@@ -14,28 +14,54 @@
 
     <div class="sidebar-menu">
         <div class="menu-label">MODUL UTAMA</div>
-        <a href="{{ url('/home') }}" class="menu-item {{ request()->is('home*') ? 'active' : '' }}">
-            <i class="fa-solid fa-house"></i>
-            <span>Home</span>
-        </a>
         <a href="{{ url('/dashboard') }}" class="menu-item {{ request()->is('dashboard*') ? 'active' : '' }}">
             <i class="fa-solid fa-gauge-high"></i>
             <span>Dashboard</span>
             <span class="menu-badge">Live</span>
         </a>
-        <a href="{{ url('/user') }}" class="menu-item {{ request()->is('user*') ? 'active' : '' }}">
-            <i class="fa-solid fa-users"></i>
-            <span>User Management</span>
+        <a href="{{ url('/profile') }}" class="menu-item {{ request()->is('profile*') ? 'active' : '' }}">
+            <i class="fa-solid fa-id-card"></i>
+            <span>Profile</span>
         </a>
-        <a href="{{ url('/product') }}" class="menu-item {{ request()->is('product*') ? 'active' : '' }}">
-            <i class="fa-solid fa-box-open"></i>
-            <span>Product</span>
+        <a href="{{ url('/education') }}" class="menu-item {{ request()->is('education*') ? 'active' : '' }}">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>Education</span>
         </a>
-
-        <div class="menu-label">FITUR HMVC</div>
-        <a href="{{ url('/dashboard/detail/100') }}" class="menu-item">
-            <i class="fa-solid fa-bolt"></i>
-            <span>Parameter Route</span>
+        <a href="{{ url('/certification') }}" class="menu-item {{ request()->is('certification*') ? 'active' : '' }}">
+            <i class="fa-solid fa-certificate"></i>
+            <span>Certification</span>
+        </a>
+        <a href="{{ url('/achievement') }}" class="menu-item {{ request()->is('achievement*') ? 'active' : '' }}">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Achievement</span>
+        </a>
+        <a href="{{ url('/interest') }}" class="menu-item {{ request()->is('interest*') ? 'active' : '' }}">
+            <i class="fa-solid fa-heart"></i>
+            <span>Interest</span>
+        </a>
+        <a href="{{ url('/project') }}" class="menu-item {{ request()->is('project*') ? 'active' : '' }}">
+            <i class="fa-solid fa-diagram-project"></i>
+            <span>Project</span>
+        </a>
+        <a href="{{ url('/research') }}" class="menu-item {{ request()->is('research*') ? 'active' : '' }}">
+            <i class="fa-solid fa-flask-vial"></i>
+            <span>Research</span>
+        </a>
+        <a href="{{ url('/career') }}" class="menu-item {{ request()->is('career*') ? 'active' : '' }}">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>Career</span>
+        </a>
+        <a href="{{ url('/activity') }}" class="menu-item {{ request()->is('activity*') ? 'active' : '' }}">
+            <i class="fa-solid fa-person-running"></i>
+            <span>Activity</span>
+        </a>
+        <a href="{{ url('/media') }}" class="menu-item {{ request()->is('media*') ? 'active' : '' }}">
+            <i class="fa-solid fa-photo-film"></i>
+            <span>Media</span>
+        </a>
+        <a href="{{ url('/setting') }}" class="menu-item {{ request()->is('setting*') ? 'active' : '' }}">
+            <i class="fa-solid fa-gear"></i>
+            <span>Setting</span>
         </a>
     </div>
 

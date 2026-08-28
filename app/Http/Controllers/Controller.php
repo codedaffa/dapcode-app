@@ -22,6 +22,11 @@ class Controller extends BaseLaravelController
     public function __construct()
     {
         $this->template = app(Template::class);
+
+        // Enforce no cross-module instantiation
+        if (property_exists($this, 'moduleName') && !empty($this->moduleName)) {
+            HMVC::enforceNoCrossModule($this->moduleName);
+        }
     }
 
     /**
