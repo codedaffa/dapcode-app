@@ -103,6 +103,16 @@ return [
         'file_size' => 'Ukuran Berkas',
         'upload_new' => 'Unggah Media',
     ],
+    'commerce' => [
+        'name' => 'Commerce',
+        'title' => 'E-Commerce & Produk',
+        'subtitle' => 'Katalog produk, layanan digital, transaksi, dan inventaris toko.',
+        'product_name' => 'Nama Produk / Layanan',
+        'price' => 'Harga',
+        'stock' => 'Stok',
+        'category' => 'Kategori Produk',
+        'add_product' => 'Tambah Produk',
+    ],
     'setting' => [
         'name' => 'Pengaturan',
         'title' => 'Pengaturan Sistem',

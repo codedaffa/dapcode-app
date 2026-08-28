@@ -22,10 +22,10 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="color: var(--text-muted); font-size: 12px; font-weight: 500;">{{ __('modules.dashboard.total_modules') }}</span>
                 <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">
-                    12 {{ __('common.live_badge') }}
+                    13 {{ __('common.live_badge') }}
                 </span>
             </div>
-            <div style="font-size: 24px; font-weight: 700; color: #38bdf8; margin-top: 6px;">12</div>
+            <div style="font-size: 24px; font-weight: 700; color: #38bdf8; margin-top: 6px;">13</div>
         </div>
         <div class="stat-item">
             <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">{{ __('modules.dashboard.active_status') }}</div>
