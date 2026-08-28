@@ -12,10 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Unified Responsive Theme Stylesheet -->
-    <link rel="stylesheet" href="{{ asset('assets/css/theme-responsive.css') }}">
-    <!-- Automatic Indonesian Holiday Themes -->
-    <link rel="stylesheet" href="{{ asset('assets/css/holiday-themes.css') }}">
+    <!-- Compiled Stylesheet & Scripts via Laravel Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="{{ holiday_theme()['css_class'] }}">
 <div class="app-layout">

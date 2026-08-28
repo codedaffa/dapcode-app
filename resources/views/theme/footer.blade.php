@@ -8,8 +8,5 @@
         </footer>
     </div> {{-- End .main-wrapper --}}
 </div> {{-- End .app-layout --}}
-
-<!-- Scripts -->
-<script src="{{ asset('assets/js/theme-responsive.js') }}"></script>
 </body>
 </html>
