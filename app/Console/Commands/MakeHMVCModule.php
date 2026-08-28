@@ -107,8 +107,10 @@ class {$name} extends {$name}Controllers
      */
     public function index(Request \$request)
     {
+        \$moduleKey = '{$viewKey}';
         return \$this->moduleRender('index', [
-            'title' => 'HMVC {$name} Module'
+            'title' => __("modules.{\$moduleKey}.title") !== "modules.{\$moduleKey}.title" ? __("modules.{\$moduleKey}.title") : "{$name} Module",
+            'subtitle' => __("modules.{\$moduleKey}.subtitle") !== "modules.{\$moduleKey}.subtitle" ? __("modules.{\$moduleKey}.subtitle") : "HMVC {$name} Module",
         ]);
     }
 }

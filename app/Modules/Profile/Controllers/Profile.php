@@ -9,7 +9,7 @@ class Profile extends ProfileControllers
 {
     /**
      * Display the index page for Profile module.
-     * Accessible via: /Profile
+     * Accessible via: /profile
      *
      * @param Request $request
      * @return \Illuminate\Contracts\View\View|string
@@ -17,7 +17,8 @@ class Profile extends ProfileControllers
     public function index(Request $request)
     {
         return $this->moduleRender('index', [
-            'title' => 'HMVC Profile Module'
+            'title' => __('modules.profile.title'),
+            'subtitle' => __('modules.profile.subtitle'),
         ]);
     }
 }

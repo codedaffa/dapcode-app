@@ -21,7 +21,7 @@ class Dashboard extends DashboardControllers
         $userGrowth = $this->calculateGrowth(1280, 1150);
 
         return $this->moduleRender('index', [
-            'title' => 'Dashboard Overview',
+            'title' => __('modules.dashboard.title'),
             'stats' => $stats,
             'activities' => $activities,
             'userGrowth' => $userGrowth,
