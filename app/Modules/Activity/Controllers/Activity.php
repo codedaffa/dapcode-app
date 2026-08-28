@@ -7,17 +7,11 @@ use Illuminate\Http\Request;
 
 class Activity extends ActivityControllers
 {
-    /**
-     * Display the index page for Activity module.
-     * Accessible via: /Activity
-     *
-     * @param Request $request
-     * @return \Illuminate\Contracts\View\View|string
-     */
     public function index(Request $request)
     {
         return $this->moduleRender('index', [
-            'title' => 'HMVC Activity Module'
+            'title' => __('modules.activity.title'),
+            'subtitle' => __('modules.activity.subtitle'),
         ]);
     }
 }

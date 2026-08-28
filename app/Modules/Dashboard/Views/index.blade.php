@@ -3,7 +3,7 @@
         <div style="min-width: 0; flex: 1;">
             <h2 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px;">{{ $title }}</h2>
             <p style="color: var(--text-muted); font-size: 13.5px;">
-                Modul <strong>{{ $moduleName }}</strong> menggunakan Base Controller <code>App\Http\Controllers\Core\Dashboard</code>. Server Time: <span style="color: #38bdf8;">{{ $serverTime }}</span>
+                {{ __('modules.dashboard.subtitle') }}
             </p>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -11,41 +11,41 @@
                 <i class="fa-solid fa-chart-pie"></i> Analytics JSON
             </a>
             <a href="{{ url('/dashboard/detail/2026') }}" style="background: var(--primary); color: #fff; text-decoration: none; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> Test JSON Detail
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> JSON Detail
             </a>
         </div>
     </div>
 
-    <!-- Responsive Metric Grid dari Base Controller -->
+    <!-- Responsive Metric Grid -->
     <div class="stats-grid-4">
         <div class="stat-item">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: var(--text-muted); font-size: 12px; font-weight: 500;">TOTAL USERS</span>
+                <span style="color: var(--text-muted); font-size: 12px; font-weight: 500;">{{ __('modules.dashboard.total_modules') }}</span>
                 <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">
-                    +{{ $userGrowth['percentage'] }}% <i class="fa-solid fa-arrow-trend-up"></i>
+                    12 {{ __('common.live_badge') }}
                 </span>
             </div>
-            <div style="font-size: 24px; font-weight: 700; color: #38bdf8; margin-top: 6px;">{{ number_format($stats['total_users']) }}</div>
+            <div style="font-size: 24px; font-weight: 700; color: #38bdf8; margin-top: 6px;">12</div>
         </div>
         <div class="stat-item">
-            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">ACTIVE SESSIONS</div>
-            <div style="font-size: 24px; font-weight: 700; color: #10b981; margin-top: 6px;">{{ $stats['active_sessions'] }}</div>
+            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">{{ __('modules.dashboard.active_status') }}</div>
+            <div style="font-size: 20px; font-weight: 700; color: #10b981; margin-top: 6px;">HMVC Auto-Route</div>
         </div>
         <div class="stat-item">
-            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">SYSTEM LOAD</div>
-            <div style="font-size: 24px; font-weight: 700; color: #f59e0b; margin-top: 6px;">{{ $stats['system_load'] }}</div>
+            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">{{ __('modules.dashboard.response_time') }}</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f59e0b; margin-top: 6px;">&lt; 15 ms</div>
         </div>
         <div class="stat-item">
-            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">HMVC MODULES</div>
-            <div style="font-size: 24px; font-weight: 700; color: #a855f7; margin-top: 6px;">{{ $stats['hmvc_modules'] }} Modul</div>
+            <div style="color: var(--text-muted); font-size: 12px; font-weight: 500;">{{ __('modules.dashboard.system_health') }}</div>
+            <div style="font-size: 24px; font-weight: 700; color: #a855f7; margin-top: 6px;">100% OK</div>
         </div>
     </div>
 
-    <!-- Recent Activities Feed dari Base Controller -->
+    <!-- Recent Activities Feed -->
     @if(isset($activities) && count($activities) > 0)
     <div style="margin-top: 24px; margin-bottom: 24px;">
         <h3 style="font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 12px;">
-            <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i> Aktivitas Sistem Terbaru (Disediakan oleh Base Core)
+            <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i> {{ __('modules.dashboard.recent_activities') }}
         </h3>
         <div style="display: flex; flex-direction: column; gap: 10px;">
             @foreach($activities as $item)
