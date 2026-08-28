@@ -110,10 +110,20 @@ body {
     height: var(--header-height);
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 0 20px;
+    justify-content: space-between;
+    padding: 0 16px;
     border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
+}
+
+.sidebar-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+    flex: 1;
 }
 
 .brand-logo {
@@ -128,20 +138,48 @@ body {
     color: #fff;
     font-size: 18px;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    flex-shrink: 0;
 }
 
+.brand-text {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.brand-text .brand-name,
 .brand-text h2 {
     font-size: 16px;
     font-weight: 700;
-    color: #fff;
-    line-height: 1.1;
+    color: #ffffff;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.brand-text span {
-    font-size: 11px;
+.brand-text .brand-name span,
+.brand-text h2 span {
+    color: var(--primary);
+}
+
+.brand-text span.brand-sub,
+.brand-text > span {
+    font-size: 10.5px;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    margin: 0;
+    line-height: 1.2;
 }
 
 .sidebar-close-btn {
@@ -164,9 +202,18 @@ body {
 
 .sidebar-menu {
     flex: 1;
-    padding: 20px 14px;
+    padding: 16px 14px;
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.sidebar-menu::-webkit-scrollbar,
+.app-sidebar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
 .menu-label {
@@ -282,13 +329,22 @@ body.sidebar-collapsed .app-sidebar {
 body.sidebar-collapsed .app-sidebar .brand-text,
 body.sidebar-collapsed .app-sidebar .menu-label,
 body.sidebar-collapsed .app-sidebar .menu-item span,
-body.sidebar-collapsed .app-sidebar .sidebar-footer {
+body.sidebar-collapsed .app-sidebar .sidebar-footer,
+body.sidebar-collapsed .app-sidebar .sidebar-active-module,
+body.sidebar-collapsed .app-sidebar .sidebar-switcher-section,
+body.sidebar-collapsed .app-sidebar .menu-badge,
+body.sidebar-collapsed .app-sidebar .sidebar-close-btn {
     display: none !important;
 }
 
 body.sidebar-collapsed .app-sidebar .sidebar-brand {
     justify-content: center;
     padding: 0;
+}
+
+body.sidebar-collapsed .app-sidebar .sidebar-brand-link {
+    justify-content: center;
+    width: 100%;
 }
 
 body.sidebar-collapsed .app-sidebar .menu-item {
@@ -390,9 +446,32 @@ body.sidebar-mobile-open .sidebar-overlay {
     white-space: nowrap;
 }
 
+.header-title-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    transition: var(--transition-smooth);
+}
+
+.header-title-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--border-color);
+}
+
+.header-title-btn:hover .title-dropdown-icon {
+    transform: translateY(2px);
+    color: #38bdf8;
+}
+
 .header-title {
     font-size: 17px;
-    font-weight: 600;
+    font-weight: 700;
     color: #ffffff;
     white-space: nowrap;
     overflow: hidden;
@@ -685,3 +764,28 @@ body.sidebar-mobile-open .sidebar-overlay {
         padding: 14px 10px;
     }
 }
+
+/* --------------------------------------------------------------------------
+   10. Interactive Portfolio Module Cards
+   -------------------------------------------------------------------------- */
+.module-card-link {
+    display: block;
+    outline: none;
+}
+
+.module-card-link .stat-item {
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    cursor: pointer;
+}
+
+.module-card-link:hover .stat-item {
+    transform: translateY(-4px);
+    border-color: rgba(99, 102, 241, 0.6) !important;
+    background: var(--bg-card-hover) !important;
+    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+.module-card-link:hover .stat-item h3 {
+    color: #38bdf8 !important;
+}
+

@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect('/dashboard');
+    return view('portfolio', [
+        'title' => __('common.portfolio_home'),
+        'pageTitle' => __('common.app_name') . ' - ' . __('common.portfolio_home'),
+    ]);
 });
 
 // Language Switcher Route
@@ -24,3 +27,19 @@ Route::get('/lang/{locale}', function ($locale) {
     }
     return redirect()->back();
 })->name('lang.switch');
+
+// Manual Theme Switcher Route
+Route::get('/theme/{themeKey}', function ($themeKey) {
+    $validPresets = array_keys(\App\Services\Theme\HolidayThemeService::getAllThemePresets());
+    $validPresets[] = 'auto';
+
+    if (in_array($themeKey, $validPresets)) {
+        if ($themeKey === 'auto') {
+            session()->forget('holiday_theme');
+        } else {
+            session(['holiday_theme' => $themeKey]);
+        }
+    }
+
+    return redirect()->back();
+})->name('theme.switch');

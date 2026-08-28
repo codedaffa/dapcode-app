@@ -64,10 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Close mobile sidebar when clicking a menu link
+    // Close mobile sidebar when clicking any navigation link inside sidebar
     if (sidebar) {
-        const menuLinks = sidebar.querySelectorAll('.menu-item');
-        menuLinks.forEach(link => {
+        const navLinks = sidebar.querySelectorAll('.menu-item, .switcher-item, .sidebar-brand-link');
+        navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 if (!isDesktop()) {
                     closeMobileSidebar();
@@ -76,7 +76,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 5. Handle Window Resize
+    // 5. Header Title Module Switcher Dropdown Toggle
+    const titleDropdownBtn = document.getElementById('headerTitleDropdownBtn');
+    const titleDropdownMenu = document.getElementById('headerTitleDropdownMenu');
+    const titleDropdownIcon = document.querySelector('.title-dropdown-icon');
+    const themeDropdownBtn = document.getElementById('themeDropdownBtn');
+    const themeDropdownMenu = document.getElementById('themeDropdownMenu');
+
+    if (titleDropdownBtn && titleDropdownMenu) {
+        titleDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (themeDropdownMenu) themeDropdownMenu.style.display = 'none';
+            const isOpen = titleDropdownMenu.style.display === 'block';
+            titleDropdownMenu.style.display = isOpen ? 'none' : 'block';
+            if (titleDropdownIcon) {
+                titleDropdownIcon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!titleDropdownBtn.contains(e.target) && !titleDropdownMenu.contains(e.target)) {
+                titleDropdownMenu.style.display = 'none';
+                if (titleDropdownIcon) titleDropdownIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+
+    // 6. Theme Dropdown Picker Toggle
+    if (themeDropdownBtn && themeDropdownMenu) {
+        themeDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (titleDropdownMenu) {
+                titleDropdownMenu.style.display = 'none';
+                if (titleDropdownIcon) titleDropdownIcon.style.transform = 'rotate(0deg)';
+            }
+            const isOpen = themeDropdownMenu.style.display === 'block';
+            themeDropdownMenu.style.display = isOpen ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!themeDropdownBtn.contains(e.target) && !themeDropdownMenu.contains(e.target)) {
+                themeDropdownMenu.style.display = 'none';
+            }
+        });
+    }
+
+    // 6. Handle Window Resize
     window.addEventListener('resize', () => {
         if (isDesktop()) {
             closeMobileSidebar();

@@ -88,8 +88,8 @@ class HMVCServiceProvider extends ServiceProvider
                     '{module}/{segment2?}/{segment3?}/{params?}',
                     [HMVCController::class, 'handle']
                 )->where([
-                    // Exclude storage, sanctum, api, lang switcher, etc.
-                    'module' => '^(?!api$|_debugbar$|sanctum$|lang$)[A-Za-z0-9\-_]+$',
+                    // Exclude storage, sanctum, api, lang switcher, theme switcher, etc.
+                    'module' => '^(?!api$|_debugbar$|sanctum$|lang$|theme$)[A-Za-z0-9\-_]+$',
                     'params' => '.*',
                 ]);
             });
