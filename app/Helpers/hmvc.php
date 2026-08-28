@@ -45,3 +45,15 @@ if (!function_exists('template_render')) {
         return app(\App\Libraries\Template::class)->render($view, $data, $return);
     }
 }
+
+if (!function_exists('holiday_theme')) {
+    /**
+     * Get active Indonesian holiday celebration theme details.
+     *
+     * @return array
+     */
+    function holiday_theme()
+    {
+        return \App\Services\Theme\HolidayThemeService::getActiveTheme();
+    }
+}
