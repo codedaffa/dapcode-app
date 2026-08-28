@@ -96,7 +96,7 @@ namespace App\Modules\\{$name}\\Controllers;
 use App\Http\Controllers\Core\\{$name}Controllers;
 use Illuminate\Http\Request;
 
-class {$name}Controller extends {$name}Controllers
+class {$name} extends {$name}Controllers
 {
     /**
      * Display the index page for {$name} module.
@@ -113,7 +113,7 @@ class {$name}Controller extends {$name}Controllers
     }
 }
 PHP;
-        File::put("{$modulePath}/Controllers/{$name}Controller.php", $controllerStub);
+        File::put("{$modulePath}/Controllers/{$name}.php", $controllerStub);
 
         // 5. Generate Main Model extending Illuminate\Database\Eloquent\Model directly
         $modelStub = <<<PHP
@@ -145,7 +145,7 @@ PHP;
 
     <div class="stat-item">
         <div style="font-family: monospace; font-size: 13px; color: #38bdf8; word-break: break-all;">
-            <i class="fa-solid fa-folder-tree"></i> Controller: app/Modules/{$name}/Controllers/{$name}Controller.php<br>
+            <i class="fa-solid fa-folder-tree"></i> Controller: app/Modules/{$name}/Controllers/{$name}.php<br>
             <i class="fa-solid fa-cube"></i> Base Core: app/Http/Controllers/Core/{$name}Controllers.php
         </div>
     </div>
@@ -155,7 +155,7 @@ BLADE;
 
         $this->info("HMVC Module [{$name}] created successfully!");
         $this->line("<comment>Base Core Controller:</comment> <info>app/Http/Controllers/Core/{$name}Controllers.php</info>");
-        $this->line("<comment>Module Controller:</comment>    <info>app/Modules/{$name}/Controllers/{$name}Controller.php</info>");
+        $this->line("<comment>Module Controller:</comment>    <info>app/Modules/{$name}/Controllers/{$name}.php</info>");
         $this->line("<comment>Module Model:</comment>         <info>app/Modules/{$name}/Models/{$name}.php</info>");
         $this->line("<comment>Access URL:</comment>           <info>/" . Str::kebab($name) . "</info> or <info>/{$name}</info>");
 
