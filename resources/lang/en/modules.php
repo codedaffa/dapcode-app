@@ -103,6 +103,16 @@ return [
         'file_size' => 'File Size',
         'upload_new' => 'Upload Media',
     ],
+    'commerce' => [
+        'name' => 'Commerce',
+        'title' => 'E-Commerce & Products',
+        'subtitle' => 'Product catalog, digital services, orders, and shop inventory management.',
+        'product_name' => 'Product / Service Name',
+        'price' => 'Price',
+        'stock' => 'Stock',
+        'category' => 'Product Category',
+        'add_product' => 'Add Product',
+    ],
     'setting' => [
         'name' => 'Setting',
         'title' => 'System Settings',

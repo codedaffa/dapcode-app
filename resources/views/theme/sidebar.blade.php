@@ -59,6 +59,10 @@
             <i class="fa-solid fa-photo-film"></i>
             <span>{{ __('modules.media.name') }}</span>
         </a>
+        <a href="{{ url('/commerce') }}" class="menu-item {{ request()->is('commerce*') ? 'active' : '' }}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>{{ __('modules.commerce.name') }}</span>
+        </a>
         <a href="{{ url('/setting') }}" class="menu-item {{ request()->is('setting*') ? 'active' : '' }}">
             <i class="fa-solid fa-gear"></i>
             <span>{{ __('modules.setting.name') }}</span>
