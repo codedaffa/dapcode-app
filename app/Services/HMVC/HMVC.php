@@ -10,14 +10,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class HMVC
 {
     /**
-     * Stack to track the currently active dispatched modules.
+     * Stack to track active modules during hierarchical dispatching.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected static $activeModuleStack = [];
 
     /**
-     * Push active module onto the stack.
+     * Push active module onto the dispatch stack.
      *
      * @param string $module
      * @return void
@@ -28,7 +28,7 @@ class HMVC
     }
 
     /**
-     * Pop active module from the stack.
+     * Pop active module from the dispatch stack.
      *
      * @return void
      */
@@ -38,7 +38,7 @@ class HMVC
     }
 
     /**
-     * Get the currently active module.
+     * Get the currently active module on top of the stack.
      *
      * @return string|null
      */
@@ -56,6 +56,7 @@ class HMVC
     public static function detectCallerModule(?string $excludeModule = null): ?string
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
         foreach ($trace as $frame) {
             $class = $frame['class'] ?? '';
             $file = isset($frame['file']) ? str_replace('\\', '/', $frame['file']) : '';
@@ -78,16 +79,16 @@ class HMVC
         }
 
         // 3. Fallback to active dispatch module
-        $active = static::getActiveModule();
-        if ($active && (!$excludeModule || strcasecmp($active, $excludeModule) !== 0)) {
-            return $active;
+        $activeModule = static::getActiveModule();
+        if ($activeModule && (!$excludeModule || strcasecmp($activeModule, $excludeModule) !== 0)) {
+            return $activeModule;
         }
 
         return null;
     }
 
     /**
-     * Enforce that cross-module calls are forbidden.
+     * Enforce module isolation: Prevent cross-module direct calls.
      * If a cross-module call is detected, redirect immediately to the main index page (/).
      *
      * @param string $targetModule
@@ -99,7 +100,7 @@ class HMVC
         $callerModule = static::detectCallerModule($targetModule);
 
         if ($callerModule !== null && strcasecmp($callerModule, $targetModule) !== 0) {
-            // Cross-module call detected! Redirect to main index (/)
+            // Cross-module call detected! Redirect to portfolio root (/)
             throw new \Illuminate\Http\Exceptions\HttpResponseException(
                 redirect('/')
             );
@@ -116,85 +117,136 @@ class HMVC
      * @param string|null $params
      * @return mixed
      */
-    public function dispatch(Request $request, string $module, ?string $segment2 = null, ?string $segment3 = null, ?string $params = null)
-    {
+    public function dispatch(
+        Request $request,
+        string $module,
+        ?string $segment2 = null,
+        ?string $segment3 = null,
+        ?string $params = null
+    ) {
         $moduleName = Str::studly($module);
         $moduleNamespace = "App\\Modules\\{$moduleName}\\Controllers";
 
-        $controllerName = null;
-        $actionName = 'index';
-        $paramList = [];
+        $urlParameters = !is_null($params) && $params !== ''
+            ? explode('/', trim($params, '/'))
+            : [];
 
-        if (!is_null($params) && $params !== '') {
-            $paramList = explode('/', trim($params, '/'));
-        }
+        [$controllerClass, $actionName, $urlParameters] = $this->resolveDispatchTarget(
+            $moduleNamespace,
+            $moduleName,
+            $segment2,
+            $segment3,
+            $urlParameters
+        );
 
-        $mainController = class_exists("{$moduleNamespace}\\{$moduleName}")
-            ? $moduleName
-            : "{$moduleName}Controller";
-
-        if ($segment2 === null) {
-            // Pattern: /{module}
-            $controllerName = $mainController;
-            $actionName = 'index';
-        } elseif ($segment3 === null) {
-            // Pattern: /{module}/{segment2}
-            $subStudly = Str::studly($segment2);
-            if (class_exists("{$moduleNamespace}\\{$subStudly}")) {
-                $controllerName = $subStudly;
-                $actionName = 'index';
-            } elseif (class_exists("{$moduleNamespace}\\{$subStudly}Controller")) {
-                $controllerName = "{$subStudly}Controller";
-                $actionName = 'index';
-            } else {
-                $controllerName = $mainController;
-                $actionName = Str::camel($segment2);
-            }
-        } else {
-            // Pattern: /{module}/{segment2}/{segment3}/{params?}
-            $subStudly = Str::studly($segment2);
-            if (class_exists("{$moduleNamespace}\\{$subStudly}")) {
-                $controllerName = $subStudly;
-                $actionName = Str::camel($segment3);
-            } elseif (class_exists("{$moduleNamespace}\\{$subStudly}Controller")) {
-                $controllerName = "{$subStudly}Controller";
-                $actionName = Str::camel($segment3);
-            } else {
-                $controllerName = $mainController;
-                $actionName = Str::camel($segment2);
-                array_unshift($paramList, $segment3);
-            }
-        }
-
-        $fullControllerClass = "{$moduleNamespace}\\{$controllerName}";
-
-        if (!class_exists($fullControllerClass)) {
-            throw new NotFoundHttpException("HMVC Module controller [{$fullControllerClass}] not found.");
+        if (!class_exists($controllerClass)) {
+            throw new NotFoundHttpException("HMVC Module controller [{$controllerClass}] not found.");
         }
 
         static::pushActiveModule($moduleName);
 
         try {
-            $controllerInstance = app()->make($fullControllerClass);
+            $controllerInstance = app()->make($controllerClass);
+            $finalAction = $this->resolveActionMethod($controllerInstance, $actionName, $request->method());
 
-            if (!method_exists($controllerInstance, $actionName)) {
-                // Try HTTP method prefix like getIndex, postStore, etc.
-                $httpMethodAction = strtolower($request->method()) . ucfirst($actionName);
-                if (method_exists($controllerInstance, $httpMethodAction)) {
-                    $actionName = $httpMethodAction;
-                } else {
-                    throw new NotFoundHttpException("HMVC Action [{$actionName}] not found in [{$fullControllerClass}].");
-                }
-            }
-
-            return $this->callActionWithResolvedParams($controllerInstance, $actionName, $paramList, $request);
+            return $this->callActionWithResolvedParams($controllerInstance, $finalAction, $urlParameters, $request);
         } finally {
             static::popActiveModule();
         }
     }
 
     /**
-     * Resolve method parameters combining DI services and URL parameters.
+     * Resolve the target controller class and action name based on URL segments.
+     *
+     * @param string $namespace
+     * @param string $module
+     * @param string|null $segment2
+     * @param string|null $segment3
+     * @param array $parameters
+     * @return array{0: string, 1: string, 2: array} [ControllerClass, ActionName, Parameters]
+     */
+    protected function resolveDispatchTarget(
+        string $namespace,
+        string $module,
+        ?string $segment2,
+        ?string $segment3,
+        array $parameters
+    ): array {
+        $mainController = $this->resolveControllerClass($namespace, $module);
+
+        // Pattern 1: /{module}
+        if ($segment2 === null) {
+            return [$mainController, 'index', $parameters];
+        }
+
+        $subCandidate = Str::studly($segment2);
+        $subController = $this->resolveControllerClass($namespace, $subCandidate);
+
+        // Pattern 2: /{module}/{segment2}
+        if ($segment3 === null) {
+            if ($subController !== null) {
+                return [$subController, 'index', $parameters];
+            }
+
+            return [$mainController, Str::camel($segment2), $parameters];
+        }
+
+        // Pattern 3: /{module}/{segment2}/{segment3}/{params?}
+        if ($subController !== null) {
+            return [$subController, Str::camel($segment3), $parameters];
+        }
+
+        array_unshift($parameters, $segment3);
+        return [$mainController, Str::camel($segment2), $parameters];
+    }
+
+    /**
+     * Find existing controller class by trying candidate names with and without 'Controller' suffix.
+     *
+     * @param string $namespace
+     * @param string $candidateName
+     * @return string|null
+     */
+    protected function resolveControllerClass(string $namespace, string $candidateName): ?string
+    {
+        $exactClass = "{$namespace}\\{$candidateName}";
+        if (class_exists($exactClass)) {
+            return $exactClass;
+        }
+
+        $suffixedClass = "{$namespace}\\{$candidateName}Controller";
+        if (class_exists($suffixedClass)) {
+            return $suffixedClass;
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve callable action method name, supporting HTTP method prefixes (e.g. getIndex, postStore).
+     *
+     * @param object $controllerInstance
+     * @param string $actionName
+     * @param string $httpMethod
+     * @return string
+     */
+    protected function resolveActionMethod($controllerInstance, string $actionName, string $httpMethod): string
+    {
+        if (method_exists($controllerInstance, $actionName)) {
+            return $actionName;
+        }
+
+        $prefixedAction = strtolower($httpMethod) . ucfirst($actionName);
+        if (method_exists($controllerInstance, $prefixedAction)) {
+            return $prefixedAction;
+        }
+
+        $controllerClass = get_class($controllerInstance);
+        throw new NotFoundHttpException("HMVC Action [{$actionName}] not found in [{$controllerClass}].");
+    }
+
+    /**
+     * Resolve method parameters combining Dependency Injection services and URL parameters.
      *
      * @param object $controllerInstance
      * @param string $actionName
@@ -202,39 +254,42 @@ class HMVC
      * @param Request|null $request
      * @return mixed
      */
-    protected function callActionWithResolvedParams($controllerInstance, string $actionName, array $paramList, ?Request $request = null)
-    {
+    protected function callActionWithResolvedParams(
+        $controllerInstance,
+        string $actionName,
+        array $paramList,
+        ?Request $request = null
+    ) {
         $refMethod = new ReflectionMethod($controllerInstance, $actionName);
-        $resolved = [];
+        $resolvedArguments = [];
         $urlParamIndex = 0;
 
         foreach ($refMethod->getParameters() as $param) {
+            $paramName = $param->getName();
             $paramType = $param->getType();
-            $paramClass = null;
+            $paramClassName = ($paramType && !$paramType->isBuiltin()) ? $paramType->getName() : null;
 
-            if ($paramType && !$paramType->isBuiltin()) {
-                $paramClass = $paramType->getName();
-            }
-
-            if ($paramClass) {
-                if ($request && ($paramClass === Request::class || is_subclass_of($paramClass, Request::class))) {
-                    $resolved[$param->getName()] = $request;
+            if ($paramClassName !== null) {
+                // Dependency Injection parameter
+                if ($request && ($paramClassName === Request::class || is_subclass_of($paramClassName, Request::class))) {
+                    $resolvedArguments[$paramName] = $request;
                 } else {
-                    $resolved[$param->getName()] = app()->make($paramClass);
+                    $resolvedArguments[$paramName] = app()->make($paramClassName);
                 }
             } else {
+                // URL positional parameter
                 if (isset($paramList[$urlParamIndex])) {
-                    $resolved[$param->getName()] = $paramList[$urlParamIndex];
+                    $resolvedArguments[$paramName] = $paramList[$urlParamIndex];
                     $urlParamIndex++;
                 } elseif ($param->isDefaultValueAvailable()) {
-                    $resolved[$param->getName()] = $param->getDefaultValue();
+                    $resolvedArguments[$paramName] = $param->getDefaultValue();
                 } else {
-                    $resolved[$param->getName()] = null;
+                    $resolvedArguments[$paramName] = null;
                 }
             }
         }
 
-        return app()->call([$controllerInstance, $actionName], $resolved);
+        return app()->call([$controllerInstance, $actionName], $resolvedArguments);
     }
 
     /**
@@ -248,7 +303,6 @@ class HMVC
      */
     public static function run(string $target, array $parameters = [])
     {
-        // Parse "Module/Controller@action" or "Module@action"
         if (strpos($target, '@') === false) {
             $target .= '@index';
         }
@@ -257,40 +311,29 @@ class HMVC
         $segments = explode('/', $classTarget);
 
         $moduleName = Str::studly($segments[0]);
+        $moduleNamespace = "App\\Modules\\{$moduleName}\\Controllers";
 
-        // Enforce no cross-module calls
+        // Enforce module isolation
         static::enforceNoCrossModule($moduleName);
 
-        if (isset($segments[1])) {
-            $candidate = Str::studly($segments[1]);
-            if (class_exists("App\\Modules\\{$moduleName}\\Controllers\\{$candidate}")) {
-                $controllerName = $candidate;
-            } elseif (class_exists("App\\Modules\\{$moduleName}\\Controllers\\{$candidate}Controller")) {
-                $controllerName = "{$candidate}Controller";
-            } else {
-                $controllerName = $candidate;
-            }
-        } else {
-            if (class_exists("App\\Modules\\{$moduleName}\\Controllers\\{$moduleName}")) {
-                $controllerName = $moduleName;
-            } else {
-                $controllerName = "{$moduleName}Controller";
-            }
+        $controllerCandidate = isset($segments[1]) ? Str::studly($segments[1]) : $moduleName;
+        $controllerClass = "{$moduleNamespace}\\{$controllerCandidate}";
+
+        if (!class_exists($controllerClass)) {
+            $controllerClass = "{$moduleNamespace}\\{$controllerCandidate}Controller";
         }
 
-        $fullControllerClass = "App\\Modules\\{$moduleName}\\Controllers\\{$controllerName}";
-
-        if (!class_exists($fullControllerClass)) {
-            throw new NotFoundHttpException("HMVC Hierarchical controller [{$fullControllerClass}] not found.");
+        if (!class_exists($controllerClass)) {
+            throw new NotFoundHttpException("HMVC Hierarchical controller [{$controllerClass}] not found.");
         }
 
         static::pushActiveModule($moduleName);
 
         try {
-            $controllerInstance = app()->make($fullControllerClass);
+            $controllerInstance = app()->make($controllerClass);
 
             if (!method_exists($controllerInstance, $action)) {
-                throw new NotFoundHttpException("HMVC Action [{$action}] not found in [{$fullControllerClass}].");
+                throw new NotFoundHttpException("HMVC Action [{$action}] not found in [{$controllerClass}].");
             }
 
             return app()->call([$controllerInstance, $action], $parameters);
