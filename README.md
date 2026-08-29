@@ -7,19 +7,22 @@
   <img src="https://img.shields.io/badge/Architecture-HMVC%20Modular-6366f1?style=for-the-badge" alt="HMVC">
   <img src="https://img.shields.io/badge/Theme%20Engine-Indonesian%20Holidays-dc2626?style=for-the-badge" alt="Indonesian Holidays">
   <img src="https://img.shields.io/badge/Localization-ID%20%7C%20EN-38bdf8?style=for-the-badge" alt="i18n">
+  <img src="https://img.shields.io/badge/Code%20Quality-Clean%20%26%20Maintainable-10b981?style=for-the-badge" alt="Code Quality">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
-**DapCode App** adalah platform portofolio digital dan aplikasi ekosistem pengembang modern yang dibangun menggunakan framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)** dan frontend asset pipeline modern bertenaga **Laravel Vite**. Platform ini dilengkapi sistem tema perayaan nasional Indonesia otomatis, lokalisasi dwi-bahasa (ID/EN), antarmuka *glassmorphism* modern, dan 13 modul fungsional terintegrasi.
+**DapCode App** adalah platform portofolio digital dan aplikasi ekosistem pengembang modern yang dibangun menggunakan framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)** dan frontend asset pipeline modern bertenaga **Laravel Vite**. Platform ini dilengkapi sistem tema perayaan nasional Indonesia otomatis (*Single Source of Truth*), lokalisasi dwi-bahasa (ID/EN), antarmuka *glassmorphism* modern, dan 13 modul fungsional terintegrasi yang mudah dirawat (*human readable & maintainable*).
 
 ---
 
 ## 🌟 Fitur Utama (Key Features)
 
-### 1. 🏛️ Arsitektur Modular HMVC
+### 1. 🏛️ Arsitektur Modular HMVC & Dynamic Dispatcher
 Seluruh fitur dikelompokkan dalam modul independen di dalam direktori `app/Modules/`:
 - **Model, View, Controller, dan Route** tersendiri untuk setiap modul.
-- *Service Provider* dinamis (`HMVCServiceProvider`) yang mendaftarkan view namespace, helper, dan route otomatis.
+- *Dynamic Auto-Dispatcher* (`HMVC.php` & `HMVCServiceProvider.php`) yang meresolusi modul, sub-controller, action, dan parameter URL secara otomatis.
+- *Hierarchical Sub-Requests* via helper `hmvc('ModuleName@action', $params)` untuk merender widget antar-modul secara terisolasi.
+- *Module Scoped Rendering* via `$this->moduleRender('viewName', $data)` di Base Controller.
 
 ### 2. ⚡ Modern Frontend Asset Pipeline (Laravel Vite)
 - Ditenagai **Vite** & **laravel-vite-plugin** dengan kompilasi super cepat dan *Hot Module Replacement* (HMR).
@@ -28,7 +31,7 @@ Seluruh fitur dikelompokkan dalam modul independen di dalam direktori `app/Modul
 - Build asset teroptimasi dan versi otomatis di `public/build/`.
 
 ### 3. 🇮🇩 Indonesian Holiday & Celebration Theme Engine
-Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indonesia dan mengubah tampilan secara real-time:
+Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indonesia dengan arsitektur *Single Source of Truth*:
 - **HUT Kemerdekaan RI (17 Agustus):** Merah Putih, font *Cinzel*, glow kemerdekaan.
 - **Hari Raya Idul Fitri & Ramadhan:** Emerald & Gold, font *Amiri*, ornamen islami.
 - **Tahun Baru Imlek:** Imperial Crimson & Gold, font *Playfair Display*.
@@ -54,7 +57,7 @@ Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indone
 
 ## 📂 13 Modul HMVC Terintegrasi
 
-| # | Modul | Deskripsi | Rute |
+| # | Modul | Deskripsi | Rute Utama |
 |---|---|---|---|
 | 1 | **Dashboard** | Statistik analitik, metrik performa & ringkasan sistem | `/dashboard` |
 | 2 | **Profile** | Biodata pribadi, keahlian teknis & kontak | `/profile` |
@@ -77,23 +80,29 @@ Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indone
 ```text
 dapcode-app/
 ├── app/
+│   ├── Helpers/
+│   │   └── hmvc.php                   # Helper global: hmvc(), module_view(), holiday_theme()
 │   ├── Http/
 │   │   └── Controllers/
-│   │       └── Core/                  # Base Controllers untuk HMVC
-│   ├── Modules/                       # Modul-Modul HMVC
-│   │   ├── Dashboard/
+│   │       ├── Controller.php         # Base Controller dengan moduleRender() & json helper
+│   │       ├── HMVCController.php     # Dynamic Route Request Dispatcher
+│   │       └── Core/                  # Base Controllers per Modul
+│   ├── Modules/                       # 13 Modul HMVC Terisolasi
+│   │   ├── Dashboard/                 # Controllers, Models, Views
 │   │   ├── Profile/
 │   │   ├── Project/
 │   │   ├── Setting/
 │   │   └── ... (13 Modules)
 │   ├── Providers/
-│   │   ├── AppServiceProvider.php     # Registrasi Directive @vite
-│   │   └── HMVCServiceProvider.php    # Dynamic HMVC Route & View Loader
+│   │   ├── AppServiceProvider.php     # Registrasi Directive Blade @vite
+│   │   └── HMVCServiceProvider.php    # Dynamic HMVC Route & View Namespace Loader
 │   └── Services/
+│       ├── HMVC/
+│       │   └── HMVC.php               # Core Dispatcher & Hierarchical Request Engine
 │       ├── Theme/
-│       │   └── HolidayThemeService.php # Indonesian Celebration Engine
+│       │   └── HolidayThemeService.php # Celebration Theme Registry & Date Detector
 │       └── Vite/
-│           └── ViteHelper.php         # Vite Asset Tag Resolver (Dev/Prod)
+│           └── ViteHelper.php         # Vite Tag Resolver (Dev Server / Production Build)
 ├── public/
 │   ├── build/                         # Output Asset Terkompilasi Vite (Production)
 │   │   ├── assets/
@@ -172,6 +181,7 @@ Anda dapat menguji dan mengganti tema perayaan secara langsung melalui URL:
 - **Hari Raya Natal & Tahun Baru:** `http://127.0.0.1:8000/theme/natal`
 - **Hari Lahir Pancasila:** `http://127.0.0.1:8000/theme/pancasila`
 - **Hari Sumpah Pemuda:** `http://127.0.0.1:8000/theme/pemuda`
+- **Hari Pahlawan:** `http://127.0.0.1:8000/theme/pahlawan`
 - **Hari Kartini:** `http://127.0.0.1:8000/theme/kartini`
 - **Hari Raya Waisak:** `http://127.0.0.1:8000/theme/waisak`
 - **Tahun Baru Masehi:** `http://127.0.0.1:8000/theme/tahunbaru`

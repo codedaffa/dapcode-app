@@ -7,14 +7,14 @@ use App\Http\Controllers\Controller;
 class DashboardControllers extends Controller
 {
     /**
-     * Nama modul identitas.
+     * Module name identifier.
      *
      * @var string
      */
     protected $moduleName = 'Dashboard';
 
     /**
-     * Konfigurasi / metadata default untuk modul Dashboard.
+     * Default dashboard metadata configuration.
      *
      * @var array
      */
@@ -25,18 +25,15 @@ class DashboardControllers extends Controller
     ];
 
     /**
-     * Helper render view khusus modul Dashboard.
-     * Otomatis menginjeksi metadata modul dan view namespace dashboard::
+     * Render view for the Dashboard module with injected system stats & metadata.
      *
-     * @param string $view Nama file view (misal: 'index', 'analytics', dsb.)
-     * @param array $data Data variabel yang dikirim ke view
-     * @param bool $return True jika ingin return raw string
+     * @param string $view
+     * @param array $data
+     * @param bool $return
      * @return \Illuminate\Contracts\View\View|string
      */
     protected function moduleRender(string $view, array $data = [], bool $return = false)
     {
-        $viewPath = strpos($view, '::') === false ? "dashboard::{$view}" : $view;
-
         $defaultData = [
             'moduleName' => $this->moduleName,
             'dashboardMeta' => $this->dashboardMeta,
@@ -44,11 +41,11 @@ class DashboardControllers extends Controller
             'summaryStats' => $this->getSystemStats(),
         ];
 
-        return $this->render($viewPath, array_merge($defaultData, $data), $return);
+        return parent::moduleRender($view, array_merge($defaultData, $data), $return);
     }
 
     /**
-     * Mengambil metrik data umum dashboard.
+     * Get real-time system metrics for the dashboard.
      *
      * @return array
      */
@@ -58,47 +55,49 @@ class DashboardControllers extends Controller
             'total_users' => 1280,
             'active_sessions' => 48,
             'system_load' => '11.4%',
-            'hmvc_modules' => 6,
+            'hmvc_modules' => 13,
             'database_status' => 'Connected',
             'cache_driver' => config('cache.default', 'file'),
         ];
     }
 
     /**
-     * Mengambil log aktivitas terbaru untuk dashboard.
+     * Get recent activity logs.
      *
      * @param int $limit
      * @return array
      */
     protected function getRecentActivities(int $limit = 5): array
     {
-        return [
+        $activities = [
             [
                 'time' => 'Baru saja',
                 'action' => 'User Login',
                 'description' => 'Administrator login ke sistem melalui Web UI',
                 'type' => 'success',
-                'icon' => 'fa-right-to-bracket'
+                'icon' => 'fa-right-to-bracket',
             ],
             [
                 'time' => '10 menit yang lalu',
                 'action' => 'HMVC Module Dispatch',
                 'description' => 'Request auto-dispatching ke modul /dashboard berhasil dieksekusi',
                 'type' => 'info',
-                'icon' => 'fa-bolt'
+                'icon' => 'fa-bolt',
             ],
             [
                 'time' => '1 jam yang lalu',
                 'action' => 'Database Backup',
                 'description' => 'Sinkronisasi database otomatis selesai',
                 'type' => 'warning',
-                'icon' => 'fa-database'
-            ]
+                'icon' => 'fa-database',
+            ],
         ];
+
+        return array_slice($activities, 0, $limit);
     }
 
     /**
-     * Helper kalkulasi tren persentase kenaikan/penurunan.
+     * Calculate percentage growth trend between current and previous values.
      *
      * @param float|int $current
      * @param float|int $previous
@@ -111,9 +110,10 @@ class DashboardControllers extends Controller
         }
 
         $diff = (($current - $previous) / $previous) * 100;
+
         return [
             'percentage' => round(abs($diff), 1),
-            'trend' => $diff >= 0 ? 'up' : 'down'
+            'trend' => $diff >= 0 ? 'up' : 'down',
         ];
     }
 }

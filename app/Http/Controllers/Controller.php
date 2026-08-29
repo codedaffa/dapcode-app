@@ -47,6 +47,26 @@ class Controller extends BaseLaravelController
     }
 
     /**
+     * Render a view scoped to the active module's view namespace.
+     *
+     * @param string $view e.g. "index" (resolved to "modulename::index")
+     * @param array $data
+     * @param bool $return
+     * @return \Illuminate\Contracts\View\View|string
+     */
+    protected function moduleRender(string $view, array $data = [], bool $return = false)
+    {
+        $moduleKey = property_exists($this, 'moduleName') && !empty($this->moduleName)
+            ? strtolower($this->moduleName)
+            : 'app';
+
+        $viewPath = strpos($view, '::') === false ? "{$moduleKey}::{$view}" : $view;
+        $payload = array_merge(['moduleName' => $this->moduleName ?? ucfirst($moduleKey)], $data);
+
+        return $this->render($viewPath, $payload, $return);
+    }
+
+    /**
      * Return a standardized JSON success response.
      *
      * @param mixed $data
