@@ -1,6 +1,6 @@
 @php
     $currentSegment = strtolower(request()->segment(1) ?: 'dashboard');
-    if (!in_array($currentSegment, ['dashboard', 'profile', 'education', 'certification', 'achievement', 'interest', 'project', 'research', 'career', 'activity', 'media', 'commerce', 'setting'])) {
+    if (!in_array($currentSegment, ['dashboard', 'profile', 'education', 'certification', 'achievement', 'interest', 'project', 'research', 'career', 'activity', 'media', 'commerce', 'setting', 'dapcode'])) {
         $currentSegment = 'dashboard';
     }
 
@@ -8,6 +8,15 @@
 
     // Purely sub-menus belonging strictly to the active module
     $moduleSubMenus = [
+        'dapcode' => [
+            'icon' => 'fa-solid fa-key',
+            'title' => 'Lisensi & Aktivasi',
+            'label' => 'SUB MENU LISENSI',
+            'items' => [
+                ['url' => url('/dapcode/activate'), 'icon' => 'fa-solid fa-shield-halved', 'label' => 'Aktivasi Lisensi', 'active' => request()->is('dapcode/activate') || request()->is('dapcode')],
+                ['url' => url('/setting?tab=themes'), 'icon' => 'fa-solid fa-palette', 'label' => 'Tema Perayaan', 'active' => false],
+            ]
+        ],
         'dashboard' => [
             'icon' => 'fa-solid fa-gauge-high',
             'title' => __('modules.dashboard.name'),

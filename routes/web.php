@@ -43,3 +43,12 @@ Route::get('/theme/{themeKey}', function ($themeKey) {
 
     return redirect()->back();
 })->name('theme.switch');
+
+// DapCode License & Activation Routes
+Route::prefix('dapcode')->group(function () {
+    Route::get('/activate', [\App\Http\Controllers\Dapcode\LicenseController::class, 'showActivate'])->name('dapcode.activate');
+    Route::post('/activate', [\App\Http\Controllers\Dapcode\LicenseController::class, 'activate'])->name('dapcode.activate.post');
+    Route::post('/deactivate', [\App\Http\Controllers\Dapcode\LicenseController::class, 'deactivate'])->name('dapcode.deactivate');
+    Route::get('/status', [\App\Http\Controllers\Dapcode\LicenseController::class, 'status'])->name('dapcode.status');
+});
+
