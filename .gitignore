@@ -2,6 +2,12 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/app/dapcode/.installation
+/storage/app/dapcode/.license
+/storage/app/dapcode/.secret
+/storage/app/dapcode/.license-state
+/storage/app/dapcode/*.secret
+/storage/app/dapcode/*.key
 /vendor
 .env
 .env.backup
