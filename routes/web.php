@@ -50,5 +50,7 @@ Route::prefix('dapcode')->group(function () {
     Route::post('/activate', [\App\Http\Controllers\Dapcode\LicenseController::class, 'activate'])->name('dapcode.activate.post');
     Route::post('/deactivate', [\App\Http\Controllers\Dapcode\LicenseController::class, 'deactivate'])->name('dapcode.deactivate');
     Route::get('/status', [\App\Http\Controllers\Dapcode\LicenseController::class, 'status'])->name('dapcode.status');
+    Route::get('/terminal', [\App\Http\Controllers\Dapcode\LicenseController::class, 'showTerminal'])->name('dapcode.terminal');
+    Route::post('/terminal/sign', [\App\Http\Controllers\Dapcode\LicenseController::class, 'signPayload'])->name('dapcode.terminal.sign');
 });
 

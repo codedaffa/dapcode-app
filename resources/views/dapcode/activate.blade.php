@@ -4,7 +4,10 @@
             <h2 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px;">Aktivasi Lisensi DapCode</h2>
             <p style="font-size: 13.5px; color: var(--text-muted);">Kelola aktivasi lisensi dan perizinan modul ekosistem DapCode.</p>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="{{ route('dapcode.terminal') }}" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); color: #818cf8; padding: 6px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-terminal"></i> Authority Terminal
+            </a>
             @if($licenseStatus === 'ACTIVE')
                 <span style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
                     <i class="fa-solid fa-circle-check"></i> AKTIF (LICENSED)

@@ -34,6 +34,23 @@ return [
         'setting',
     ],
 
+    // Protected modules list alias
+    'protected_modules' => [
+        'dashboard',
+        'profile',
+        'education',
+        'commerce',
+        'research',
+        'career',
+        'activity',
+        'media',
+        'achievement',
+        'certification',
+        'interest',
+        'project',
+        'setting',
+    ],
+
     // Routes explicitly excluded from license enforcement (Only activation & static assets)
     'excluded_routes' => [
         'dapcode/*',
