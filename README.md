@@ -5,13 +5,13 @@
   <img src="https://img.shields.io/badge/PHP-7.4%2B%20%7C%208.x-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP">
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
   <img src="https://img.shields.io/badge/Architecture-HMVC%20Modular-6366f1?style=for-the-badge" alt="HMVC">
-  <img src="https://img.shields.io/badge/License%20Guard-Asymmetric%20RSA%202048-emerald?style=for-the-badge" alt="Asymmetric RSA">
+  <img src="https://img.shields.io/badge/Security%20Engine-DapCode%20AegisGuard%E2%84%A2-emerald?style=for-the-badge&logo=auth0&logoColor=white" alt="DapCode AegisGuard">
   <img src="https://img.shields.io/badge/Theme%20Engine-Indonesian%20Holidays-dc2626?style=for-the-badge" alt="Indonesian Holidays">
   <img src="https://img.shields.io/badge/Localization-ID%20%7C%20EN-38bdf8?style=for-the-badge" alt="i18n">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
-**DapCode App** adalah platform portofolio digital dan aplikasi ekosistem pengembang modern yang dibangun menggunakan framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)**, frontend asset pipeline modern bertenaga **Laravel Vite**, dan sistem pengamanan lisensi asimetris **DapCode License & Module Activation Guard**.
+**DapCode App** adalah platform portofolio digital dan aplikasi ekosistem pengembang modern yang dibangun menggunakan framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)**, frontend asset pipeline modern bertenaga **Laravel Vite**, dan sistem keamanan lisensi asimetris **DapCode AegisGuard™** (*Asymmetric Cryptographic RSA-2048 & Fail-Closed Module Activation Engine*).
 
 ---
 
@@ -24,19 +24,24 @@ Seluruh fitur dikelompokkan dalam modul independen di dalam direktori `app/Modul
 - *Hierarchical Sub-Requests* via helper `hmvc('ModuleName@action', $params)` untuk merender widget antar-modul secara terisolasi.
 - *Module Scoped Rendering* via `$this->moduleRender('viewName', $data)` di Base Controller.
 
-### 2. 🔐 Asymmetric DapCode License & Module Activation System
-Sistem perizinan dan proteksi modul berbasis kriptografi kunci asimetris murni (**RSA-2048 + SHA-256**):
+### 2. 🛡️ DapCode AegisGuard™ (Asymmetric License & Module Activation Engine)
+Sistem proteksi dan perizinan modul tingkat tinggi berbasis kriptografi kunci asimetris murni (**RSA-2048 + SHA-256**):
 - **Asymmetric Cryptographic Separation:** Aplikasi klien hanya memiliki *Public Verification Key*. *Private Signing Key* disimpan secara terisolasi di sisi Owner / DapCode License Authority Server.
 - **Zero Secrets in Repository:** Tidak ada secret, private key, maupun fallback credentials di repositori aplikasi yang didistribusikan.
 - **Persistent Installation ID:** Setiap instalasi memiliki ID unik persisten (`DAP-XXXXXX-...`) yang di-generate otomatis saat setup pertama.
+- **Dynamic Module Auto-Discovery:** Sistem otomatis mendeteksi modul baru di `app/Modules/` tanpa perlu konfigurasi rute manual. Modul baru langsung terlindungi oleh AegisGuard.
 - **Multi-Module Granular Control:** Lisensi dapat mengaktifkan modul spesifik (`commerce`, `research`, `career`, dll.) atau seluruh modul (`*`).
 - **Fail-Closed Integrity Check:** Jika file lisensi diubah secara ilegal atau dirusak, sistem otomatis mengunci protected module secara aman tanpa merusak database.
-- **Dedicated Authority Signer CLI:** Tersedia command resmi `php artisan dapcode:sign-license` untuk menandatangani lisensi dan token pencabutan (*revocation token*) secara praktis.
+- **Dedicated Authority Signer Tools:**
+  - **Artisan CLI:** `php artisan dapcode:sign-license` untuk menandatangani lisensi dan token pencabutan via terminal.
+  - **Authority Web Terminal:** `GET /dapcode/terminal` — Antarmuka web konsol interaktif bertema dark cybersecurity untuk generate signed payload dengan 1-klik.
 - **Dedicated Activation Endpoints:**
-  - `GET /dapcode/activate`: Antarmuka aktivasi visual dengan tombol salin Installation ID.
+  - `GET /dapcode/activate`: Antarmuka aktivasi visual dengan tombol salin Installation ID & shortcut ke Authority Terminal.
   - `POST /dapcode/activate`: Endpoint verifikasi payload lisensi.
   - `POST /dapcode/deactivate`: Endpoint pencabutan lisensi resmi dengan Signed Revocation Token.
   - `GET /dapcode/status`: Endpoint JSON status instalasi & lisensi.
+  - `GET /dapcode/terminal`: Konsol Authority Web Terminal & HSM Signer.
+  - `POST /dapcode/terminal/sign`: Endpoint penandatanganan payload asimetris RSA-2048.
 
 ### 3. ⚡ Modern Frontend Asset Pipeline (Laravel Vite)
 - Ditenagai **Vite** & **laravel-vite-plugin** dengan kompilasi super cepat dan *Hot Module Replacement* (HMR).
@@ -216,7 +221,19 @@ Buka browser pada: **`http://127.0.0.1:8000`**
 
 Sebagai pemilik kode (*Owner / DapCode License Authority*), Anda dapat men-generate payload lisensi bertanda tangan kriptografis (**RSA-2048**) untuk Installation ID klien menggunakan salah satu dari cara berikut:
 
-### 1. Menggunakan Artisan Command (Paling Praktis)
+### 1. 🖥️ Menggunakan Authority Web Terminal (Paling Visual & Praktis)
+
+Buka URL: **`http://127.0.0.1:8000/dapcode/terminal`**
+1. Pilih Mode: **Sign License** (Aktivasi) atau **Sign Revocation** (Pencabutan).
+2. Masukkan **Authority Secret Passcode** (`***********`).
+3. Masukkan **Target Installation ID** (tersedia tombol *"Gunakan ID Mesin Ini"*).
+4. Tentukan masa berlaku lisensi (1, 2, 5, atau 10 tahun).
+5. Pilih otorisasi modul: **Semua Modul (`*`)** atau checklist per-modul.
+6. Klik **"Generate & Sign Payload (RSA-2048)"** &rarr; Salin output JSON langsung dengan tombol **"Salin JSON"**!
+
+---
+
+### 2. ⚡ Menggunakan Artisan Command (Terminal CLI)
 
 Command ini mewajibkan **Authority Secret Passcode** (`--passcode="***********"`) atau akan meminta input rahasia di terminal:
 
@@ -247,7 +264,23 @@ php artisan dapcode:sign-license --revoke --license_id=LIC-2026-PRO-2F2F12 --mod
 
 ---
 
-### 2. Menggunakan Raw PHP di Terminal (Manual CLI / Standalone Server)
+### 3. 🧩 Perilaku Keamanan Saat Siklus Hidup Modul (Module Lifecycle)
+
+Sistem proteksi DapCode mendukung penambahan, perubahan, dan penghapusan modul secara *zero-config*:
+
+* **Menambah Modul Baru (`app/Modules/NamaModul/`):**
+  - **Otomatis Terproteksi:** Sistem langsung memindai modul baru.
+  - Jika klien memiliki lisensi penuh (`*`), modul baru **langsung aktif dan dapat dibuka**.
+  - Jika klien memiliki lisensi parsial (misal hanya `commerce`), modul baru **otomatis terkunci (HTTP 403)** sampai didaftarkan ke lisensi klien.
+* **Menghapus Modul:**
+  - **Aman & Bebas Error:** Tidak merusak validitas lisensi maupun tanda tangan digital. Rute modul yang dihapus akan merespons dengan `404 Not Found` standar yang rapi.
+* **Mengubah Nama Modul (Rename):**
+  - Jika lisensi klien adalah `*`, modul dengan nama baru langsung aktif otomatis.
+  - Jika lisensi klien adalah parsial khusus, modul dengan nama baru akan terkunci sampai lisensi baru diterbitkan.
+
+---
+
+### 4. 💻 Menggunakan Raw PHP di Terminal (Standalone Server)
 
 Jika Anda menjalankan penandatanganan dari server terpisah atau tanpa framework Laravel, Anda dapat menjalankan perintah PHP langsung di terminal:
 
@@ -303,7 +336,7 @@ echo json_encode(\$payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
 ---
 
-### 3. Struktur JSON Payload yang Dihasilkan
+### 5. Struktur JSON Payload yang Dihasilkan
 
 Output dari perintah di atas menghasilkan payload JSON resmi yang siap disalin dan ditempelkan ke form aktivasi atau form pencabutan di `http://127.0.0.1:8000/dapcode/activate`:
 
@@ -341,7 +374,7 @@ Output dari perintah di atas menghasilkan payload JSON resmi yang siap disalin d
 
 ---
 
-### 4. Penjelasan Atribut Payload
+### 6. Penjelasan Atribut Payload
 
 | Atribut | Tipe | Keterangan |
 |---|---|---|

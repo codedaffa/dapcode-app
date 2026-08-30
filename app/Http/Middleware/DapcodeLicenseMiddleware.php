@@ -66,10 +66,9 @@ class DapcodeLicenseMiddleware
 
         // 3. Application access is valid. Check specific module authorization if targeting a module.
         $targetModule = $module ?? $request->route('module') ?? $request->segment(1);
-        $configuredModules = config('dapcode.modules', []);
-        $normalizedConfigured = array_map('strtolower', $configuredModules);
+        $availableModules = LicenseGuard::getAllAvailableModules();
 
-        if ($targetModule && in_array(strtolower($targetModule), $normalizedConfigured, true)) {
+        if ($targetModule && in_array(strtolower($targetModule), $availableModules, true)) {
             if (!LicenseGuard::isModuleAllowed($targetModule)) {
                 if ($request->expectsJson() || $request->is('api/*')) {
                     return response()->json([

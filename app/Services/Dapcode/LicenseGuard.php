@@ -161,4 +161,55 @@ class LicenseGuard
     {
         return InstallationService::getInstallationId();
     }
+
+    /**
+     * Get all available HMVC modules automatically discovered from app/Modules and config.
+     *
+     * @return array
+     */
+    public static function getAllAvailableModules(): array
+    {
+        $configured = (array) config('dapcode.modules', []);
+        $discovered = [];
+
+        $modulesPath = app_path('Modules');
+        if (File::isDirectory($modulesPath)) {
+            $dirs = File::directories($modulesPath);
+            foreach ($dirs as $dir) {
+                $discovered[] = strtolower(basename($dir));
+            }
+        }
+
+        return array_values(array_unique(array_merge(
+            array_map('strtolower', $configured),
+            $discovered
+        )));
+    }
+
+    /**
+     * Get all allowed modules for active license.
+     *
+     * @return array
+     */
+    public static function getAllowedModules(): array
+    {
+        $license = self::getLicense();
+        if (!$license || !self::canAccessApplication()) {
+            return [];
+        }
+
+        $modules = (array) ($license['modules'] ?? []);
+        $revoked = (array) ($license['revoked_modules'] ?? []);
+
+        if (in_array('*', $modules, true)) {
+            $all = self::getAllAvailableModules();
+            return array_values(array_filter($all, function ($m) use ($revoked) {
+                return !in_array(strtolower($m), array_map('strtolower', $revoked), true);
+            }));
+        }
+
+        return array_values(array_filter($modules, function ($m) use ($revoked) {
+            return !in_array(strtolower($m), array_map('strtolower', $revoked), true);
+        }));
+    }
 }

@@ -170,7 +170,7 @@ class ActivationService
         if (!empty($revokedModules) && is_array($revokedModules) && !in_array('*', $revokedModules, true)) {
             $currentModules = (array) ($currentLicense['modules'] ?? []);
             if (in_array('*', $currentModules, true)) {
-                $currentModules = config('dapcode.protected_modules', []);
+                $currentModules = LicenseGuard::getAllAvailableModules();
             }
 
             $normalizedRevoked = array_map('strtolower', $revokedModules);
