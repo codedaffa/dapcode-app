@@ -64,9 +64,13 @@ class ActivationService
         File::put($licensePath, $encoded);
         @chmod($licensePath, 0600);
 
-        // Update local integrity checksum
+        // Update local integrity checksum & core files manifest
         IntegrityService::updateIntegrityState($licenseData);
+        IntegrityService::recordCoreFilesManifest();
         LicenseGuard::clearCache();
+
+        // Unlock and decrypt authorized modules
+        ModuleEncryptionService::unlockAuthorizedModules($licenseData);
 
         if ($isReactivation) {
             Log::info('[AUDIT] EVENT: LICENSE_REACTIVATED', [
@@ -196,6 +200,9 @@ class ActivationService
             IntegrityService::updateIntegrityState($currentLicense);
             LicenseGuard::clearCache();
 
+            // Lock and remove plaintext for revoked modules
+            ModuleEncryptionService::lockRevokedModules($normalizedRevoked);
+
             $modList = implode(', ', $normalizedRevoked);
             Log::info('[AUDIT] EVENT: MODULES_REVOKED', [
                 'license_id'      => $currentLicense['license_id'],
@@ -221,6 +228,18 @@ class ActivationService
         // Update integrity state to reflect REVOKED status
         IntegrityService::updateIntegrityState($currentLicense);
         LicenseGuard::clearCache();
+
+        // Invalidate application cache on license revocation
+        if (function_exists('cache')) {
+            try {
+                cache()->flush();
+            } catch (\Throwable $e) {
+                // Ignore cache driver errors
+            }
+        }
+
+        // Full Revocation: Lock and remove plaintext for all encrypted modules
+        ModuleEncryptionService::lockRevokedModules();
 
         Log::info('[AUDIT] EVENT: LICENSE_REVOKED', [
             'license_id'      => $currentLicense['license_id'],

@@ -1,0 +1,21 @@
+{
+    "module": "media",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "433579dc0ed421cce377fc802fe13820",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Media.php",
+            "encrypted": "Encrypted/Controllers/Media.php.enc",
+            "sha256": "8685e582cb3ab473ac13316b158fd8fcbc98817e019c99bfb0469805c9352e82",
+            "size": 403
+        },
+        {
+            "path": "Models/Media.php",
+            "encrypted": "Encrypted/Models/Media.php.enc",
+            "sha256": "77a328f91c188cff480939d82b71dbd607cc311c5bac0b3389390da72d419576",
+            "size": 231
+        }
+    ]
+}

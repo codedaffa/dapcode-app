@@ -1,0 +1,21 @@
+{
+    "module": "achievement",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "3173bf0bc7409018f6e583b2f43a7cb2",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Achievement.php",
+            "encrypted": "Encrypted/Controllers/Achievement.php.enc",
+            "sha256": "cbc8fc548f27589f808a23d5201898b5fe5ccd53c959018b0e0f7851ebdc255d",
+            "size": 439
+        },
+        {
+            "path": "Models/Achievement.php",
+            "encrypted": "Encrypted/Models/Achievement.php.enc",
+            "sha256": "84aad1f24ad6d6ae48b038d2653bffec99377ec44842ef9b82aba58221c4c142",
+            "size": 243
+        }
+    ]
+}

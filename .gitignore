@@ -1,16 +1,12 @@
 /node_modules
 /public/hot
 /public/storage
+/public/build
 /storage/*.key
-/storage/app/dapcode/.installation
-/storage/app/dapcode/.license
-/storage/app/dapcode/.secret
-/storage/app/dapcode/.license-state
-/storage/app/dapcode/*.secret
-/storage/app/dapcode/*.key
 /vendor
 .env
 .env.backup
+.env.production
 .phpunit.result.cache
 docker-compose.override.yml
 Homestead.json
@@ -19,3 +15,33 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+.DS_Store
+Thumbs.db
+
+# ==============================================================================
+# DAPCODE AEGISGUARD SECURITY - SECRETS & LOCAL LICENSING
+# ==============================================================================
+# Local installation secrets, license keys, and state files must NEVER be committed
+/storage/app/dapcode/.installation
+/storage/app/dapcode/.license
+/storage/app/dapcode/.license-state
+/storage/app/dapcode/.secret
+/storage/app/dapcode/*.secret
+/storage/app/dapcode/*.key
+/storage/app/dapcode/*.pem
+/storage/app/dapcode/*.bak
+/storage/app/dapcode/*_backup*
+
+# ==============================================================================
+# DAPCODE PROTECTED MODULES (PLAINTEXT FILES ARE IGNORED)
+# ==============================================================================
+# Only encrypted envelopes in app/Modules/*/Encrypted/ are committed to Git.
+# Plaintext source code (.php) from local activations must never leak to GitHub.
+app/Modules/*/Controllers/*.php
+app/Modules/*/Models/*.php
+app/Modules/*/Services/*.php
+app/Modules/*/Repositories/*.php
+app/Modules/*/Actions/*.php
+app/Modules/*/Jobs/*.php
+app/Modules/*/Policies/*.php
+app/Modules/*/Helpers/*.php

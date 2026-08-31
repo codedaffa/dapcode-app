@@ -1,0 +1,21 @@
+{
+    "module": "dashboard",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "451beb8fb1b117dc09d7781749b76827",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Dashboard.php",
+            "encrypted": "Encrypted/Controllers/Dashboard.php.enc",
+            "sha256": "86302699a148d0f61bd4545e1db481583170303676f4b1be7f9a8beb3d616e96",
+            "size": 2784
+        },
+        {
+            "path": "Models/Dashboard.php",
+            "encrypted": "Encrypted/Models/Dashboard.php.enc",
+            "sha256": "e8a60c60b956456e6c92d2e36915d553d85f9c36b23472cdf3d0f2ab870b6e6d",
+            "size": 239
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "ic3WJCUJvPagzkYi",
+    "tag": "ofG/t+EzQAP0+xlU/tfgpA==",
+    "ciphertext": "uFsj2K5C8pUd7DEHPDBxpid5pNfD3E2NAL1oYQdlFv+HWq7icuKLPWmUY+cT9wgy3ahiHUungaG5QAc+hopnG8D/x/aEyPi8d8W6BISq8FMI4sG7C/PV7YDB9ESZYHYipSsIb/PTj+j6gBxQHOk+1drQhNQmNe6qEcvdUBdk/exX6MKpy/EZyNJqXWEso5Z/dpc+kZhjB0FDRGhCNPDZSG0iPcBPVWU5MZO4oCyT+xkb0wU99v3uvLy/s+cH62JFEcUIN+Wo965IYFxBvx5f4TjgERAkVzlAX2uooaoVNtYahIh7wQwUy1uhJeIL8P24dt4r",
+    "sha256": "84aad1f24ad6d6ae48b038d2653bffec99377ec44842ef9b82aba58221c4c142",
+    "size": 243,
+    "module": "achievement",
+    "relative_path": "Models/Achievement.php"
+}

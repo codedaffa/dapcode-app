@@ -1,0 +1,21 @@
+{
+    "module": "profile",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "efeb826e00f2b0c9c19afac221c58a42",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Profile.php",
+            "encrypted": "Encrypted/Controllers/Profile.php.enc",
+            "sha256": "28136a79f7f9931862054fb9ecdec1c58bc0e09e10e414071f0a75f6ac707b9c",
+            "size": 612
+        },
+        {
+            "path": "Models/Profile.php",
+            "encrypted": "Encrypted/Models/Profile.php.enc",
+            "sha256": "25d3caa3dc274355fd1d687b071a67f070ab5f3471757969c2a3f8340f1666bc",
+            "size": 235
+        }
+    ]
+}

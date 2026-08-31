@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "I1HhH632HzzpamoN",
+    "tag": "0iYRRVr+4ZS/WY6wuTsnaw==",
+    "ciphertext": "kGWog0WrYGrMtKo+0wwJVzzoO9grUajFBT3ZiAS4rak+atatyVbANp/i1VK7/PgX/oG/8EnD/I7jI4gtgxqUg+qgNf0TSY47Y+0S0L/ofNZYdvIhi2oFuJx0BSXpHuTNRhs9y+yw9Ikm4jWbdTKYVUSk80i5SNVomPtL/7W0XeC9eklLkEsUTLnwyj/7nCjrdZgjaJ1HM1RrI+pOarACJZ/tDhJvFvVv9xnE7WNG6UL/8eoeSBBjYc61/MDhVacMHLnpw4KWvtJB8y4eEiY0tEXkOOUHEcytDSi3xB92ZkKDW5HYijO+WLJ8ego70kn/L4de80vTIxfSmPNr2Kt4+7QJc2dCcvt4XrlCD74FUIFIsN2NabLkRcnMWCZ3+K0ZWhFUPwW0zaYobQ+1+ATZYS8yOca4iA/OZ8YNiJfe34TBOjGvSvP6xB7H+eN6aGrq6RJT7Cb2SVIWYd24ByE3e8ZKWgi1GCW3u+JidXPDzdaaLpBTFA+9v7C60FB+UBLNDPMYo7Aa02msqoO02hVeD/5GQ6NJQUhlEFHazZn1tLu6Dk3pug==",
+    "sha256": "8657a15807eb7694f49f34ad26a52e687842c9082ed02642d911eebdd10a509a",
+    "size": 421,
+    "module": "research",
+    "relative_path": "Controllers/Research.php"
+}

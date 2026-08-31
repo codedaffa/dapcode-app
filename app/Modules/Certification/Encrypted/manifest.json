@@ -1,0 +1,21 @@
+{
+    "module": "certification",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "a6be3d0553ff68e88efb97c137a57173",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Certification.php",
+            "encrypted": "Encrypted/Controllers/Certification.php.enc",
+            "sha256": "87b3765c9d68d31c12c6f58ec8341b1109a0e57cac6ba263dd09927db49fac93",
+            "size": 451
+        },
+        {
+            "path": "Models/Certification.php",
+            "encrypted": "Encrypted/Models/Certification.php.enc",
+            "sha256": "ddbbed7e75406e013a23d0ade4f4a24c77844c5f0f664ac9c794c2123a8b00e6",
+            "size": 247
+        }
+    ]
+}

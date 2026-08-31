@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "i/5IAc2lx/TmTFHq",
+    "tag": "t8RCUvs8kk651SSABIUL0Q==",
+    "ciphertext": "+oRjqOi4ePKJVct9L0Y8GYHeUhI8y2gfC0c0w7m0WaeVU+brjcjFg9oFoFtLHpibDDxT5jRXnA4gSX1akeW+5SpShKrl8h+yr7b4YhgiDqFdsBmMJIs/376v9WEZoKtm8u7AvUb8RHcm5zuYvVUerIhx1sA2BUvPgRtAp+FixEwVZYjl909gAGMbSr3xhooqG4rUD8KNUh6Gug9QN9K1V22CEOlpHgiA8juefyaMaEH8/avdPBGrGeXxm4NnOGi/qz0nticQmy/TOtcfxirYhwmHR6WNR54MKQSJIHOeurg9gSTUheceYjjq4nX6",
+    "sha256": "69da7ba71c78196ad5879a9854471a2fda4ce2ffbdf11fec9b072992f7920cbe",
+    "size": 237,
+    "module": "research",
+    "relative_path": "Models/Research.php"
+}

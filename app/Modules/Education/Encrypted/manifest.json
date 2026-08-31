@@ -1,0 +1,21 @@
+{
+    "module": "education",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "446cfd553d2b9e486dc32044e1b0301d",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Education.php",
+            "encrypted": "Encrypted/Controllers/Education.php.enc",
+            "sha256": "d14b4793defe7a1f81d794b15b7fa355c7b10466d5aa9060d0cc65eadd61680a",
+            "size": 427
+        },
+        {
+            "path": "Models/Education.php",
+            "encrypted": "Encrypted/Models/Education.php.enc",
+            "sha256": "83b3040f7ac7d4ee8c4c3f6539871831d2f1a35c5d6044eca9dcb3c3050d9fb1",
+            "size": 239
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "RH2PQ7pqXACtrAdo",
+    "tag": "1lpyKeXYZj6A+z2raL9ZVw==",
+    "ciphertext": "0u0n9ghvSF1fkP5kaAlGebAQnYZ01cF8tjqReZtKwxBhIgOnGjabBE+4cNh6eSoT+v4uUTzaqbPOHEBr+TFlxaLfpX2ow/Gd8AePetCZdbKPgLdSu87u1DDfv3DY0SVtRm9LW2Yxqq1v4MjO3EaV4E4qzO2QLqu7/w5SLk2bwCngfoGSMKFBG2oCzmHykYfkhfdD3Vg1pQobHUfBs7hpAUXRs8/+ezJHEhkBqNRwxfqv0dNqawzG9oiEBAYUSD519IqjqOz78g/3wUaeBAtU+RlBpuJK381DsHvae3C80CFSLQPgEa92sUg=",
+    "sha256": "b5f7e8458429cb867160382883ac8291ca020dd5550758b68666945929508cbb",
+    "size": 233,
+    "module": "career",
+    "relative_path": "Models/Career.php"
+}

@@ -8,6 +8,160 @@ use Illuminate\Support\Facades\Log;
 class IntegrityService
 {
     /**
+     * In-memory cache for core files integrity check.
+     *
+     * @var bool|null
+     */
+    protected static $cachedCoreIntegrity = null;
+
+    /**
+     * Timestamp when core files integrity was last cached.
+     *
+     * @var int
+     */
+    protected static $cachedCoreIntegrityTime = 0;
+
+    /**
+     * Cache TTL in seconds for core integrity checks.
+     *
+     * @var int
+     */
+    protected static $cacheTtlSeconds = 60;
+
+    /**
+     * Get the list of critical core system files to monitor for integrity.
+     * Uses relative Laravel base paths for portability.
+     *
+     * @return array<string, string>
+     */
+    public static function getCoreFiles(): array
+    {
+        return [
+            'middleware'       => app_path('Http/Middleware/DapcodeLicenseMiddleware.php'),
+            'license_guard'    => app_path('Services/Dapcode/LicenseGuard.php'),
+            'license_verifier' => app_path('Services/Dapcode/LicenseVerifier.php'),
+            'integrity'        => app_path('Services/Dapcode/IntegrityService.php'),
+            'activation'       => app_path('Services/Dapcode/ActivationService.php'),
+            'installation'      => app_path('Services/Dapcode/InstallationService.php'),
+            'module_encryption' => app_path('Services/Dapcode/ModuleEncryptionService.php'),
+            'hmvc'              => app_path('Services/HMVC/HMVC.php'),
+            'controller'        => app_path('Http/Controllers/Controller.php'),
+            'hmvc_controller'      => app_path('Http/Controllers/HMVCController.php'),
+            'portfolio_controller' => app_path('Http/Controllers/PortfolioController.php'),
+            'template'             => app_path('Libraries/Template.php'),
+            'hmvc_provider'        => app_path('Providers/HMVCServiceProvider.php'),
+            'app_provider'         => app_path('Providers/AppServiceProvider.php'),
+        ];
+    }
+
+    /**
+     * Generate and record the core files integrity manifest.
+     *
+     * @return array
+     */
+    public static function recordCoreFilesManifest(): array
+    {
+        $manifest = [];
+        foreach (self::getCoreFiles() as $key => $filePath) {
+            if (File::exists($filePath)) {
+                $manifest[$key] = [
+                    'file' => str_replace('\\', '/', str_replace(base_path() . DIRECTORY_SEPARATOR, '', $filePath)),
+                    'hash' => hash_file('sha256', $filePath),
+                    'size' => filesize($filePath),
+                ];
+            }
+        }
+
+        $manifestPath = config('dapcode.files.integrity_manifest', storage_path('app/dapcode/.integrity-manifest'));
+        $manifestPayload = [
+            'installation_id' => InstallationService::getInstallationId(),
+            'generated_at'    => time(),
+            'files'           => $manifest,
+        ];
+
+        File::put($manifestPath, json_encode($manifestPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        @chmod($manifestPath, 0600);
+
+        static::$cachedCoreIntegrity = true;
+        static::$cachedCoreIntegrityTime = time();
+
+        return $manifest;
+    }
+
+    /**
+     * Verify the integrity of critical core application files (Layer 5 Defense).
+     * Implements in-memory caching with TTL to eliminate performance overhead.
+     * Fail-closed: Returns false on mismatch or tampering.
+     *
+     * @return bool
+     */
+    public static function verifyCoreFilesIntegrity(): bool
+    {
+        $now = time();
+        if (static::$cachedCoreIntegrity !== null && ($now - static::$cachedCoreIntegrityTime) < static::$cacheTtlSeconds) {
+            return static::$cachedCoreIntegrity;
+        }
+
+        $manifestPath = config('dapcode.files.integrity_manifest', storage_path('app/dapcode/.integrity-manifest'));
+
+        // If manifest does not exist yet (e.g. initial setup), generate it automatically
+        if (!File::exists($manifestPath)) {
+            self::recordCoreFilesManifest();
+            static::$cachedCoreIntegrity = true;
+            static::$cachedCoreIntegrityTime = $now;
+            return true;
+        }
+
+        $manifestData = json_decode(File::get($manifestPath), true);
+        if (!$manifestData || !isset($manifestData['files']) || !is_array($manifestData['files'])) {
+            Log::warning('[AUDIT] EVENT: CORE_INTEGRITY_CHECK_FAILED', [
+                'reason' => 'Manifest file is unreadable or has invalid structure',
+            ]);
+            static::$cachedCoreIntegrity = false;
+            static::$cachedCoreIntegrityTime = $now;
+            return false;
+        }
+
+        foreach (self::getCoreFiles() as $key => $filePath) {
+            if (!File::exists($filePath)) {
+                Log::warning('[AUDIT] EVENT: CORE_INTEGRITY_CHECK_FAILED', [
+                    'reason' => "Critical core file missing: {$key} ({$filePath})",
+                ]);
+                static::$cachedCoreIntegrity = false;
+                static::$cachedCoreIntegrityTime = $now;
+                return false;
+            }
+
+            if (!isset($manifestData['files'][$key]['hash'])) {
+                Log::warning('[AUDIT] EVENT: CORE_INTEGRITY_CHECK_FAILED', [
+                    'reason' => "Core file key missing in manifest: {$key}",
+                ]);
+                static::$cachedCoreIntegrity = false;
+                static::$cachedCoreIntegrityTime = $now;
+                return false;
+            }
+
+            $expectedHash = $manifestData['files'][$key]['hash'];
+            $actualHash = hash_file('sha256', $filePath);
+
+            if (!hash_equals($expectedHash, $actualHash)) {
+                Log::warning('[AUDIT] EVENT: CORE_INTEGRITY_CHECK_FAILED', [
+                    'file_key' => $key,
+                    'file'     => $filePath,
+                    'reason'   => 'Core file SHA-256 hash mismatch against integrity manifest',
+                ]);
+                static::$cachedCoreIntegrity = false;
+                static::$cachedCoreIntegrityTime = $now;
+                return false;
+            }
+        }
+
+        static::$cachedCoreIntegrity = true;
+        static::$cachedCoreIntegrityTime = $now;
+        return true;
+    }
+
+    /**
      * Compute and store integrity state signature for local license file.
      *
      * @param array $licenseData
@@ -75,5 +229,16 @@ class IntegrityService
         }
 
         return true;
+    }
+
+    /**
+     * Clear the in-memory integrity cache.
+     *
+     * @return void
+     */
+    public static function clearCache(): void
+    {
+        static::$cachedCoreIntegrity = null;
+        static::$cachedCoreIntegrityTime = 0;
     }
 }

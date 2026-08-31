@@ -1,0 +1,21 @@
+{
+    "module": "activity",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "4c152fa2199bd089dd2f68b9a41c0bab",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Activity.php",
+            "encrypted": "Encrypted/Controllers/Activity.php.enc",
+            "sha256": "4295e3a0f20c2c43952dfe6bd5cac13600a1edca3c4d6cfb2fc3fdcbcd0dfad8",
+            "size": 421
+        },
+        {
+            "path": "Models/Activity.php",
+            "encrypted": "Encrypted/Models/Activity.php.enc",
+            "sha256": "8a9899a5b73bd5635baf2110babea990f8b7a89c6cf1c380d5e6c81329cc9e46",
+            "size": 237
+        }
+    ]
+}

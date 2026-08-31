@@ -1,0 +1,21 @@
+{
+    "module": "interest",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "f99733af7c01c310134f078eb7f05b97",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Interest.php",
+            "encrypted": "Encrypted/Controllers/Interest.php.enc",
+            "sha256": "28f2bfde4a010ec97c06d37939bafb66ef5cebf7a1b506b0b79051e349f7967c",
+            "size": 421
+        },
+        {
+            "path": "Models/Interest.php",
+            "encrypted": "Encrypted/Models/Interest.php.enc",
+            "sha256": "a983ec6f3cbc7e58b587c2ad5f01fcaca69eed2815c8efd00c9fe9dc54d32d06",
+            "size": 237
+        }
+    ]
+}

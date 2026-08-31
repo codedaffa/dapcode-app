@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "H5NG1MSFNXWhyQHs",
+    "tag": "xCzDkAhBXpGDuLBkurgVlw==",
+    "ciphertext": "7QqKt2V4PT+pRRukSv2DjDjz6rCyWIFekIOwMa+P31eeofsne57nDZ0fnju3RcsNtIsUfZ5bQzB6Bch5+xaAFKD2JCNu3qwcU+eneQ0VQM8ycUhq7ewGE3dtXnr5D6EPQGf9eWq7aaydnqak/sct5ioWh++0zgBEi4BrYlvbyHCKuKF+S7z6v7ZhdNgmasSPesHQvXZ9l1uZkV8dgzC3GnYfrRBrbIfUvZdEIA6RMFRPcAHrPHqG39RNjj8KCaT4mIxW3+dzxsZAtIqDiDaWmtAIhH+I8HUoOfsO6V8u2mnsPfc8iQ/P1/NG/A==",
+    "sha256": "e4038888bf5d5afb9aaff45c326e687604e8efd8641bf8e59eb494069c29139a",
+    "size": 235,
+    "module": "project",
+    "relative_path": "Models/Project.php"
+}

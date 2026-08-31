@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "DM08qLO46AQ6Hivj",
+    "tag": "4PrMpIb5IvQFKPxBg977RQ==",
+    "ciphertext": "IaYVFsuSfQKNjhYVqcJjI44CGmpVRyDbtRVWAfkWqEM747yXa8bM8NSRDQ+dO3dMmM/QvWXVjjn8OHENTz+g3e7hiGh+JEaCRyAqvkdoi0+2kXvGvcPzU//zUarsqCn+ryu29EqYYos14YJquzFVZWDKMZq8akQEQVWLUmqE5wJpwlWpgNc8lLcmemTaqqyEWt86ixvrlF5ohbLvnr3q4oB48rqlZCTy+wnTiYhVYQI/BcjTXz03Kv8RqhIt/ALDCP3JS8NiFQCFSTDrwnOZYoEFvU7R1Rl9ftOk3C0kxAUv4Il1air5A6HD1FQD01AKZ4qBG5xB4Q==",
+    "sha256": "ddbbed7e75406e013a23d0ade4f4a24c77844c5f0f664ac9c794c2123a8b00e6",
+    "size": 247,
+    "module": "certification",
+    "relative_path": "Models/Certification.php"
+}

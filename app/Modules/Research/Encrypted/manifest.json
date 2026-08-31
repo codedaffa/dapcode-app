@@ -1,0 +1,21 @@
+{
+    "module": "research",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "13bb453e253e8dd0552b05cf11031562",
+    "encrypted_at": "2026-08-31T18:11:13+00:00",
+    "files": [
+        {
+            "path": "Controllers/Research.php",
+            "encrypted": "Encrypted/Controllers/Research.php.enc",
+            "sha256": "8657a15807eb7694f49f34ad26a52e687842c9082ed02642d911eebdd10a509a",
+            "size": 421
+        },
+        {
+            "path": "Models/Research.php",
+            "encrypted": "Encrypted/Models/Research.php.enc",
+            "sha256": "69da7ba71c78196ad5879a9854471a2fda4ce2ffbdf11fec9b072992f7920cbe",
+            "size": 237
+        }
+    ]
+}

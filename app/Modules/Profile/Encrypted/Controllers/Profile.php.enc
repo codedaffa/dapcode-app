@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "IPbdZeSGY7IQidMG",
+    "tag": "SQfh2CFZRj+VqYVdiE7m7A==",
+    "ciphertext": "4uaXT8CXK54H7jzVmnN+KfbLJzckGvBr2J5UhS1DoRV+jru5D2QCPYyi8nmLZsm4Ob/81FQiWDhxLXSwmM+Y/ud179TEnFg0d/U0VkEU3g5+NvHtQzcwCZe8dWch/dHK+ahczHOvus7mAA4Cr8rC6iKLwPGi/zrtMLeYDp1zSwg495NjS9RVm++K6bXnea4bgDSKK5GOVsaRsK5y4ynyZvcXcJUUGwc6DZmtYu0JFu5pmBiZ5tepKQlNyk6HZ4NAxby4fV119yN4zAfm9ILcGNa7a5llsrwj1k0NU+w6tgVpNXB8ZOLm2PMUX5DBLSc2W/2mxifFNraVfGOJlzN6GpazyNIKJfWvGq5vMW+cNDjkBCWkG4dtvpfA5VOycQS0Y2TBhFrMTnCdvU1cRJF8AKHxmb+Gxgv+jAsVltzN3dX+rtNPlVUKwUKwNU6m5zfNmTaSvgZ71g2iROiyu96tk3Y5cq/wVC8wzri8Fk6AXD2bMAd60pPgJGnU7upowYQen4jkhvUc+YmZnedXg0nYCIIaUlZPUBGmlxcjWtHvUnsKT70lDjAfor59BuixTxDfY9+OpgYqgfMV5gM1wbG8al2EFsHBcRR69DjX93uGinwZKJYvUGii9rMx9ElGrIPgbTlaA5pxEcDc2RijGvPmwnqau1pdu/iydtbIztXsUwQxWBKxSBlmMUxPL70tWZI5OyL5CWvwBX/2EU7UUzR/IuWppDdw4Jr3QJ116eFIwIdVz10NfNAJLYEhc0HWXfdFnVXtoj+pb4KZu1LpdDQ+sPkAN8fxyTvWhpOaOEvSYZ07w0ON",
+    "sha256": "28136a79f7f9931862054fb9ecdec1c58bc0e09e10e414071f0a75f6ac707b9c",
+    "size": 612,
+    "module": "profile",
+    "relative_path": "Controllers/Profile.php"
+}

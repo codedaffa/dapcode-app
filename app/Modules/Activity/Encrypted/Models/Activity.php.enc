@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "DFMRkpYRtortGtC7",
+    "tag": "EkjxkW16Z7ZNnZNRrGnTKA==",
+    "ciphertext": "eDEPI8eUmii/CMuCyVP8R/KrKfmPEyIoGltcFH8x7AgMx3cJhQ2CjZEghHj424f0Kt9p4S1rfarv231o//ih7157hSw2EJA/Ie0k8KEdlt0+1ORVk74OkPl++Gil05/oNbfBL4LQw0q4Db1cWSQOH5VRFYGxh84lIRuSb5aur4SrvBkok8ah71yzud2W647kY6TnbP7idl859/bSpxEkLR8LlsKx+4vCsm3q2PpNBMJrMKr3seLf62HZWyEXmmH2IK9PEptvcPvBvtBZm+lt3jMbn8k3cXKrmkvC90yX0OD517vLWZ0BJGUWmHKl",
+    "sha256": "8a9899a5b73bd5635baf2110babea990f8b7a89c6cf1c380d5e6c81329cc9e46",
+    "size": 237,
+    "module": "activity",
+    "relative_path": "Models/Activity.php"
+}

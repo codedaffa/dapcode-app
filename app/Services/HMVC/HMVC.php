@@ -2,6 +2,7 @@
 
 namespace App\Services\HMVC;
 
+use App\Services\Dapcode\LicenseGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use ReflectionMethod;
@@ -108,6 +109,48 @@ class HMVC
     }
 
     /**
+     * Canonical module name resolver (Layer 2 Security Boundary).
+     * Normalizes case, trims slashes, rejects traversal attempts and invalid characters.
+     *
+     * @param string|null $rawModule
+     * @return string|null Normalized lowercase module name or null if invalid
+     */
+    public static function resolveCanonicalModuleName(?string $rawModule): ?string
+    {
+        if ($rawModule === null || $rawModule === '') {
+            return null;
+        }
+
+        // 1. URL decode recursively to prevent double-encoding bypasses
+        $decoded = rawurldecode(urldecode($rawModule));
+
+        // 2. Reject path traversal sequences
+        if (strpos($decoded, '..') !== false || strpos($decoded, '%2e%2e') !== false) {
+            return null;
+        }
+
+        // 3. Clean leading/trailing slashes and directory separators
+        $clean = trim($decoded, "/\\ \t\n\r\0\x0B");
+
+        // 4. Extract first path segment if multiple segments were provided
+        if (strpos($clean, '/') !== false) {
+            $clean = explode('/', $clean)[0];
+        }
+        if (strpos($clean, '\\') !== false) {
+            $clean = explode('\\', $clean)[0];
+        }
+
+        // 5. Sanitize to strict alphanumeric, underscores, and hyphens only
+        $clean = preg_replace('/[^A-Za-z0-9_\-]/', '', $clean);
+
+        if (empty($clean)) {
+            return null;
+        }
+
+        return strtolower($clean);
+    }
+
+    /**
      * Dispatch an incoming HTTP request to the target module controller & action.
      *
      * @param Request $request
@@ -124,7 +167,15 @@ class HMVC
         ?string $segment3 = null,
         ?string $params = null
     ) {
-        $moduleName = Str::studly($module);
+        $canonicalModule = static::resolveCanonicalModuleName($module);
+        if ($canonicalModule === null) {
+            throw new NotFoundHttpException("Invalid module identifier.");
+        }
+
+        // Layer 2 Defense: Central Execution Boundary — Enforce module license authorization before controller instantiation
+        LicenseGuard::assertModuleAllowed($canonicalModule);
+
+        $moduleName = Str::studly($canonicalModule);
         $moduleNamespace = "App\\Modules\\{$moduleName}\\Controllers";
 
         $urlParameters = !is_null($params) && $params !== ''
@@ -310,7 +361,15 @@ class HMVC
         [$classTarget, $action] = explode('@', $target);
         $segments = explode('/', $classTarget);
 
-        $moduleName = Str::studly($segments[0]);
+        $canonicalModule = static::resolveCanonicalModuleName($segments[0]);
+        if ($canonicalModule === null) {
+            throw new NotFoundHttpException("Invalid module identifier in HMVC hierarchical call.");
+        }
+
+        // Layer 2 Defense: Central Execution Boundary — Enforce module license authorization for hierarchical HMVC calls
+        LicenseGuard::assertModuleAllowed($canonicalModule);
+
+        $moduleName = Str::studly($canonicalModule);
         $moduleNamespace = "App\\Modules\\{$moduleName}\\Controllers";
 
         // Enforce module isolation

@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "IlczVGnU7GmKT9Rl",
+    "tag": "n5JnpW5gX1dYWjRT0UD7VQ==",
+    "ciphertext": "/AACWZSZKfol8jfJRA0TiOho//Zv+VmZcqNqz+fKrN+NqOcwevyORPGjlau2zF1bW+TnCSoyAZvl4pQbloEW0PiaTjMOpGW6yzuWo4zPl8i2fhh1VQf0EqwDX26hFBe0ojalZwJW9TjhpkBqIP4h9uVUuCxZ8D7BzJcQv7/cmwivL5tMfYcC17o+nzwFt7K+CTt9+Sf3VkvCEANCuNFDMQvxWlc4RU7M3Z35z1l1SVMOGgTPuyu2/RCHSRNNBZdvmE0RqPnsov6/iOhtgJqpPlSQUY/6rD/n78Ha/6l+xp+1HxYoc66blEes+Bam6gE=",
+    "sha256": "e8a60c60b956456e6c92d2e36915d553d85f9c36b23472cdf3d0f2ab870b6e6d",
+    "size": 239,
+    "module": "dashboard",
+    "relative_path": "Models/Dashboard.php"
+}

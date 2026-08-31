@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "spFNhvY/65YwR3+T",
+    "tag": "eCg4e0z8N28J4/zPs2Klgg==",
+    "ciphertext": "krMbdADcUYqYTrkK2J+ORd6oWIIXdxJPxfa5iSj6ZWzL7L3vhBPHAwlShW5bqJMQ8nP1/W1kpOIPboqoR8ISv7LW5i2L1Xip+M3rM0VRlElKt8N1e+P15Stpb6MJdIbRyRtid+VE/sQWRyxWlMdr+8tf6p210sAHEk4Vod6qwBYIbXR4rjOYyw8xZck8v1cSYwtyZsx8fs9d6PPZrUeJZSBriVcbSpjOFEzj020fUEUP44xv2lrgpKFUGzlF2cVE2n4QyvzY0nFu0rL9AWv8a7s1QHy3B+1fahcr08HMrqhA6R9HrvPZ5yePIhwE",
+    "sha256": "a983ec6f3cbc7e58b587c2ad5f01fcaca69eed2815c8efd00c9fe9dc54d32d06",
+    "size": 237,
+    "module": "interest",
+    "relative_path": "Models/Interest.php"
+}

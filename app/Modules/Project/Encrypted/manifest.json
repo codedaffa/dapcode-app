@@ -1,0 +1,21 @@
+{
+    "module": "project",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "1671223741f7381588d7887090142f0f",
+    "encrypted_at": "2026-08-31T18:11:13+00:00",
+    "files": [
+        {
+            "path": "Controllers/Project.php",
+            "encrypted": "Encrypted/Controllers/Project.php.enc",
+            "sha256": "8e2c3b6067b1f0369dbe39b67422f98cc906f2780e7bf89396b4e5383f9b62b0",
+            "size": 415
+        },
+        {
+            "path": "Models/Project.php",
+            "encrypted": "Encrypted/Models/Project.php.enc",
+            "sha256": "e4038888bf5d5afb9aaff45c326e687604e8efd8641bf8e59eb494069c29139a",
+            "size": 235
+        }
+    ]
+}

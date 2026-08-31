@@ -1,0 +1,21 @@
+{
+    "module": "commerce",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "5a14d187a03c1606e6848bb9da8ee89b",
+    "encrypted_at": "2026-08-31T18:11:13+00:00",
+    "files": [
+        {
+            "path": "Controllers/Commerce.php",
+            "encrypted": "Encrypted/Controllers/Commerce.php.enc",
+            "sha256": "be6ff293fc7b1f10f0c384d2e366b34f5e9c23dc883c8292410502644dcf3605",
+            "size": 849
+        },
+        {
+            "path": "Models/Commerce.php",
+            "encrypted": "Encrypted/Models/Commerce.php.enc",
+            "sha256": "997b94974d24f004d4c33470b6fd2497c329532cccc3cc821e651862c29052ad",
+            "size": 237
+        }
+    ]
+}

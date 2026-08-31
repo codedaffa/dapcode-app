@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "0joUyt2ECzNZuo9/",
+    "tag": "Ug4iPwkRDrpkHCoQUYVakQ==",
+    "ciphertext": "3mIGRbPkTNOu/dXH13csDMV/0Q+jpjmWwwCixM0BxfvkR8YcV2glzg8IhPcBD35yQ2eSVYUUuNIVp+l4BrxAUqb0gg+yAXvEtC1kVkU2k7n00MwwGmhMCiZCBIPgzmOu8YxTa9tGjX+Q4RyLyD+Nsh28jLOMhMZZJs1nTogNgCbFfvu4P3yDQOiqFMQsdLbBwphI1za0faN6rNSFIB81ayFEYb+W/4niYHvuCJriAt8MmA6lvFMPEH2hqkrwERiGH2Qh0oH90ePcOVSH/ISxGa/ZN5JSueiBSpW7z9gT9ACZ7WTEb5KuKDT8CRjqb0LhqdEr8S56P9bXTaBtOyD1JO8J1KoE7khc+AniGLSmuYdtGH7X9Oob++tJa4VrMgVpeVU5U5H6quZVWpUZswvSGQd0Dntk6sY7YUZxQdudm1EhSi8UpmUcwS7DUBU1Z1zpJ0DIoAqf6I+q4tIJtj0431JyaG87rkGvdFCgW6hhnk72j4KG2ZbWn95Mut1VHw/3JLjkKR4hn9xi1ZQ7ITZQUa4lU7HTCgL7FYx5IWlSNkQVvn1thQ==",
+    "sha256": "4295e3a0f20c2c43952dfe6bd5cac13600a1edca3c4d6cfb2fc3fdcbcd0dfad8",
+    "size": 421,
+    "module": "activity",
+    "relative_path": "Controllers/Activity.php"
+}
