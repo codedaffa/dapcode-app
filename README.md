@@ -11,6 +11,10 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
+<p align="center">
+  <img src="docs/images/dapcode-aegisguard.jpg" alt="DapCode AegisGuard - Advanced Cybersecurity & Protection" width="100%">
+</p>
+
 **DapCode App** adalah platform portofolio digital dan aplikasi ekosistem pengembang modern yang dibangun menggunakan framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)**, frontend asset pipeline modern bertenaga **Laravel Vite**, dan sistem keamanan lisensi asimetris **DapCode AegisGuard™** (*Asymmetric Cryptographic RSA-2048 & Fail-Closed Module Activation Engine*).
 
 ---
