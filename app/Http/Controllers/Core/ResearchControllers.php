@@ -23,7 +23,6 @@ class ResearchControllers extends Controller
      */
     protected function moduleRender(string $view, array $data = [], bool $return = false)
     {
-        $viewPath = strpos($view, '::') === false ? "research::{$view}" : $view;
-        return $this->render($viewPath, array_merge(['moduleName' => $this->moduleName], $data), $return);
+        return parent::moduleRender($view, $data, $return);
     }
 }

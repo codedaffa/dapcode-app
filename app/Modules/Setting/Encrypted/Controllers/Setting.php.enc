@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "p1rr6m6wSUuEgCa7",
+    "tag": "dkbgPyLMgRsU+w1Ofh6ErA==",
+    "ciphertext": "G/inDJaRbEpDIzaQn1GnXtlrduJZoqIQO5UiAZwZ86rrQfQgXyzl17uuTWRdbRI44DEUX0JsQQ4eVRZ5nTvdCtxLijn1KEeqnqBBgl7skZx2zQzSqg2HCiMjzO1yHcDvqCXJ+e/Wkxpm5t6CiXgPylfMzMumNPSi5wi7BcDYkDls/vu/D1A3NLp65wBsIM06O5F8RzSWkfTQ0v4mYl77ibHGwXA9jo4hdtnAE3Bp0weuTK8XUwgEmKjVK0ZhWsIHciPoXcGGHB68pVvpXgTQpD+0iQCjdm2I2THS3uRBbBKE6UfjEQlrOjmI/QkW6zV7eDmac8XJwE7r3iiHI4m8HZhtASMrH+YkB6KiTcCMoLYZf6eoJOVgkGd0tgp+o7PLz6y18fZh73O1z4lR79A8YrK1bXZZ3bzNML6PmwvdYraTzpyrJO4OCcSgpW98oxt8ezdSwGfZBIPw8J/2egI+iXi8wpKf2NnOPsQ7lqEg/xIOQ2rcv6f8HM0qoLHGxy9BXD1rW5MBc6cGRk6ebvWLIBNgvGWULAaOK8i0dp+Udg==",
+    "sha256": "8e89e03954806752848c06b1cf5ccce28d2a9b7adf249701fc7355582392c21d",
+    "size": 415,
+    "module": "setting",
+    "relative_path": "Controllers/Setting.php"
+}

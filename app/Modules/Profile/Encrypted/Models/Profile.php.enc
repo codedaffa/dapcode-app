@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "D88oxTEx5pl+++ub",
+    "tag": "+tZikMFXGRcHXzjjPaaIPQ==",
+    "ciphertext": "nLh4jV/Fppey83YkhuWPRJUP7Nd9aRuZwr7+vf75jID53/asBvXnVOi31uCh7erFHWasNRGbTPJBMWGjwWe5NaJNkx+RJyX5SxWcz1/uiZmlUtbDV3+eQR98DKRbtlJ30Y4HqoPM1/FC2B4s1/fWUEt7AXZJaTA3xYRU6URtr+Xg7pcvRqmWfO6dwsXiciDIUWJU5T2p9/dZSvIvGrbHJpHy0wKoTFEgkLfl1CJ/iX1JuQs2hFuwufVY4ZEB2mIKfAyHSMC4FlOMDac2qsRminloVkIYhK6HkPpkf15xZsc8YhIcmHtyUoQYPg==",
+    "sha256": "25d3caa3dc274355fd1d687b071a67f070ab5f3471757969c2a3f8340f1666bc",
+    "size": 235,
+    "module": "profile",
+    "relative_path": "Models/Profile.php"
+}

@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "xpSD78xpi3nGHWle",
+    "tag": "323ZXoC5Og5BdxuRj+oXcw==",
+    "ciphertext": "uOdhMLSDKjfPv3P46n9DLYRUhH7n6O8I013D+HlpazVq4kD03efg43hrIGVhJhVG1tpdOeYZ0GtorhFDBJvbQ4Gmb4H9sqhGBxTvsXDDEzj1hi7oykas5jItI5e4afsqwvyOpYfIwN5KuHvdIRkLnHUkpylTDH1XC/n4qkFhn1v3kaw4X7oCPH+sjdBeHcDStH+3Orqd/6DcOSYnatVrWtVLXHr4pIC0W6ZvS680jrrFk37GSzM6oyNSjD9nWjKPy0xal/jgDK4Ihd/Fy+bSQQunoSo1wGVpIWlQNydnmIxWpSrpqkLhckJT1ESU7SiCmT8rMicxSQOOT6qk+pdXMVh/SCKScrK6jg2QFAsiluvL4qkX6bLqMB3b0G8Mj1fqhVvOnyagX/yg7LjCxQgpvvP/V7rR7QZhTuSRprCOM0DUwXz0B2+povPbkBtfgVUWrX4Qkk/w+jLZJW0Jcu4/s1IWWXaAhgsnnmqOD6n5U7wTcV1Bk/27CBJxaEmnwyMfpwkC3+NDoyKzJYN6jn0QjOZnDjG3VPh1DQhzPhUqhbWEMgm9o9LmtgAEQaREOeODZsFKRlUD3qjqLl5eLGlSJstrUg==",
+    "sha256": "87b3765c9d68d31c12c6f58ec8341b1109a0e57cac6ba263dd09927db49fac93",
+    "size": 451,
+    "module": "certification",
+    "relative_path": "Controllers/Certification.php"
+}

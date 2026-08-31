@@ -9,7 +9,7 @@
 
 Anda bertindak sebagai **Principal Security Architect & Senior Laravel Engineer**.
 
-Tugas Anda adalah mengimplementasikan **DapCode AegisGuard™ (Asymmetric Cryptographic RSA-2048 & Fail-Closed Module Activation Engine)** secara lengkap, tangguh, dan siap produksi ke dalam repositori aplikasi Laravel ini.
+Tugas Anda adalah mengimplementasikan **DapCode AegisGuard™ (6-Layer Defense-in-Depth, Asymmetric RSA-2048 Digital Licensing & AES-256-GCM Envelope Encryption Engine)** secara lengkap, tangguh, dan siap produksi ke dalam repositori aplikasi Laravel ini.
 
 ---
 
@@ -24,9 +24,12 @@ Tugas Anda adalah mengimplementasikan **DapCode AegisGuard™ (Asymmetric Crypto
    - Seluruh rute aplikasi (web & api) **wajib terproteksi secara global**. Jika belum diaktivasi, lisensi kadaluwarsa, dirusak (*tampered*), atau dicabut (*revoked*), aplikasi wajib merespons **HTTP 403 Forbidden** (kecuali rute aktivasi `/dapcode/*` dan asset statis).
 4. **Dynamic Module Auto-Discovery:**
    - Modul yang ada di dalam `app/Modules/` atau terdaftar di konfigurasi wajib otomatis terdeteksi dan terproteksi per modul (*granular access control*).
-5. **Anti-Tampering & Granular Signed Revocation:**
-   - Setiap modifikasi ilegal pada file lisensi lokal akan langsung memicu penguncian otomatis.
-   - Pencabutan lisensi (penuh maupun per-modul) wajib diverifikasi menggunakan *Signed Revocation Token* bertanda tangan RSA-2048 yang sah.
+5. **AES-256-GCM Envelope Encryption & Fresh Clone Protection:**
+   - Source code controller & model tersimpan dalam format terenkripsi `.php.enc` di GitHub.
+   - Plaintext `.php` hasil aktivasi lokal otomatis diabaikan oleh `.gitignore`.
+6. **Anti-Tampering & Granular Signed Revocation:**
+   - Setiap modifikasi ilegal pada file lisensi atau file security inti sistem langsung memicu penguncian otomatis (Layer 5 Integrity).
+   - Pencabutan lisensi (penuh maupun per-modul) wajib diverifikasi menggunakan *Signed Revocation Token* bertanda tangan RSA-2048 yang sah dan langsung menghapus plaintext dari disk.
 
 ---
 
@@ -52,102 +55,53 @@ Buat file konfigurasi yang memuat:
    - `verifyAsymmetricSignature($canonicalPayload, $base64Signature, $keyId = null)`: Memvalidasi tanda tangan digital RSA-2048 dengan SHA-256 menggunakan `openssl_verify()`.
    - `verify($license, $moduleToCheck = null)`: Verifikasi menyeluruh (kelengkapan atribut, validasi `auth_token`, `installation_id`, `status == ACTIVE`, `expires_at`, `openssl_verify`, dan granular per-modul).
 
-3. **`IntegrityService.php`:**
-   - Mengelola checksum integritas SHA-256 lokal (`.license-state`) untuk mendeteksi modifikasi langsung pada file lisensi.
+3. **`ModuleEncryptionService.php`:**
+   - Enkripsi dan dekripsi modul amplop AES-256-GCM dengan HKDF-SHA256 key derivation.
+   - `encryptModule($module, $license)`: Membaca `.php` dan mengenkripsinya ke `.php.enc` dan `manifest.json`.
+   - `decryptModule($module, $license)`: Mendekripsi `.php.enc` ke `.php` sementara dengan validasi GCM Tag dan Checksum.
+   - `lockModule($module)`: Menghapus file `.php` dari disk (kembali ke locked state).
 
-4. **`LicenseGuard.php`:**
+4. **`IntegrityService.php`:**
+   - Mengelola checksum integritas SHA-256 file core (`integrity_manifest.json`) dan state lisensi lokal (`.license-state`).
+
+5. **`LicenseGuard.php`:**
    - Central evaluator dengan in-memory request caching:
      - `canAccessApplication()`: Mengecek integritas, status ACTIVE, masa berlaku, dan validasi signature lisensi global.
      - `isModuleAllowed(string $moduleName)`: Mengecek apakah modul tertentu diizinkan dan belum dicabut.
-     - `getAllAvailableModules()`: Memindai dinamis direktori `app/Modules/` dan menggabungkannya dengan konfigurasi.
-     - `getAllowedModules()`: Mengembalikan daftar modul aktif saat ini.
-     - `getStatus()`: Mengembalikan `ACTIVE`, `PENDING`, `EXPIRED`, `REVOKED`, `CORRUPTED`, atau `INVALID`.
+     - `assertModuleAllowed(string $moduleName)`: Memvalidasi dan melempar `HttpResponseException(403)` jika modul terkunci.
+     - `getAllAvailableModules()`: Memindai dinamis direktori `app/Modules/`.
 
-5. **`ActivationService.php`:**
-   - `activate($licensePayload)`: Memverifikasi tanda tangan digital RSA-2048 payload lisensi baru, mencocokkan Installation ID, menyimpan ke `.license`, mengupdate integrity checksum, dan me-rotate secret.
-   - `deactivate($revocationInput, $reason)`: Memverifikasi *Signed Revocation Token*, memproses pencabutan penuh (`REVOKE`) atau pencabutan modul parsial (`revoked_modules`), dan memperbarui file lisensi lokal.
+6. **`ActivationService.php`:**
+   - `activate($licensePayload)`: Memverifikasi tanda tangan digital RSA-2048 payload lisensi baru, mencocokkan Installation ID, menyimpan ke `.license`, mendiskripsi modul yang diotorisasi, dan mengupdate integrity checksum.
+   - `deactivate($revocationInput, $reason)`: Memverifikasi *Signed Revocation Token*, memproses pencabutan penuh atau parsial, menghapus plaintext modul yang dicabut, dan memperbarui lisensi.
 
 ---
 
-### C. Global Middleware (`app/Http/Middleware/DapcodeLicenseMiddleware.php` & `app/Http/Kernel.php`)
+### C. Console Commands (`app/Console/Commands/`)
+
+1. **`MakeHMVCModule.php` (`php artisan make:module {name}`):**
+   - Membuat Controller, Model, Blade View, Core Base Controller, otomatis memaketkan enkripsi `.php.enc`, dan mengunci modul dalam status fresh clone.
+2. **`DapcodePackCommand.php` (`php artisan dapcode:pack {module=all}`):**
+   - Mengemas dan mengenkripsi ulang source code `.php` terbaru ke dalam amplop `.php.enc` sebelum commit ke Git.
+3. **`DapcodeModuleCommand.php` (`php artisan dapcode:module`):**
+   - Menampilkan tabel visual status enkripsi, ketersediaan plaintext, dan otorisasi lisensi seluruh modul.
+4. **`SignDapcodeLicense.php` (`php artisan dapcode:sign-license`):**
+   - Menandatangani lisensi digital dan token pencabutan via CLI.
+
+---
+
+### D. Global Middleware & Base Controller
 
 1. **`DapcodeLicenseMiddleware.php`:**
    - Mengecualikan `excluded_routes`.
-   - Memvalidasi `LicenseGuard::canAccessApplication()`. Jika gagal, kembalikan response **403 Forbidden** (JSON untuk API / View `dapcode.license-required` untuk Web).
-   - Memvalidasi `LicenseGuard::isModuleAllowed($targetModule)` jika rute menargetkan modul spesifik.
-2. **`app/Http/Kernel.php`:**
-   - Daftarkan `\App\Http\Middleware\DapcodeLicenseMiddleware::class` di dalam grup `$middlewareGroups['web']` dan `$middlewareGroups['api']`.
+   - Memvalidasi `LicenseGuard::canAccessApplication()` dan `LicenseGuard::isModuleAllowed($targetModule)`.
+2. **`app/Http/Controllers/Controller.php`:**
+   - Constructor (`__construct`) memanggil `LicenseGuard::assertModuleAllowed()` pada setiap instansiasi controller.
 
 ---
 
-### D. Authority Signer Tools
+### E. Authority Web Terminal & Views (`/dapcode/terminal`)
 
-1. **Artisan CLI Command (`app/Console/Commands/SignDapcodeLicense.php`):**
-   - Command: `php artisan dapcode:sign-license {installation_id?}`
-   - Opsi: `--modules=*`, `--years=2`, `--revoke`, `--license_id=`, `--passcode=`.
-   - Meminta input passcode rahasia (disembunyikan di terminal) jika `--passcode` tidak disertakan.
-   - Memvalidasi passcode via `LicenseVerifier::verifyPasscode()`.
-   - Mengambil private key lokal/environment, membuat `auth_token`, melakukan canonicalization, menandatangani dengan `openssl_sign()`, dan mencetak output JSON yang siap pakai.
-
-2. **Web Controller & Routes (`app/Http/Controllers/Dapcode/LicenseController.php` & `routes/web.php`):**
-   - `GET  /dapcode/activate`: Tampilan antarmuka aktivasi & tombol salin Installation ID.
-   - `POST /dapcode/activate`: Endpoint aktivasi lisensi.
-   - `POST /dapcode/deactivate`: Endpoint pencabutan lisensi.
-   - `GET  /dapcode/status`: Endpoint status JSON.
-   - `GET  /dapcode/terminal`: Konsol Authority Web Terminal & HSM Signer UI.
-   - `POST /dapcode/terminal/sign`: Endpoint penandatanganan payload kriptografis.
-
-3. **Views Blade:**
-   - `resources/views/dapcode/activate.blade.php`: Form aktivasi dan deaktivasi visual.
-   - `resources/views/dapcode/license-required.blade.php`: Halaman 403 Forbidden yang elegan saat lisensi terkunci.
-   - `resources/views/dapcode/authority-terminal.blade.php`: Konsol interaktif dark-cyberpunk untuk menandatangani payload dengan 1-klik.
-
----
-
-### E. Automated Security Test Suite (`tests/Feature/DapcodeLicenseSecurityTest.php`)
-
-Wajib membuat 22 automated test cases komprehensif menggunakan PHPUnit:
-1. Fresh clone tanpa lisensi mengembalikan 403 pada rute publik dan modul.
-2. Halaman aktivasi `/dapcode/activate` tetap bisa diakses (200 OK).
-3. Aktivasi dengan lisensi bertanda-tangan sah berhasil membuka akses (200 OK).
-4. Pemalsuan data lisensi (*tampering*) langsung ditolak oleh signature verification.
-5. Lisensi dengan Installation ID mesin lain ditolak (*machine lock*).
-6. Lisensi kedaluwarsa (*expired*) otomatis mengembalikan status EXPIRED & 403.
-7. Lisensi parsial hanya membuka modul yang diizinkan, modul lain tetap 403.
-8. Modul baru yang ditambahkan otomatis terproteksi.
-9. Pencabutan lisensi penuh (*Signed Full Revocation*) menonaktifkan aplikasi (403).
-10. Pencabutan parsial (*Signed Granular Revocation*) hanya mengunci modul yang dicabut.
-11. Passcode yang salah pada Signer Console langsung diblokir (403 Access Denied).
-12. Menghapus atau me-rename modul tidak merusak integritas sistem lisensi.
-
----
-
-## 🔒 3. ATURAN KEAMANAN IMPLEMENTASI
-
-- **JANGAN PERNAH** membuat backdoor seperti `if (app()->environment('local')) return true;` atau `env('SKIP_LICENSE')`.
-- **JANGAN PERNAH** mengekspos plaintext passcode atau private key di dalam file kode aplikasi atau repositori publik.
-- **SELALU** pastikan file lisensi runtime (`storage/app/dapcode/`) masuk ke `.gitignore`.
-- Jalankan `php vendor/phpunit/phpunit/phpunit tests/Feature/DapcodeLicenseSecurityTest.php` untuk memastikan seluruh 22 pengujian keamanan lolos 100% (*Pass*).
+- **`authority-terminal.blade.php`:** Web Terminal interaktif dengan Artisan console runner, modal dialog **`+ Make Module`**, preset buttons, dan RSA-2048 Signer.
+- **`activate.blade.php`:** Halaman aktivasi klien dengan tombol salin Installation ID dan modal konfirmasi pencabutan lisensi.
 ```
-
----
-
-## 📋 DAFTAR FILE HASIL IMPLEMENTASI
-Setelah prompt di atas dijalankan oleh AI Agent, proyek baru Anda akan memiliki arsitektur keamanan lengkap berikut:
-
-| File | Peran / Deskripsi |
-|---|---|
-| `config/dapcode.php` | Konfigurasi file storage, rute excluded, dan modul. |
-| `app/Services/Dapcode/InstallationService.php` | Pembuat & validator Installation ID unik persisten. |
-| `app/Services/Dapcode/LicenseVerifier.php` | Verifikator tanda tangan digital asimetris RSA-2048 & SHA-256 Auth Token. |
-| `app/Services/Dapcode/IntegrityService.php` | Pengecek checksum integritas data anti-tampering. |
-| `app/Services/Dapcode/LicenseGuard.php` | Evaluator otorisasi sentral & auto-discovery modul dinamis. |
-| `app/Services/Dapcode/ActivationService.php` | Handler aktivasi dan pencabutan lisensi (*Signed Revocation*). |
-| `app/Http/Middleware/DapcodeLicenseMiddleware.php` | Middleware global fail-closed penghadang rute tak terotorisasi. |
-| `app/Console/Commands/SignDapcodeLicense.php` | CLI Authority Signer resmi dengan verifikasi passcode. |
-| `app/Http/Controllers/Dapcode/LicenseController.php` | Controller aktivasi, status, dan web signer terminal. |
-| `resources/views/dapcode/activate.blade.php` | Tampilan form aktivasi visual. |
-| `resources/views/dapcode/authority-terminal.blade.php` | Antarmuka web konsol Authority Signer Terminal. |
-| `resources/views/dapcode/license-required.blade.php` | Tampilan pesan 403 Forbidden informatif. |
-| `tests/Feature/DapcodeLicenseSecurityTest.php` | 22 skenario automated unit/feature tests. |
-| `.agents/rules/security-guardian.md` | Aturan sistem penjaga keamanan agent 24 bab (*Bilingual*). |

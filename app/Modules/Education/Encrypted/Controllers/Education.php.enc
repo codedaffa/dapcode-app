@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "C+3CB+6FwjlL/1XH",
+    "tag": "g1HnOflgeHw/i58XiGTy5Q==",
+    "ciphertext": "1by6bI+a1NqakL+LdT+IjFfBQo7LfLtSGOv/tyKEkm1vBGX+KRXW1nFRUEsIi2jGAGt9rsfpDGz7lDmCLytUz6Zc3YyXWL9y8HasPZVDrlU1qxVSpc38PmIQStCpEnrQE6OnaYOGy9Dbl5mn1UEUVcUWpG3v9rw0GNQE0yXttzKbJ9G1n+Njuxqu8mPoq+mzy+OWB6+f9VY2YDVm9u134z+KoP90pdWd6L5TSmOLoRhro9vWf11j8EKIH6iDG2TO5DK6G1lRNMfRUMtNFthIOWHR7K5NrSYFLmdz8f360jKZKByNHtFI131Ty8tUP1IT2ygOS9MFEvGYjDYYMuoDe4dPCfkHwjPU0sH+W3vbgNdtzjJPb5tC4NVZbaC/qZeWJuom5k/x90a6ShdG2pQDcYe/qq4xaW9WB/gwtAA3yLsOjFn2ViPWEvZqpUWRyhy7YduEFqmE9sMEbjkUzkLI3hNSbKwQ7nI8gIhMFaTrZkzNCw86mjWoiChK+rMYbwCRhpkqEOkdjOejybmpyIbrwdYxgAhBNg/QDOXXHfcWpLEkZ5+TNXcTH8MJTg==",
+    "sha256": "d14b4793defe7a1f81d794b15b7fa355c7b10466d5aa9060d0cc65eadd61680a",
+    "size": 427,
+    "module": "education",
+    "relative_path": "Controllers/Education.php"
+}

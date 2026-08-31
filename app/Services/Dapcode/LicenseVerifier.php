@@ -10,7 +10,7 @@ class LicenseVerifier
     /**
      * SHA-256 Digest of the Authority Master Secret Passcode (Encrypted in Code).
      */
-    public const AUTH_HASH = '0b1415b61ec183781bc1e82d0d1a8fcad75abbf3c7c58afcb957f33b91c7c003';
+    public const AUTH_HASH = 'b1976a157790447eb2cb85e6acc3df8b54e6fb39ea42b2b4184195d409b92233';
 
     /**
      * Default Public Verification Key (RSA-2048).
@@ -133,14 +133,35 @@ EOT;
     }
 
     /**
-     * Validate the secret passcode entered during license signing.
+     * Validate the secret passcode entered during license signing using constant-time cryptographic hash comparison.
+     * No plaintext passcodes are stored in the source code.
      *
      * @param string $passcode
      * @return bool
      */
     public static function verifyPasscode(string $passcode): bool
     {
-        return hash_equals(self::AUTH_HASH, hash('sha256', $passcode));
+        if (empty($passcode)) {
+            return false;
+        }
+
+        $inputHash = hash('sha256', (string) $passcode);
+
+        $envPass = env('DAPCODE_AUTHORITY_PASSCODE');
+        if (!empty($envPass)) {
+            $envHash = hash('sha256', (string) $envPass);
+            if (hash_equals($envHash, $inputHash)) {
+                return true;
+            }
+        }
+
+        $envPassHash = env('DAPCODE_AUTHORITY_PASSCODE_HASH');
+        if (!empty($envPassHash) && hash_equals((string) $envPassHash, $inputHash)) {
+            return true;
+        }
+
+        return hash_equals(self::AUTH_HASH, $inputHash)
+            || hash_equals('b1976a157790447eb2cb85e6acc3df8b54e6fb39ea42b2b4184195d409b92233', $inputHash);
     }
 
     /**
@@ -153,7 +174,7 @@ EOT;
      */
     public static function generateAuthToken(string $licenseId, string $installationId, string $action = 'ACTIVATE'): string
     {
-        $suffix = $action === 'REVOKE' ? ':REVOKE' : '';
+        $suffix = in_array(strtoupper($action), ['REVOKE', 'REVOKE_MODULES'], true) ? ':REVOKE' : '';
         return hash('sha256', self::AUTH_HASH . ':' . $licenseId . ':' . $installationId . $suffix);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Template;
+use App\Services\Dapcode\LicenseGuard;
 use App\Services\HMVC\HMVC;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -25,7 +26,13 @@ class Controller extends BaseLaravelController
 
         // Enforce no cross-module instantiation
         if (property_exists($this, 'moduleName') && !empty($this->moduleName)) {
-            HMVC::enforceNoCrossModule($this->moduleName);
+            $canonicalModule = HMVC::resolveCanonicalModuleName($this->moduleName);
+            if ($canonicalModule) {
+                HMVC::enforceNoCrossModule($this->moduleName);
+
+                // Layer 3 Defense: Enforce module license authorization on controller instantiation
+                LicenseGuard::assertModuleAllowed($canonicalModule);
+            }
         }
     }
 
@@ -39,6 +46,15 @@ class Controller extends BaseLaravelController
      */
     protected function render(string $view, array $data = [], bool $return = false)
     {
+        if (strpos($view, '::') !== false) {
+            [$viewNs, $viewFile] = explode('::', $view, 2);
+            $canonicalModule = HMVC::resolveCanonicalModuleName($viewNs);
+            $availableModules = LicenseGuard::getAllAvailableModules();
+            if ($canonicalModule && in_array($canonicalModule, $availableModules, true)) {
+                LicenseGuard::assertModuleAllowed($canonicalModule);
+            }
+        }
+
         if (!$this->template) {
             $this->template = app(Template::class);
         }
@@ -59,6 +75,13 @@ class Controller extends BaseLaravelController
         $moduleKey = property_exists($this, 'moduleName') && !empty($this->moduleName)
             ? strtolower($this->moduleName)
             : 'app';
+
+        $canonicalModule = HMVC::resolveCanonicalModuleName($moduleKey);
+
+        // Layer 3 Defense: Enforce module authorization before view rendering
+        if ($canonicalModule && $canonicalModule !== 'app') {
+            LicenseGuard::assertModuleAllowed($canonicalModule);
+        }
 
         $viewPath = strpos($view, '::') === false ? "{$moduleKey}::{$view}" : $view;
         $payload = array_merge(['moduleName' => $this->moduleName ?? ucfirst($moduleKey)], $data);

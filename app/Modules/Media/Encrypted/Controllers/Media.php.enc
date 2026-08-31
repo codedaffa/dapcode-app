@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "izI217w+uav5WprE",
+    "tag": "tX4MfJgYIJxBimwlnVMQtg==",
+    "ciphertext": "TqL78x4r8JX9KrtMnPzI/wbhe43KLI0/k1niuPXNizypkk3PTVPc4MSEj2bktpE2gqdt2JYzQt9mXgGRCD1JjKsj1N9ouG4CXR5LepYm3LxtSqnLaSvrfR685J+uwu2G8mRrDoz2B15NZj5P6tQkBVAwLvn+WdRelwPC/7q8AmUuV1a4YE7R4bEd6S+zk/m7suJrq7mYIg/jgFGP0P5/YVsDlOd9TtA+AC0iuRpM01K6qp/hFRRvto7DjdQOPS1XEUkpRV5BYd0xM4p60bonsOBe5czS1mqy6STBjuCXTtM5sd1SERHOVVGGGc9FZoU+h2WmxnLZebn7D+A9WMI0Qh4GjRooCXlAZpk1rs0XKV4Qi2aHVvyjmyzPHmV/tBNRKMwJVER4TfR07pwVnmyIMolZCVBYM2xAotMmhXzB7w3t3eU1und7yAHhqjw0MCKxSJM/+PuGxbSwwLCQjjArLCzvCRMou8ksofmWGVtbB1fsfnBeOvYe/RcadRkrjOujbOnGTJkRx/zN9nk7WRYOtyNQzA==",
+    "sha256": "8685e582cb3ab473ac13316b158fd8fcbc98817e019c99bfb0469805c9352e82",
+    "size": 403,
+    "module": "media",
+    "relative_path": "Controllers/Media.php"
+}

@@ -59,6 +59,16 @@ class Template
     {
         $mergedData = array_merge($this->data, $data);
 
+        // Security Execution Boundary: Enforce module license assertion if rendering a module view
+        if (strpos($view, '::') !== false) {
+            [$viewNs, $viewFile] = explode('::', $view, 2);
+            $canonicalModule = \App\Services\HMVC\HMVC::resolveCanonicalModuleName($viewNs);
+            $availableModules = \App\Services\Dapcode\LicenseGuard::getAllAvailableModules();
+            if ($canonicalModule && in_array($canonicalModule, $availableModules, true)) {
+                \App\Services\Dapcode\LicenseGuard::assertModuleAllowed($canonicalModule);
+            }
+        }
+
         // 1. Render the module's inner content view
         $moduleContent = View::make($view, $mergedData)->render();
 

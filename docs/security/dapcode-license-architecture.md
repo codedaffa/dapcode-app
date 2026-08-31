@@ -1,133 +1,79 @@
-# 🏛️ DapCode License — Architecture, Verification & Hardening Guide
+# DAPCODE AEGISGUARD™ — ARSITEKTUR KEAMANAN LISENSI & ENCRYPTED RUNTIME
 
-## 1. Cryptographic Architecture Overview
+## 1. Arsitektur 6-Layer Defense-in-Depth
 
-Sistem lisensi DapCode menggunakan model kriptografi kunci asimetris (*Asymmetric Public-Key Cryptography*) standar industri:
+DapCode AegisGuard™ mengimplementasikan sistem keamanan berlapis untuk mengontrol otorisasi, integritas, dan enkripsi modul aplikasi:
+
+1. **Layer 1: DapcodeLicenseMiddleware** (HTTP Perimeter Guard)
+   Pintu gerbang HTTP request yang menjalankan validasi awal terhadap seluruh rute modul yang dituju.
+2. **Layer 2: HMVC Dispatcher & Hierarchical Runner** (Module Resolution & Dispatch Boundary)
+   Memastikan class modul tidak dapat di-resolve atau diinstansiasi tanpa otorisasi lisensi yang valid. Dilengkapi dengan *Canonical Module Resolver* yang menolak traversal (`..`), encoding ganda, dan karakter berbahaya.
+3. **Layer 3: Base Controller & Core Controllers** (Instantiation & Render Guard)
+   Memvalidasi otorisasi di konstruktor controller modul (`__construct()`), `render()`, dan `moduleRender()` sebelum merender tampilan ke browser (`App\Http\Controllers\Core`).
+4. **Layer 4: RSA-2048 Digital Licensing & Authority Secret Passcode** (Cryptographic Licensing Boundary)
+   Memverifikasi keabsahan tanda tangan digital RSA-2048 dengan public verification key dan validasi constant-time SHA-256 hash passcode. Bebas dari hardcoded plaintext credentials di client repo.
+5. **Layer 5: Core File Integrity Service** (Anti-Tamper Checksum Verification)
+   Memverifikasi SHA-256 hash file inti arsitektur lisensi menggunakan manifest integritas (`integrity_manifest.json`). Modifikasi file core secara ilegal langsung memicu status `INTEGRITY_FAILED`.
+6. **Layer 6: Encrypted Critical Module Protection & Atomic Runtime** (AES-256-GCM Envelope Encryption)
+   Menyimpan source code controller & model dalam format terenkripsi (`.php.enc`) di repositori fresh clone GitHub. Source code didekripsi ke file `.php` lokal saat lisensi aktif, dan dihapus (*fail-closed lock*) saat lisensi dicabut (*Revoked*).
+
+---
+
+## 2. Alur Enkripsi & Dekripsi Atomic (Layer 6)
 
 ```text
-               DAPCODE LICENSE AUTHORITY (OWNER)
-                             │
-                      RSA PRIVATE KEY
-                             │
-                             ▼
-                    Sign License / Revoke
-                             │
-                      Base64 Signature
-                             │
-                             ▼
-                 CLIENT APPLICATION (LARAVEL)
-                             │
-                      RSA PUBLIC KEY
-                             │
-                             ▼
-                      LicenseVerifier
-```
-
-- **Algoritma:** RSA-SHA256 (2048-bit modulus).
-- **Public Key:** Disertakan dalam [LicenseVerifier.php](file:///c:/laragon/www/dapcode-app/app/Services/Dapcode/LicenseVerifier.php) (atau dimuat via `storage/app/dapcode/public_key.pem`).
-- **Private Key:** Disimpan murni dan terisolasi pada DapCode License Authority Server milik Owner.
-
----
-
-## 2. Deterministic Canonicalization
-
-Untuk mencegah variasi representasi JSON yang dapat merusak validasi tanda tangan (*signature verification*), data dinormalisasi secara deterministik sebelum proses signing maupun verification:
-
-```php
-public static function canonicalizePayload(array $license): string
-{
-    $clean = $license;
-    // Hapus atribut runtime yang berubah-ubah
-    unset($clean['signature'], $clean['activated_at'], $clean['revoked_at'], $clean['revocation_reason']);
-    
-    // Urutkan key alfabetis
-    ksort($clean);
-
-    // Urutkan array modul
-    if (isset($clean['modules']) && is_array($clean['modules'])) {
-        sort($clean['modules']);
-    }
-
-    return json_encode($clean, JSON_UNESCAPED_SLASHES);
-}
+[ Encrypted Module (.php.enc) ]
+           ↓
+    [ Read Envelope ]
+           ↓
+[ Validate Manifest (Anti-Traversal) ]
+           ↓
+ [ Validate RSA License Signature ]
+           ↓
+ [ Validate Installation ID & Status ]
+           ↓
+   [ HKDF-SHA256 Key Derivation ]
+           ↓
+   [ AES-256-GCM Decryption ]
+           ↓
+ [ Verify GCM Authentication Tag ]
+           ↓
+[ Verify SHA-256 Checksum vs Manifest ]
+           ↓
+ [ Write to Temporary File (.tmp) ]
+           ↓
+   [ Verify Temporary File ]
+           ↓
+ [ Atomic Rename to Runtime Target (.php) ]
+           ↓
+      [ Execute Module ]
 ```
 
 ---
 
-## 3. Evaluation of Verification Modes
+## 3. Developer Workflow & Packaging Engine
 
-### 3.1. Mode A: Offline License Verification (Current Default)
-- **Mekanisme:** Lisensi ditandatangani sekali oleh Authority, diaktivasi oleh klien, dan diverifikasi secara lokal menggunakan Public Key.
-- **Kelebihan:**
-  - 100% Berfungsi tanpa koneksi internet (*Air-gapped / Isolated environments*).
-  - Waktu eksekusi ultra-cepat ($< 1\text{ ms}$).
-  - Privasi data klien terjaga penuh.
-- **Keterbatasan:**
-  - Pencabutan lisensi (*Revocation*) membutuhkan *Signed Revocation Token* yang dimasukkan ke aplikasi klien.
-  - Bergantung pada jam sistem lokal (*System Clock*) untuk validasi tanggal kedaluwarsa.
+Untuk memfasilitasi siklus pengembangan modul tanpa membocorkan source code plaintext ke Git:
+
+```mermaid
+graph TD
+    A["1. Create Module (make:module)"] --> B["Auto-Pack & Auto-Lock (.php.enc)"]
+    B --> C["2. Development (.php local)"]
+    C --> D["3. Re-Pack (dapcode:pack)"]
+    D --> E["4. Updated .php.enc Envelopes"]
+    E --> F["5. Push to GitHub (Zero Plaintext Leaks)"]
+```
+
+### Command Lifecycle:
+* **Membuat Modul:** `php artisan make:module {Nama}` (atau klik tombol **`+ Make Module`** di Web Terminal).
+* **Mengemas Kode Terbaru:** `php artisan dapcode:pack {module=all}` (atau klik tombol **`dapcode:pack all`** di Web Terminal).
+* **Melihat Status Keamanan:** `php artisan dapcode:module status`.
 
 ---
 
-### 3.2. Mode B: Online Verification & Heartbeat (Recommended Extension)
-- **Mekanisme:** Aplikasi klien secara periodik (misal setiap 12–24 jam) melakukan sinkronisasi status ke Authority API:
-  `POST https://license.dapcode.com/api/v1/verify`
-- **Arsitektur Caching & Offline Grace Period:**
+## 4. Batasan Keamanan & Trust Boundary (White-Box Limitation)
 
-```text
-HTTP Request
-     │
-     ▼
-Local License Cache Check
-     │
-     ├── Cache Masih Valid (TTL misal 12 Jam) ───► ALLOW (Local Verify)
-     │
-     └── Cache Expired (Melewati TTL)
-              │
-              ▼
-         Authority API Call
-              │
-              ├── [Online OK] Status ACTIVE ─────► Update Cache TTL & ALLOW
-              ├── [Online OK] Status REVOKED ────► Revoke License & DENY (403)
-              │
-              └── [Network Error / Timeout]
-                       │
-                       ├── Dalam Offline Grace Period (misal 14 Hari) ──► ALLOW (Fallback Offline)
-                       └── Melewati Offline Grace Period ──────────────► DENY (403 - Verification Required)
-```
-
-- **Manfaat:**
-  - Revokasi lisensi dapat merambat secara otomatis (*Instant Remote Revocation*).
-  - Mengeliminasi risiko manipulasi jam sistem klien karena timestamp divalidasi oleh server Authority.
-
----
-
-## 4. Key Management & Key Rotation Strategy
-
-Jika di masa mendatang Authority perlu memperbarui kunci kriptografis (*Key Rotation*):
-
-### 4.1. Desain Multi-Key Verification (`key_id`)
-Tambahkan atribut `key_id` pada header payload lisensi:
-```json
-{
-    "key_id": "auth-2026-v1",
-    "license_id": "LIC-2026-PRO-001",
-    "installation_id": "DAP-...",
-    ...
-}
-```
-Client dapat memelihara array Public Keys terpercaya:
-```php
-protected const TRUSTED_PUBLIC_KEYS = [
-    'auth-2026-v1' => "-----BEGIN PUBLIC KEY-----\n...",
-    'auth-2027-v1' => "-----BEGIN PUBLIC KEY-----\n...",
-];
-```
-Authority dapat menerbitkan lisensi baru dengan key baru tanpa membatalkan lisensi lama yang belum kedaluwarsa.
-
----
-
-## 5. Storage & Logging Hardening
-
-1. **Private Storage:** Direktori `storage/app/dapcode/` dilindungi permission `0600` dan diabaikan oleh `.gitignore`.
-2. **Sanitized Audit Logs:** Log pada `storage/logs/laravel.log` mencatat event (`ACTIVATION_SUCCESS`, `LICENSE_VALIDATED`, `LICENSE_REVOKED`, dll.) dengan konteks aman tanpa pernah mencetak private key, token rahasia, atau raw binary credential.
-3. **Fail-Closed Principle:** Segala bentuk anomali (file hilang, JSON rusak, signature tidak cocok, tanggal kedaluwarsa, module mismatch) secara default memicu penguncian modul terlindungi (**HTTP 403 Forbidden**) dengan aman tanpa mengganggu halaman publik atau merusak data aplikasi.
+> **Pernyataan Batasan Keamanan:**
+> Proteksi enkripsi modul dan layered execution guard memastikan bahwa repository fresh clone tidak menyimpan source code kritis dalam bentuk plaintext dan modul hanya dapat dibuka jika memiliki lisensi sah yang terikat pada Installation ID terkait.
+> Namun demikian, pada server on-premise di mana pengguna memiliki hak *root access* dan kontrol penuh atas runtime interpreter PHP, pengguna dengan kemampuan teknis tingkat tinggi secara teoritis dapat melakukan memory dumps atau runtime patching.
+> Enkripsi modul berfungsi sebagai **Defense-in-Depth Berlapis Tinggi**, bukan jaminan keamanan absolut terhadap attacker dengan kontrol runtime penuh.

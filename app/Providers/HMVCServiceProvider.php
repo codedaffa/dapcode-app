@@ -62,6 +62,14 @@ class HMVCServiceProvider extends ServiceProvider
                     View::addNamespace(strtolower($moduleName), $viewsPath);
                     View::addNamespace(Str::kebab($moduleName), $viewsPath);
                     View::addNamespace(Str::snake($moduleName), $viewsPath);
+
+                    // Mandatory Security View Composer for Protected Module View Namespace (Layer 4)
+                    View::composer([
+                        "{$moduleName}::*",
+                        "{$viewKey}::*",
+                    ], function () use ($viewKey) {
+                        \App\Services\Dapcode\LicenseGuard::assertModuleAllowed($viewKey);
+                    });
                 }
 
                 // Auto-register Migrations (if present)

@@ -13,12 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('portfolio', [
-        'title' => __('common.portfolio_home'),
-        'pageTitle' => __('common.app_name') . ' - ' . __('common.portfolio_home'),
-    ]);
-});
+Route::get('/', [\App\Http\Controllers\PortfolioController::class, 'index'])->name('home');
 
 // Language Switcher Route
 Route::get('/lang/{locale}', function ($locale) {
@@ -52,5 +47,6 @@ Route::prefix('dapcode')->group(function () {
     Route::get('/status', [\App\Http\Controllers\Dapcode\LicenseController::class, 'status'])->name('dapcode.status');
     Route::get('/terminal', [\App\Http\Controllers\Dapcode\LicenseController::class, 'showTerminal'])->name('dapcode.terminal');
     Route::post('/terminal/sign', [\App\Http\Controllers\Dapcode\LicenseController::class, 'signPayload'])->name('dapcode.terminal.sign');
+    Route::post('/terminal/artisan', [\App\Http\Controllers\Dapcode\LicenseController::class, 'executeArtisan'])->name('dapcode.terminal.artisan');
 });
 

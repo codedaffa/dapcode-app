@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "Jlfpvxso5BIapPtC",
+    "tag": "gcZvNN7jXyYKmz9UOa7Mxw==",
+    "ciphertext": "p1nwG+4U9/ozOEecE0Wq6q7+rbtfNMWHbh0J1qe7H+xyu0zFAycxQzqvxUwlga/g0nowoT4oa4fOULLyP+oSJLZY9GYdRKyeFQkNUDKAC08VVHbu02IIggAk8zmwMcL/PXtn4lZNnYDBhx6pOD6L5tD8hwO71MEBcbpdv1LWFZ14q66CF4DGh3EULPaR1XynPCERuceT672VrfOpCiABZ/ofAoyLr+yg9klwpcY/rl6rb3iYAHZJ8kBp6tCPQYhIR/7sIt41gNo5ROe2Xh9vAJY2tRC5Ntn+684RBkbn9LNazymLko8p",
+    "sha256": "77a328f91c188cff480939d82b71dbd607cc311c5bac0b3389390da72d419576",
+    "size": 231,
+    "module": "media",
+    "relative_path": "Models/Media.php"
+}

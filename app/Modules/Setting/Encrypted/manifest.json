@@ -1,0 +1,21 @@
+{
+    "module": "setting",
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "salt": "6377f3bf7b60815a97e9a4876128a2d2",
+    "encrypted_at": "2026-08-31T16:23:55+00:00",
+    "files": [
+        {
+            "path": "Controllers/Setting.php",
+            "encrypted": "Encrypted/Controllers/Setting.php.enc",
+            "sha256": "8e89e03954806752848c06b1cf5ccce28d2a9b7adf249701fc7355582392c21d",
+            "size": 415
+        },
+        {
+            "path": "Models/Setting.php",
+            "encrypted": "Encrypted/Models/Setting.php.enc",
+            "sha256": "d9e780b4791fde05a37ab9c424151d038cc5fa121a4504bd54ddb7af6d3e0d0e",
+            "size": 235
+        }
+    ]
+}

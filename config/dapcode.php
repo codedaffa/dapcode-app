@@ -11,10 +11,11 @@ return [
     'storage_path' => storage_path('app/dapcode'),
 
     'files' => [
-        'installation'  => storage_path('app/dapcode/.installation'),
-        'license'       => storage_path('app/dapcode/.license'),
-        'license_state' => storage_path('app/dapcode/.license-state'),
-        'public_key'    => storage_path('app/dapcode/public_key.pem'),
+        'installation'       => storage_path('app/dapcode/.installation'),
+        'license'            => storage_path('app/dapcode/.license'),
+        'license_state'      => storage_path('app/dapcode/.license-state'),
+        'integrity_manifest' => storage_path('app/dapcode/.integrity-manifest'),
+        'public_key'         => storage_path('app/dapcode/public_key.pem'),
     ],
 
     // All available application modules requiring authorization

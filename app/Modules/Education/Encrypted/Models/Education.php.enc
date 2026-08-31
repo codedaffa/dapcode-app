@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "v215IvYZb2Rk/hwq",
+    "tag": "oVe9iwivfsFGTAOyDoQcgA==",
+    "ciphertext": "EOd0T346vKVK6KxcI7vv+RP0AqguUhckztcMkjg2ODOWGevrP+JhTG0DbldBz7eBE5BjJk4PdyBtzEQjaGtdLb/FASAV9GieBvjK71UxrYyIiLE0je+8JtDkcEj8HkOTT+L46IPxbYtxKAi+LmnvPS6lvghcqX49ikfqzGLXXfopjYNFmoe63RxA79qGdleOYn0BOQc2zva2wx4u3J8bjBtkk0T731DUc9oOHpqom9Jcgni6U6V7nH7OsMs4KzFw2jERR3y3rqGjxuX4HxzXTOc48Roova7w4p+gtVhRtQiAUfIuSV07fLWXXDMl2Ts=",
+    "sha256": "83b3040f7ac7d4ee8c4c3f6539871831d2f1a35c5d6044eca9dcb3c3050d9fb1",
+    "size": 239,
+    "module": "education",
+    "relative_path": "Models/Education.php"
+}

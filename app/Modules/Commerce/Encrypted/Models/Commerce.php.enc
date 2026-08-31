@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "f68m2fYSfx3YzKDf",
+    "tag": "A0TwK8+Yq+Wov66jeMv/dQ==",
+    "ciphertext": "KrL2b1W+9dCslepy4GnmLtv5rHYw93mJMxOFC6YrUbzXRJYFeOTA8CC2XbPZAHLFSYwA1HRE7c4eHVJwXBRnfUiALIU18Y0cg1BuG5L2hSHgBedSkSmfshhGWIKP9gM3IzOBXy6hAlTblhBppeDAxMUnDQrpzOsA/+/9ZhTft2Rs9pYbqLZWfQMtTkCkY/e51MUUEaVPdSZm3+eZkXDoXBPvdlcVa0kfnUAae7KhXjKITLPn6uOcEW9daZJ5EBB85OPkz/bLHhLCXMblDEvGOXL9MksM52zYjs/PlTV5H+wv3wSjlsQCCsfZcaEo",
+    "sha256": "997b94974d24f004d4c33470b6fd2497c329532cccc3cc821e651862c29052ad",
+    "size": 237,
+    "module": "commerce",
+    "relative_path": "Models/Commerce.php"
+}

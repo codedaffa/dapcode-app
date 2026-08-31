@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "iv": "TmjiQ+Hf2PM6XrfC",
+    "tag": "Jkn7HgAcUTJvXZFQQ0k3RQ==",
+    "ciphertext": "Z9RV/TPq8+HpS6EkY1mWtLvz/qJgof27GWtI0uk1GAA+SPS1T/qiOWJNrzPEJQRtAPffbXfBaj8m43ppQ19bnBQsy+WJI55AIMxSbYEiVkTkFvDjlVxGG0K4I1E+14G6VYMsCVHt/EGJZg8roZEo70zxrYxANg1O8uYYePbtHEE+kqKPF3OrmCVYyZnjLJ0FqDc9NH+0awDhKQzrdO0WF3dyvsN/LMO0k8HAwJ3x/9UNxLXKfxTjP4ZNMzylIP8yKQFu/Y6UOkN3m7h8zHquQ+E4eI5YctPKAKsONo2KVO2Cde18jz8JVIYYHw==",
+    "sha256": "d9e780b4791fde05a37ab9c424151d038cc5fa121a4504bd54ddb7af6d3e0d0e",
+    "size": 235,
+    "module": "setting",
+    "relative_path": "Models/Setting.php"
+}

@@ -138,11 +138,13 @@ class LicenseController extends Controller
         ];
 
         return $this->render('dapcode.authority-terminal', [
-            'title'            => 'Authority Terminal — DapCode Signer Server',
-            'pageTitle'        => 'DapCode License Authority Terminal',
-            'currentInstId'    => LicenseGuard::getInstallationId(),
-            'currentLicenseId' => LicenseGuard::getLicense()['license_id'] ?? '',
-            'modules'          => $allModules,
+            'title'                 => 'Authority Terminal — DapCode Signer Server',
+            'pageTitle'             => 'DapCode License Authority Terminal',
+            'currentInstId'         => LicenseGuard::getInstallationId(),
+            'currentLicenseId'      => LicenseGuard::getLicense()['license_id'] ?? '',
+            'currentLicense'        => LicenseGuard::getLicense(),
+            'activeLicensedModules' => LicenseGuard::getAllowedModules(),
+            'modules'               => $allModules,
         ]);
     }
 
@@ -154,7 +156,7 @@ class LicenseController extends Controller
      */
     public function signPayload(Request $request)
     {
-        $passcode = $request->input('passcode');
+        $passcode = (string) ($request->input('passcode') ?? $request->input('authority_passcode') ?? '');
         if (empty($passcode) || !LicenseVerifier::verifyPasscode($passcode)) {
             return response()->json([
                 'success' => false,
@@ -181,12 +183,14 @@ class LicenseController extends Controller
         if ($action === 'REVOKE') {
             $licenseId = $request->input('license_id', 'LIC-' . date('Y') . '-REV');
             $reason = $request->input('reason', 'Pencabutan Resmi via Authority Web Terminal');
-            $revokedModules = $request->input('modules', ['*']);
+            $revokedModules = (array) $request->input('modules', ['*']);
 
-            $authToken = LicenseVerifier::generateAuthToken($licenseId, $targetInstallationId, 'REVOKE');
+            $isGranular = !empty($revokedModules) && !in_array('*', $revokedModules, true);
+            $actionType = $isGranular ? 'REVOKE_MODULES' : 'REVOKE';
+            $authToken = LicenseVerifier::generateAuthToken($licenseId, $targetInstallationId, $actionType);
 
             $payload = [
-                'action'          => 'REVOKE',
+                'action'          => $actionType,
                 'license_id'      => $licenseId,
                 'installation_id' => $targetInstallationId,
                 'revoked_at'      => date('c'),
@@ -194,8 +198,8 @@ class LicenseController extends Controller
                 'auth_token'      => $authToken,
             ];
 
-            if (!empty($revokedModules) && !in_array('*', $revokedModules, true)) {
-                $payload['revoked_modules'] = $revokedModules;
+            if ($isGranular) {
+                $payload['revoked_modules'] = array_values(array_map('strtolower', $revokedModules));
             }
 
             $clean = $payload;
@@ -203,17 +207,22 @@ class LicenseController extends Controller
             if (isset($clean['revoked_modules']) && is_array($clean['revoked_modules'])) {
                 sort($clean['revoked_modules']);
             }
+            if (isset($clean['modules']) && is_array($clean['modules'])) {
+                sort($clean['modules']);
+            }
             $canonical = json_encode($clean, JSON_UNESCAPED_SLASHES);
 
             $binarySig = '';
             openssl_sign($canonical, $binarySig, $privateKeyContent, OPENSSL_ALGO_SHA256);
             $payload['signature'] = base64_encode($binarySig);
 
+            $targetDesc = $isGranular ? implode(', ', $payload['revoked_modules']) : 'ALL (*) — SELURUH LISENSI';
+
             return response()->json([
                 'success' => true,
                 'type'    => 'SIGNED_REVOCATION_TOKEN',
                 'payload' => $payload,
-                'log'     => "AUTHORITY_SIGNER: Generating Signed Revocation Token...\nCANONICAL_HASH: SHA-256 Digest Computed.\nRSA_SIGN: 2048-bit Private Key Signature Applied.\nSTATUS: TOKEN_READY",
+                'log'     => "AUTHORITY_SIGNER: Generating Signed Revocation Token ({$actionType})...\nTARGET_MODULES: {$targetDesc}\nCANONICAL_HASH: SHA-256 Digest Computed.\nRSA_SIGN: 2048-bit Private Key Signature Applied.\nSTATUS: TOKEN_READY",
             ]);
         }
 
@@ -249,5 +258,72 @@ class LicenseController extends Controller
             'payload' => $payload,
             'log'     => "AUTHORITY_SIGNER: Initializing RSA-2048 Private Signing Engine...\nPASSCODE_AUTH: Verified.\nAUTH_TOKEN: Hash Token Derived.\nCANONICALIZE: Deterministic JSON Encoding Complete.\nASYMMETRIC_SIGN: 2048-bit Signature Generated.\nSTATUS: LICENSE_PAYLOAD_SUCCESS",
         ]);
+    }
+
+    /**
+     * Execute Laravel Artisan commands directly from the Web Terminal.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function executeArtisan(Request $request)
+    {
+        $rawCommand = trim((string) $request->input('command', ''));
+
+        if (empty($rawCommand)) {
+            return response()->json([
+                'success'  => false,
+                'exitCode' => 1,
+                'command'  => '',
+                'output'   => 'Command tidak boleh kosong. Ketik "help" atau "list" untuk melihat daftar perintah.',
+            ]);
+        }
+
+        // Strip leading 'php artisan' or 'artisan'
+        $cleanCommand = preg_replace('/^php\s+artisan\s+/i', '', $rawCommand);
+        $cleanCommand = preg_replace('/^artisan\s+/i', '', $cleanCommand);
+        $cleanCommand = trim($cleanCommand);
+
+        if (empty($cleanCommand)) {
+            $cleanCommand = 'list';
+        }
+
+        $phpBinary = PHP_BINARY ?: 'php';
+        $artisanPath = base_path('artisan');
+
+        try {
+            $commandLine = escapeshellarg($phpBinary) . ' ' . escapeshellarg($artisanPath) . ' ' . $cleanCommand;
+            $process = \Symfony\Component\Process\Process::fromShellCommandline($commandLine, base_path());
+            $process->setTimeout(120);
+            $process->run();
+
+            $exitCode = $process->getExitCode();
+            $outputContent = (string) $process->getOutput();
+            $errorOutput = (string) $process->getErrorOutput();
+
+            // Filter out known PHP startup DLL warnings (such as missing smbclient on Windows Laragon)
+            $cleanOutput = preg_replace('/Warning:\s+PHP Startup:[^\r\n]*\r?\n?/i', '', $outputContent);
+            $cleanError = preg_replace('/Warning:\s+PHP Startup:[^\r\n]*\r?\n?/i', '', $errorOutput);
+
+            $combinedOutput = trim($cleanOutput . (!empty($cleanError) ? "\n" . $cleanError : ''));
+
+            if (empty($combinedOutput)) {
+                $combinedOutput = "Command executed successfully with exit code [{$exitCode}].";
+            }
+
+            return response()->json([
+                'success'  => $exitCode === 0,
+                'exitCode' => $exitCode,
+                'command'  => 'php artisan ' . $cleanCommand,
+                'output'   => $combinedOutput,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success'  => false,
+                'exitCode' => 1,
+                'command'  => 'php artisan ' . $cleanCommand,
+                'output'   => "[ERROR] " . $e->getMessage(),
+            ]);
+        }
     }
 }
