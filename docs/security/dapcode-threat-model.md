@@ -16,10 +16,10 @@ Dokumen ini memetakan model ancaman (*Threat Model*), matriks vektor serangan po
 | **Passcode Reverse Engineering / Hardcoded Leaks** | Mengekstrak passcode authority dari source code | **One-Way SHA-256 Digest**: Passcode diverifikasi menggunakan perbandingan hash konstan `hash_equals()` dengan digest SHA-256. Tidak ada plaintext passcode di source code. | **MITIGATED** |
 | **Signature Forgery / Fake License** | Pembuatan lisensi palsu secara lokal | **Asymmetric RSA-2048 + SHA-256 Signature**: Aplikasi klien hanya memiliki Public Key. Private signing key terisolasi aman di sisi Pemilik/Otoritas. | **MITIGATED** |
 | **Installation ID Spoofing / Cloning** | Menggunakan lisensi dari server lain | Lisensi mengikat `installation_id` mesin lokal yang di-hash dari hardware/environment signature. Key AES modul mengikat `installation_id`. | **MITIGATED** |
-| **Ciphertext / Tag Tampering** | Memodifikasi file `.enc` atau manifest | Dekripsi AES-256-GCM memvalidasi 16-byte Authentication Tag + SHA-256 checksum pasca-dekripsi. Jika rusak, eksekusi ditolak (*Fail-Closed*). | **MITIGATED** |
+| **Ciphertext / Tag Tampering** | Memodifikasi file `.enc` atau master manifest (`modules-manifest.json`) | Dekripsi AES-256-GCM memvalidasi 16-byte Authentication Tag + SHA-256 checksum pasca-dekripsi. Jika rusak, eksekusi ditolak (*Fail-Closed*). | **MITIGATED** |
 | **Stale / Injected Plaintext File** | Membuat file PHP manual tanpa lisensi | `LicenseGuard` memvalidasi status lisensi aktif dan integritas modul. Jika tidak ada lisensi sah, akses tetap menghasilkan HTTP 403. | **MITIGATED** |
 | **Race Condition on Revocation** | Eksekusi modul bersamaan dengan revokasi | File locking eksklusif (`flock LOCK_EX`) pada proses unlock dan validasi ulang lisensi di critical section. Plaintext langsung dipurge saat revokasi. | **MITIGATED** |
-| **Core Security File Tampering** | Mengedit `LicenseGuard.php` atau `LicenseVerifier.php` | **Layer 5 (IntegrityService)** memverifikasi SHA-256 manifest file inti sistem. Status menjadi `INTEGRITY_FAILED` jika dimodifikasi. | **MITIGATED** |
+| **Core Security File Tampering** | Mengedit `LicenseGuard.php`, `LicenseVerifier.php`, atau `modules-manifest.json` | **Layer 5 (IntegrityService)** memverifikasi SHA-256 seluruh file inti sistem dan master manifest. Status menjadi `INTEGRITY_FAILED` jika dimodifikasi. | **MITIGATED** |
 | **Path Traversal & Obfuscation** (`../`, encoded slugs) | Mengakses modul terlarang via path manipulasi | **Canonical Module Resolver** menormalisasi string, menolak traversal, encoding ganda, dan karakter non-alfanumerik. | **MITIGATED** |
 | **Unauthorized / Bypass Unminification** | Membongkar atau me-unminify kode terproteksi secara ilegal | **Secure SourceMap Vault + Layer 5 Integrity**: Kode asli terenkripsi di `.sourcemaps/*.dapmap`. Unminify hanya dapat dieksekusi via channel resmi yang terotorisasi (`code:unminify`). Segala bypass eksternal dilarang keras dan ditolak oleh Security Guardian. | **MITIGATED** |
 
@@ -32,8 +32,8 @@ Batas eksekusi modul tidak bergantung pada titik tunggal:
 2. **Layer 2 (HMVC Dynamic Dispatcher)**: Memvalidasi `resolveCanonicalModuleName()` dan memanggil `LicenseGuard::assertModuleAllowed()` sebelum resolver memanggil controller.
 3. **Layer 3 (Core Base Controller)**: `Controller::__construct()`, `render()`, dan `moduleRender()` mengunci instansiasi dan eksekusi controller.
 4. **Layer 4 (RSA-2048 Digital Licensing & Authority Passcode)**: Memverifikasi keabsahan tanda tangan kriptografis dan digest passcode authority.
-5. **Layer 5 (Anti-Tampering Integrity Guard)**: Memverifikasi hash SHA-256 seluruh file core security.
-6. **Layer 6 (AES-256-GCM Envelope Encryption)**: Menyimpan kode kritis dalam format terenkripsi `.php.enc` di GitHub dan hanya membuka plaintext secara lokal saat aktif.
+5. **Layer 5 (Anti-Tampering Integrity Guard)**: Memverifikasi hash SHA-256 seluruh file core security dan master manifest (`modules-manifest.json`).
+6. **Layer 6 (AES-256-GCM Envelope Encryption & Centralized Master Manifest)**: Menyimpan kode kritis dalam format terenkripsi `.php.enc` di GitHub dengan master manifest terpusat di `app/Services/Dapcode/modules-manifest.json` dan hanya membuka plaintext secara lokal saat aktif.
 
 ---
 

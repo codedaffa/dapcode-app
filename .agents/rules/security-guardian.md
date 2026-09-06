@@ -45,6 +45,7 @@ Komponen berikut WAJIB dianggap sebagai security-critical:
 * Security audit logging / Security audit logging
 * Security configuration / Konfigurasi keamanan
 * Security automated tests / Automated security tests
+* Master modules manifest (`app/Services/Dapcode/modules-manifest.json`) / Master manifest modul terpusat
 
 ---
 

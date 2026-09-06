@@ -74,7 +74,7 @@ Tugas Anda adalah mengimplementasikan sistem **Code Minifier & Unminifier Enterp
 #### 3. `CodeMinifierService.php`
 - **Fungsi:** Engine utama minifikasi dan analisis status kode.
 - **Target File Discovery:**
-  - Mendukung target `'all'`, `'modules'`, `'routes'`, `'views'`, atau path file/direktori spesifik.
+  - Mendukung target `'all'`, `'aegisguard'` (file proteksi core & master manifest JSON terpusat), `'modules'`, `'routes'`, `'views'`, atau path file/direktori spesifik.
 - **Method yang wajib ada:**
   - `minifyPhp(string $content, string $filePath = ''): string`
     - Memanfaatkan `php_strip_whitespace()`.

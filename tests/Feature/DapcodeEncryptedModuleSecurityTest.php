@@ -28,6 +28,12 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
     /** @var array<string, string> Backup of original model contents */
     protected static $originalModels = [];
 
+    /** @var array<string, array<string, string>> Backup of original encrypted files per module */
+    protected static $originalEncryptedFiles = [];
+
+    /** @var string|null Backup of original master manifest */
+    protected static $originalMasterManifest = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -35,7 +41,11 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
             $this->authorityPrivateKey = file_get_contents($this->privKeyPath);
         }
 
-        // Backup Commerce & Career controllers and models
+        if (self::$originalMasterManifest === null && File::exists(ModuleEncryptionService::getMasterManifestPath())) {
+            self::$originalMasterManifest = File::get(ModuleEncryptionService::getMasterManifestPath());
+        }
+
+        // Backup Commerce & Career controllers, models, and original encrypted payloads
         $modules = ['Commerce', 'Career', 'Project', 'Research'];
         foreach ($modules as $mod) {
             $ctrl = app_path("Modules/{$mod}/Controllers/{$mod}.php");
@@ -45,6 +55,14 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
             $model = app_path("Modules/{$mod}/Models/{$mod}.php");
             if (!isset(self::$originalModels[$mod]) && File::exists($model)) {
                 self::$originalModels[$mod] = File::get($model);
+            }
+            $encDir = app_path("Modules/{$mod}/Encrypted");
+            if (!isset(self::$originalEncryptedFiles[$mod]) && File::isDirectory($encDir)) {
+                self::$originalEncryptedFiles[$mod] = [];
+                foreach (File::allFiles($encDir) as $f) {
+                    $rel = ltrim(str_replace(str_replace('\\', '/', $encDir), '', str_replace('\\', '/', $f->getPathname())), '/');
+                    self::$originalEncryptedFiles[$mod][$rel] = File::get($f->getPathname());
+                }
             }
         }
 
@@ -58,6 +76,9 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
     {
         $this->resetLicenseFiles();
         $this->restorePlaintextFiles();
+        if (self::$originalMasterManifest !== null) {
+            File::put(ModuleEncryptionService::getMasterManifestPath(), self::$originalMasterManifest);
+        }
         IntegrityService::recordCoreFilesManifest();
         LicenseGuard::clearCache();
         parent::tearDown();
@@ -65,18 +86,40 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
 
     protected function restorePlaintextFiles(): void
     {
-        foreach (self::$originalControllers as $mod => $content) {
+        $modules = ['Commerce', 'Career', 'Project', 'Research'];
+        foreach ($modules as $mod) {
             $ctrlPath = app_path("Modules/{$mod}/Controllers/{$mod}.php");
-            File::put($ctrlPath, $content);
+            if (isset(self::$originalControllers[$mod])) {
+                File::put($ctrlPath, self::$originalControllers[$mod]);
+            } elseif (File::exists($ctrlPath)) {
+                File::delete($ctrlPath);
+            }
+
+            $modelPath = app_path("Modules/{$mod}/Models/{$mod}.php");
+            if (isset(self::$originalModels[$mod])) {
+                File::put($modelPath, self::$originalModels[$mod]);
+            } elseif (File::exists($modelPath)) {
+                File::delete($modelPath);
+            }
+
             $encDir = app_path("Modules/{$mod}/Encrypted");
-            if (File::isDirectory($encDir)) {
-                File::deleteDirectory($encDir);
+            if (isset(self::$originalEncryptedFiles[$mod])) {
+                if (File::isDirectory($encDir)) {
+                    File::deleteDirectory($encDir);
+                }
+                File::makeDirectory($encDir, 0755, true, true);
+                foreach (self::$originalEncryptedFiles[$mod] as $rel => $encContent) {
+                    $fullPath = $encDir . '/' . $rel;
+                    if (!File::isDirectory(dirname($fullPath))) {
+                        File::makeDirectory(dirname($fullPath), 0755, true, true);
+                    }
+                    File::put($fullPath, $encContent);
+                }
             }
         }
 
-        foreach (self::$originalModels as $mod => $content) {
-            $modelPath = app_path("Modules/{$mod}/Models/{$mod}.php");
-            File::put($modelPath, $content);
+        if (self::$originalMasterManifest !== null) {
+            File::put(ModuleEncryptionService::getMasterManifestPath(), self::$originalMasterManifest);
         }
     }
 
@@ -138,12 +181,14 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
     {
         $modStudly = \Illuminate\Support\Str::studly($module);
         $ctrlPath = app_path("Modules/{$modStudly}/Controllers/{$modStudly}.php");
-        if (!File::exists($ctrlPath) && isset(self::$originalControllers[$modStudly])) {
-            File::put($ctrlPath, self::$originalControllers[$modStudly]);
+        if (!File::exists($ctrlPath)) {
+            $ctrlContent = self::$originalControllers[$modStudly] ?? "<?php\nnamespace App\Modules\\{$modStudly}\\Controllers;\nuse App\Http\Controllers\Controller;\nclass {$modStudly} extends Controller {\n    public function index() { return response()->json(['module' => '{$modStudly}']); }\n}\n";
+            File::put($ctrlPath, $ctrlContent);
         }
         $modelPath = app_path("Modules/{$modStudly}/Models/{$modStudly}.php");
-        if (!File::exists($modelPath) && isset(self::$originalModels[$modStudly])) {
-            File::put($modelPath, self::$originalModels[$modStudly]);
+        if (!File::exists($modelPath)) {
+            $modelContent = self::$originalModels[$modStudly] ?? "<?php\nnamespace App\Modules\\{$modStudly}\\Models;\nuse Illuminate\Database\Eloquent\Model;\nclass {$modStudly} extends Model {\n    protected \$table = '" . strtolower($modStudly) . "';\n}\n";
+            File::put($modelPath, $modelContent);
         }
 
         $instId = InstallationService::getInstallationId();
@@ -172,7 +217,8 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
         $this->createEncryptedModuleState('Commerce');
         $ctrlPath = app_path('Modules/Commerce/Controllers/Commerce.php');
         $this->assertFileDoesNotExist($ctrlPath);
-        $this->assertFileExists(app_path('Modules/Commerce/Encrypted/manifest.json'));
+        $this->assertTrue(ModuleEncryptionService::isModuleEncrypted('Commerce'));
+        $this->assertFileExists(ModuleEncryptionService::getMasterManifestPath());
     }
 
     // 2. Fresh clone has no plaintext protected Models
@@ -453,11 +499,9 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
     public function test_17_modified_manifest_fails()
     {
         $license = $this->createEncryptedModuleState('Commerce');
-        $manifestPath = app_path('Modules/Commerce/Encrypted/manifest.json');
-
-        $manifest = json_decode(File::get($manifestPath), true);
-        $manifest['salt'] = bin2hex(random_bytes(16)); // Tamper salt
-        File::put($manifestPath, json_encode($manifest));
+        $master = ModuleEncryptionService::getMasterManifest();
+        $master['modules']['commerce']['salt'] = bin2hex(random_bytes(16)); // Tamper salt
+        ModuleEncryptionService::saveMasterManifest($master);
 
         $res = ModuleEncryptionService::unlockModule('Commerce', $license);
         $this->assertFalse($res['success']);
@@ -467,11 +511,9 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
     public function test_18_checksum_mismatch_fails()
     {
         $license = $this->createEncryptedModuleState('Commerce');
-        $manifestPath = app_path('Modules/Commerce/Encrypted/manifest.json');
-
-        $manifest = json_decode(File::get($manifestPath), true);
-        $manifest['files'][0]['sha256'] = hash('sha256', 'tampered-payload-expectation');
-        File::put($manifestPath, json_encode($manifest));
+        $master = ModuleEncryptionService::getMasterManifest();
+        $master['modules']['commerce']['files'][0]['sha256'] = hash('sha256', 'tampered-payload-expectation');
+        ModuleEncryptionService::saveMasterManifest($master);
 
         $res = ModuleEncryptionService::unlockModule('Commerce', $license);
         $this->assertFalse($res['success']);
@@ -481,11 +523,9 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
     public function test_19_path_traversal_is_rejected()
     {
         $license = $this->createEncryptedModuleState('Commerce');
-        $manifestPath = app_path('Modules/Commerce/Encrypted/manifest.json');
-
-        $manifest = json_decode(File::get($manifestPath), true);
-        $manifest['files'][0]['path'] = '../../../../public/hacked.php';
-        File::put($manifestPath, json_encode($manifest));
+        $master = ModuleEncryptionService::getMasterManifest();
+        $master['modules']['commerce']['files'][0]['path'] = '../../../../public/hacked.php';
+        ModuleEncryptionService::saveMasterManifest($master);
 
         $res = ModuleEncryptionService::unlockModule('Commerce', $license);
         $this->assertFalse($res['success']);
