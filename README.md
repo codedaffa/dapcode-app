@@ -6,6 +6,7 @@
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
   <img src="https://img.shields.io/badge/Architecture-HMVC%20Modular-6366f1?style=for-the-badge" alt="HMVC">
   <img src="https://img.shields.io/badge/Security%20Engine-DapCode%20AegisGuard%E2%84%A2-emerald?style=for-the-badge&logo=auth0&logoColor=white" alt="DapCode AegisGuard">
+  <img src="https://img.shields.io/badge/Minifier%20Vault-Secure%20SourceMap-blueviolet?style=for-the-badge" alt="Secure SourceMap Vault">
   <img src="https://img.shields.io/badge/Theme%20Engine-Indonesian%20Holidays-dc2626?style=for-the-badge" alt="Indonesian Holidays">
   <img src="https://img.shields.io/badge/Localization-ID%20%7C%20EN-38bdf8?style=for-the-badge" alt="i18n">
   <img src="https://img.shields.io/badge/Security%20Tests-61%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="61 Passed Tests">
@@ -16,7 +17,7 @@
   <img src="docs/images/dapcode-aegisguard.jpg" alt="DapCode AegisGuard - Advanced Cybersecurity & Protection" width="100%">
 </p>
 
-**DapCode App** adalah platform portofolio digital dan ekosistem pengembang modern yang dibangun di atas framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)**, frontend asset pipeline modern bertenaga **Laravel Vite**, serta sistem proteksi multi-lapis terenkripsi **DapCode AegisGuard™** (*6-Layer Defense-in-Depth, Asymmetric RSA-2048 Digital Licensing, and AES-256-GCM Envelope Encryption*).
+**DapCode App** adalah platform portofolio digital dan ekosistem pengembang modern yang dibangun di atas framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)**, frontend asset pipeline modern bertenaga **Laravel Vite**, sistem proteksi multi-lapis terenkripsi **DapCode AegisGuard™** (*6-Layer Defense-in-Depth, Asymmetric RSA-2048 Digital Licensing, and AES-256-GCM Envelope Encryption*), serta mesin **Code & View Minifier / Unminifier** bertenaga **Secure SourceMap Vault** (*Zero Plaintext Leak, 100% Byte-for-Byte SHA-256 Exact Restoration*).
 
 ---
 
@@ -42,18 +43,29 @@ Sistem keamanan enterprise yang menggabungkan kriptografi kunci asimetris (**RSA
   - **Auto-Lock:** Saat lisensi dicabut (*Revoke*), file `.php` dihapus dari disk sehingga kembali ke status terenkripsi dan fail-closed.
   - **Git Leak-Proof:** File `.php` plaintext diabaikan oleh `.gitignore` sehingga **hanya file `.php.enc` yang di-push ke GitHub**.
 
-### 3. 🖥️ Developer Web Terminal & Authority Signer (`/dapcode/terminal`)
+### 3. 📦 PHP Code Minifier Engine with Secure SourceMap Vault
+Engine kompresi dan dekompresi performa tinggi untuk file PHP (AegisGuard Protection, HMVC Modules, Controllers, Models, Routes):
+- **Zero Plaintext Leak (`.bak` Elimination):** Tidak lagi meninggalkan file backup `.bak` di direktori source code. Seluruh kode asli dikompresi (`gzdeflate` level 9), dienkripsi, dan diarsipkan secara aman di `storage/app/dapcode/.sourcemaps/*.dapmap` (terisolasi dan diabaikan oleh Git).
+- **100% Byte-for-Byte SHA-256 Exact Restoration:** Menjamin restorasi kode asli saat proses `unminify` persis 100% identik tanpa perubahan spasi, baris baru, indentasi, atau format karakter.
+- **PHP Code Minification:** Menggunakan engine tokenizer native PHP (`php_strip_whitespace`) untuk membersihkan komentar, tab, dan baris baru secara instan.
+- **Full Module Discovery:** Otomatis memindai dan me-minify seluruh file PHP pada modul HMVC (`app/Modules/*`), dengan proteksi khusus yang mengabaikan file terenkripsi (`*.enc`) dan Blade Views.
+
+### 4. 🖥️ Developer Web Terminal & Authority Signer (`/dapcode/terminal`)
 - **Interactive Artisan Console:** Menjalankan perintah Laravel Artisan secara visual dengan riwayat perintah (*keyboard history*), auto-scroll, dan output berwarna.
-- **Dedicated Make Module Modal:** Tombol **`+ Make Module`** untuk membuat modul baru lengkap (Controller, Model, View, Core Base Controller, dan auto-enkripsi Layer 6).
+- **Dedicated Modal Actions:**
+  - **`+ Make Module`**: Membuat modul baru lengkap (Controller, Model, View, Core Base Controller, dan auto-enkripsi Layer 6).
+  - **`🗑️ Remove Module`**: Menghapus modul secara aman beserta registrasinya.
+  - **`⚡ Minify PHP Code`**: Menjalankan minifikasi kode PHP (Semua Modul, Controller, Model, AegisGuard, Routes) secara visual.
+  - **`🔄 Unminify PHP Code`**: Merestorasi kode asli dari Secure SourceMap Vault secara visual.
 - **RSA-2048 License Signer:** Menghasilkan signed activation payload dan signed revocation token secara instan dengan proteksi passcode Authority.
 - **Custom Floating Toast Notifications:** Seluruh notifikasi menggunakan komponen UI modern (*no native browser alerts*).
 
-### 4. ⚡ Modern Frontend Asset Pipeline (Laravel Vite)
+### 5. ⚡ Modern Frontend Asset Pipeline (Laravel Vite)
 - Ditenagai **Vite** & **laravel-vite-plugin** dengan kompilasi super cepat dan *Hot Module Replacement* (HMR).
 - Integrasi Blade native melalui directive `@vite(['resources/css/app.css', 'resources/js/app.js'])`.
 - Modul JavaScript modern berbasis standard ES Modules (ESM).
 
-### 5. 🇮🇩 Indonesian Holiday & Celebration Theme Engine
+### 6. 🇮🇩 Indonesian Holiday & Celebration Theme Engine
 Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indonesia:
 - **HUT Kemerdekaan RI (17 Agustus):** Merah Putih, font *Cinzel*, glow kemerdekaan.
 - **Hari Raya Idul Fitri & Ramadhan:** Emerald & Gold, font *Amiri*, ornamen islami.
@@ -62,7 +74,7 @@ Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indone
 - **Hari Lahir Pancasila, Sumpah Pemuda, Hari Pahlawan, Hari Kartini, Waisak, & Tahun Baru Masehi.**
 - **Manual Selector:** Pengguna dapat mengganti tema secara bebas melalui ikon palet di header (`/theme/{key}`).
 
-### 6. 🌐 Dual-Language Localization (ID / EN)
+### 7. 🌐 Dual-Language Localization (ID / EN)
 - Dukungan penuh multi-bahasa untuk seluruh modul dan antarmuka sistem (`/lang/id` & `/lang/en`).
 
 ---
@@ -93,9 +105,14 @@ Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indone
 dapcode-app/
 ├── app/
 │   ├── Console/Commands/
+│   │   ├── CodeMinifyCommand.php      # Minify PHP & Blade: php artisan code:minify
+│   │   ├── CodeUnminifyCommand.php    # Unminify PHP & Blade: php artisan code:unminify
+│   │   ├── ViewMinifyCommand.php      # Minify Views: php artisan view:minify
+│   │   ├── ViewUnminifyCommand.php    # Unminify Views: php artisan view:unminify
 │   │   ├── DapcodeModuleCommand.php   # Status modul: php artisan dapcode:module
 │   │   ├── DapcodePackCommand.php     # Re-encrypt kode develop: php artisan dapcode:pack
 │   │   ├── MakeHMVCModule.php         # Generator modul baru: php artisan make:module
+│   │   ├── RemoveHMVCModule.php       # Hapus modul HMVC: php artisan remove:module
 │   │   └── SignDapcodeLicense.php     # Authority CLI Signer (RSA-2048 Private Key)
 │   ├── Http/
 │   │   ├── Controllers/
@@ -123,7 +140,13 @@ dapcode-app/
 │       │   ├── ActivationService.php  # Handler Aktivasi & Pencabutan Lisensi
 │       │   ├── ModuleEncryptionService.php # AES-256-GCM Envelope Encryption Engine
 │       │   ├── LicenseGuard.php       # Sentral Pengecekan Izin Akses Modul
-│       │   └── IntegrityService.php   # Layer 5 SHA-256 Anti-Tampering Engine
+│       │   ├── IntegrityService.php   # Layer 5 SHA-256 Anti-Tampering Engine
+│       │   ├── SourceMapVaultService.php # Encrypted SourceMap Vault Engine
+│       │   ├── CodeMinifierService.php # PHP & Blade Code Minifier Engine
+│       │   └── CodeFormatterService.php # Code Unminifier & Fallback Beautifier
+│       ├── View/
+│       │   ├── ViewMinifierService.php  # Blade Views Minification Engine
+│       │   └── ViewFormatterService.php # Blade Views Formatter & Beautifier
 │       └── HMVC/
 │           └── HMVC.php               # Core Dispatcher & Hierarchical Request Engine
 ├── config/
@@ -139,6 +162,10 @@ dapcode-app/
 │       │   ├── authority-terminal.blade.php # Developer Web Terminal & RSA-2048 Signer
 │       │   └── license-required.blade.php # Tampilan Error Saat Modul Terkunci (403)
 │       └── portfolio.blade.php        # Landing Page Portofolio
+├── storage/
+│   └── app/
+│       └── dapcode/
+│           └── .sourcemaps/           # Secure SourceMap Vault (*.dapmap, di-.gitignore)
 ├── tests/
 │   └── Feature/
 │       ├── DapcodeEncryptedModuleSecurityTest.php # 25 Tests Enkripsi AES-256-GCM
@@ -187,6 +214,60 @@ Buka browser pada: **`http://127.0.0.1:8000`**
 
 ---
 
+## ⚡ Panduan Minify & Unminify (PHP Code & HMVC Modules)
+
+Anda dapat mengompresi dan merestorasi kode PHP melalui **Web Terminal** di `http://127.0.0.1:8000/dapcode/terminal` (menu *Quick Command Presets*) atau melalui Artisan CLI:
+
+### 1. Minifikasi Kode PHP (`code:minify`)
+```bash
+# Minify seluruh file PHP (Semua Modul, Controller, Model, AegisGuard, Routes) sekaligus:
+php artisan code:minify all
+
+# Minify seluruh file PHP pada semua modul HMVC (app/Modules/*):
+php artisan code:minify modules
+
+# Minify seluruh Controllers yang tidak dienkripsi (app/Http/Controllers & Modules):
+php artisan code:minify controllers
+
+# Minify seluruh Models yang tidak dienkripsi (app/Models & Modules):
+php artisan code:minify models
+
+# Minify seluruh file proteksi DapCode AegisGuard (Services, Core, Middleware, Commands):
+php artisan code:minify aegisguard
+
+# Minify seluruh file routes (web.php, api.php, channels.php, console.php):
+php artisan code:minify routes
+
+# Minify 1 modul spesifik (misal: Blog):
+php artisan code:minify Blog
+```
+
+### 2. Restorasi Kode Asli (`code:unminify`)
+```bash
+# Restorasi seluruh file dari Secure SourceMap Vault:
+php artisan code:unminify all
+
+# Restorasi seluruh modul HMVC ke 100% kode asli:
+php artisan code:unminify modules
+
+# Restorasi Controllers ke 100% kode asli:
+php artisan code:unminify controllers
+
+# Restorasi Models ke 100% kode asli:
+php artisan code:unminify models
+
+# Restorasi file proteksi AegisGuard ke 100% kode asli:
+php artisan code:unminify aegisguard
+
+# Restorasi file routes:
+php artisan code:unminify routes
+
+# Restorasi 1 modul spesifik:
+php artisan code:unminify Blog
+```
+
+---
+
 ## 💻 Panduan Pengembangan Modul Baru (*Developer Workflow*)
 
 ### A. Membuat Modul Baru:
@@ -206,6 +287,11 @@ php artisan dapcode:pack Blog
 php artisan dapcode:pack all
 ```
 *Perintah ini mengambil kode terbaru, mengenkripsinya ke `.php.enc`, memperbarui manifest integritas, dan mengunci file plaintext agar aman saat di-commit ke Git.*
+
+### C. Menghapus Modul:
+```bash
+php artisan remove:module Blog
+```
 
 ---
 

@@ -1,28 +1,2 @@
 <?php
-
-namespace App\Http\Controllers\Core;
-
-use App\Http\Controllers\Controller;
-
-class MediaControllers extends Controller
-{
-    /**
-     * Module name identifier.
-     *
-     * @var string
-     */
-    protected $moduleName = 'Media';
-
-    /**
-     * Helper to render view within Media module namespace.
-     *
-     * @param string $view
-     * @param array $data
-     * @param bool $return
-     * @return \Illuminate\Contracts\View\View|string
-     */
-    protected function moduleRender(string $view, array $data = [], bool $return = false)
-    {
-        return parent::moduleRender($view, $data, $return);
-    }
-}
+namespace App\Http\Controllers\Core; use App\Http\Controllers\Controller; class MediaControllers extends Controller { protected $moduleName = 'Media'; protected function moduleRender(string $view, array $data = [], bool $return = false) { return parent::moduleRender($view, $data, $return); } }
