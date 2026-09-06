@@ -60,7 +60,8 @@ Buat file konfigurasi yang memuat:
 
 3. **`ModuleEncryptionService.php`:**
    - Enkripsi dan dekripsi modul amplop AES-256-GCM dengan HKDF-SHA256 key derivation.
-   - `encryptModule($module, $license)`: Membaca `.php` dan mengenkripsinya ke `.php.enc` dan `manifest.json`.
+   - Mengelola master manifest terpusat di `app/Services/Dapcode/modules-manifest.json` di bawah proteksi AegisGuard.
+   - `encryptModule($module, $license)`: Membaca `.php` dan mengenkripsinya ke `.php.enc` serta mencatatnya ke `modules-manifest.json`.
    - `decryptModule($module, $license)`: Mendekripsi `.php.enc` ke `.php` sementara dengan validasi GCM Tag dan Checksum.
    - `lockModule($module)`: Menghapus file `.php` dari disk (kembali ke locked state).
 

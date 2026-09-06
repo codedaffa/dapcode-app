@@ -37,11 +37,11 @@ Sistem keamanan enterprise yang menggabungkan kriptografi kunci asimetris (**RSA
 - **Layer 3 (Core BaseController Guard):** Pengecekan lisensi pada inisialisasi constructor controller (`App\Http\Controllers\Core`).
 - **Layer 4 (RSA-2048 Digital Licensing & Authority Passcode):** Tanda tangan digital asimetris dengan verifikasi hash satu arah (SHA-256 constant-time). Repositori klien **bebas dari hardcoded plaintext passcodes & private keys**.
 - **Layer 5 (Integrity Verification & Anti-Tampering Engine):** Memeriksa integritas SHA-256 seluruh file core security. Modifikasi file ilegal langsung memicu *fail-closed*.
-- **Layer 6 (AES-256-GCM Envelope Encryption & Fail-Closed Lock):**
-  - **Fresh Clone State:** Source code controller & model tersimpan dalam format terenkripsi **`.php.enc`** di `app/Modules/{Module}/Encrypted/`.
+- **Layer 6 (AES-256-GCM Envelope Encryption & Centralized Master Manifest):**
+  - **Fresh Clone State:** Source code controller & model tersimpan dalam format terenkripsi **`.php.enc`** di `app/Modules/{Module}/Encrypted/` dengan master manifest terpusat di `app/Services/Dapcode/modules-manifest.json` yang dipantau oleh Layer 5.
   - **Auto-Unlock:** Saat diaktivasi dengan lisensi resmi, file didekripsi menjadi `.php` di disk lokal.
   - **Auto-Lock:** Saat lisensi dicabut (*Revoke*), file `.php` dihapus dari disk sehingga kembali ke status terenkripsi dan fail-closed.
-  - **Git Leak-Proof:** File `.php` plaintext diabaikan oleh `.gitignore` sehingga **hanya file `.php.enc` yang di-push ke GitHub**.
+  - **Git Leak-Proof:** File `.php` plaintext diabaikan oleh `.gitignore` sehingga **hanya file `.php.enc` dan `modules-manifest.json` yang di-push ke GitHub**.
 
 ### 3. 📦 PHP Code Minifier Engine with Secure SourceMap Vault
 Engine kompresi dan dekompresi performa tinggi untuk file PHP (AegisGuard Protection, HMVC Modules, Controllers, Models, Routes):
@@ -125,7 +125,7 @@ dapcode-app/
 │   │       └── DapcodeLicenseMiddleware.php # Layer 1 Dynamic Route Interceptor
 │   ├── Modules/                       # 13 Modul HMVC Terenkripsi
 │   │   ├── Dashboard/
-│   │   │   ├── Encrypted/             # File .php.enc & manifest.json (Naik ke Git)
+│   │   │   ├── Encrypted/             # File .php.enc (Naik ke Git)
 │   │   │   ├── Controllers/           # Plaintext .php (Lokal saat aktif, di-.gitignore)
 │   │   │   ├── Models/                # Plaintext .php (Lokal saat aktif, di-.gitignore)
 │   │   │   └── Views/                 # Blade View Templates (Naik ke Git)
@@ -135,6 +135,7 @@ dapcode-app/
 │   │   └── HMVCServiceProvider.php    # Dynamic HMVC Route & View Namespace Loader
 │   └── Services/
 │       ├── Dapcode/                   # DapCode AegisGuard™ Core Engine
+│       │   ├── modules-manifest.json  # Master Centralized Module Manifest (Naik ke Git)
 │       │   ├── InstallationService.php # ID Instalasi Unik Persisten (DAP-XXXXXX-...)
 │       │   ├── LicenseVerifier.php    # Verifikasi Kriptografi RSA-2048 & Hash Passcode
 │       │   ├── ActivationService.php  # Handler Aktivasi & Pencabutan Lisensi
@@ -232,7 +233,7 @@ php artisan code:minify controllers
 # Minify seluruh Models yang tidak dienkripsi (app/Models & Modules):
 php artisan code:minify models
 
-# Minify seluruh file proteksi DapCode AegisGuard (Services, Core, Middleware, Commands):
+# Minify seluruh file proteksi DapCode AegisGuard (Services, Master Manifest, Core, Middleware, Commands):
 php artisan code:minify aegisguard
 
 # Minify seluruh file routes (web.php, api.php, channels.php, console.php):

@@ -13,9 +13,9 @@ DapCode AegisGuard™ mengimplementasikan sistem keamanan berlapis untuk mengont
 4. **Layer 4: RSA-2048 Digital Licensing & Authority Secret Passcode** (Cryptographic Licensing Boundary)
    Memverifikasi keabsahan tanda tangan digital RSA-2048 dengan public verification key dan validasi constant-time SHA-256 hash passcode. Bebas dari hardcoded plaintext credentials di client repo.
 5. **Layer 5: Core File Integrity Service** (Anti-Tamper Checksum Verification)
-   Memverifikasi SHA-256 hash file inti arsitektur lisensi menggunakan manifest integritas (`integrity_manifest.json`). Modifikasi file core secara ilegal langsung memicu status `INTEGRITY_FAILED`.
+   Memverifikasi SHA-256 hash file inti arsitektur lisensi dan master manifest modul (`app/Services/Dapcode/modules-manifest.json`) menggunakan manifest integritas runtime (`.integrity-manifest`). Modifikasi file core atau manipulasi master manifest secara ilegal langsung memicu status `INTEGRITY_FAILED`.
 6. **Layer 6: Encrypted Critical Module Protection & Atomic Runtime** (AES-256-GCM Envelope Encryption)
-   Menyimpan source code controller & model dalam format terenkripsi (`.php.enc`) di repositori fresh clone GitHub. Source code didekripsi ke file `.php` lokal saat lisensi aktif, dan dihapus (*fail-closed lock*) saat lisensi dicabut (*Revoked*).
+   Menyimpan source code controller & model dalam format terenkripsi (`.php.enc`) di repositori fresh clone GitHub dengan master manifest terpusat di `app/Services/Dapcode/modules-manifest.json`. Source code didekripsi ke file `.php` lokal saat lisensi aktif, dan dihapus (*fail-closed lock*) saat lisensi dicabut (*Revoked*).
 
 ---
 
@@ -26,7 +26,7 @@ DapCode AegisGuard™ mengimplementasikan sistem keamanan berlapis untuk mengont
            ↓
     [ Read Envelope ]
            ↓
-[ Validate Manifest (Anti-Traversal) ]
+[ Validate Master Manifest (Anti-Traversal) ]
            ↓
  [ Validate RSA License Signature ]
            ↓
@@ -38,7 +38,7 @@ DapCode AegisGuard™ mengimplementasikan sistem keamanan berlapis untuk mengont
            ↓
  [ Verify GCM Authentication Tag ]
            ↓
-[ Verify SHA-256 Checksum vs Manifest ]
+[ Verify SHA-256 Checksum vs Master Manifest ]
            ↓
  [ Write to Temporary File (.tmp) ]
            ↓
