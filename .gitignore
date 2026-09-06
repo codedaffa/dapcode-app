@@ -31,6 +31,9 @@ Thumbs.db
 /storage/app/dapcode/*.pem
 /storage/app/dapcode/*.bak
 /storage/app/dapcode/*_backup*
+/storage/app/dapcode/.sourcemaps
+/storage/app/dapcode/*.dapmap
+*.bak
 
 # ==============================================================================
 # DAPCODE PROTECTED MODULES (PLAINTEXT FILES ARE IGNORED)

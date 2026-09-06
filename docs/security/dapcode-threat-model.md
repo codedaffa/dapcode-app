@@ -21,6 +21,7 @@ Dokumen ini memetakan model ancaman (*Threat Model*), matriks vektor serangan po
 | **Race Condition on Revocation** | Eksekusi modul bersamaan dengan revokasi | File locking eksklusif (`flock LOCK_EX`) pada proses unlock dan validasi ulang lisensi di critical section. Plaintext langsung dipurge saat revokasi. | **MITIGATED** |
 | **Core Security File Tampering** | Mengedit `LicenseGuard.php` atau `LicenseVerifier.php` | **Layer 5 (IntegrityService)** memverifikasi SHA-256 manifest file inti sistem. Status menjadi `INTEGRITY_FAILED` jika dimodifikasi. | **MITIGATED** |
 | **Path Traversal & Obfuscation** (`../`, encoded slugs) | Mengakses modul terlarang via path manipulasi | **Canonical Module Resolver** menormalisasi string, menolak traversal, encoding ganda, dan karakter non-alfanumerik. | **MITIGATED** |
+| **Unauthorized / Bypass Unminification** | Membongkar atau me-unminify kode terproteksi secara ilegal | **Secure SourceMap Vault + Layer 5 Integrity**: Kode asli terenkripsi di `.sourcemaps/*.dapmap`. Unminify hanya dapat dieksekusi via channel resmi yang terotorisasi (`code:unminify`). Segala bypass eksternal dilarang keras dan ditolak oleh Security Guardian. | **MITIGATED** |
 
 ---
 
