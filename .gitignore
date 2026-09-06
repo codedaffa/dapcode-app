@@ -33,25 +33,31 @@ Thumbs.db
 /storage/app/dapcode/*.pem
 /storage/app/dapcode/*.bak
 /storage/app/dapcode/*_backup*
-/storage/app/dapcode/.sourcemaps
+/storage/app/dapcode/.sourcemaps/
 /storage/app/dapcode/*.dapmap
+/storage/framework/cache/dap_php_*
+/storage/logs/license-audit*.log
 *.bak
 *.tmp
 
 # ==============================================================================
 # DAPCODE PROTECTED MODULES (PLAINTEXT FILES ARE IGNORED)
 # ==============================================================================
-# Only encrypted envelopes in app/Modules/*/Encrypted/*.enc and master manifest
+# Only encrypted envelopes in app/Modules/*/Encrypted/*.enc (.php.enc) and master manifest
 # in app/Services/Dapcode/modules-manifest.json are committed to Git.
 # Plaintext source code (.php) from local activations must never leak to GitHub.
-app/Modules/*/Controllers/*.php
-app/Modules/*/Models/*.php
-app/Modules/*/Services/*.php
-app/Modules/*/Repositories/*.php
-app/Modules/*/Actions/*.php
-app/Modules/*/Jobs/*.php
-app/Modules/*/Policies/*.php
-app/Modules/*/Helpers/*.php
+app/Modules/**/Controllers/**/*.php
+app/Modules/**/Models/**/*.php
+app/Modules/**/Services/**/*.php
+app/Modules/**/Repositories/**/*.php
+app/Modules/**/Actions/**/*.php
+app/Modules/**/Jobs/**/*.php
+app/Modules/**/Policies/**/*.php
+app/Modules/**/Helpers/**/*.php
+
+# Ensure encrypted envelopes are strictly tracked
+!app/Modules/**/Encrypted/**/*.enc
+!app/Modules/**/Encrypted/**/*.php.enc
 
 # Legacy per-module manifest (deprecated in favor of centralized modules-manifest.json)
 app/Modules/*/Encrypted/manifest.json

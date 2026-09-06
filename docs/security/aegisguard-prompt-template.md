@@ -85,8 +85,11 @@ Buat file konfigurasi yang memuat:
 
 1. **`MakeHMVCModule.php` (`php artisan make:module {name}`):**
    - Membuat Controller, Model, Blade View, Core Base Controller, otomatis memaketkan enkripsi `.php.enc`, dan mengunci modul dalam status fresh clone.
-2. **`DapcodePackCommand.php` (`php artisan dapcode:pack {module=all}`):**
+2. **`DapcodePackCommand.php` (`php artisan dapcode:pack {module=all} {--lock}`):**
    - Mengemas dan mengenkripsi ulang source code `.php` terbaru ke dalam amplop `.php.enc` sebelum commit ke Git.
+   - Otomatis memformat file `.php.enc` menjadi minified 1-baris JSON (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`).
+   - Mempertahankan modul terbuka (`UNLOCKED via Active License`) jika lisensi lokal aktif, atau kunci paksa dengan flag `--lock`.
+   - Menampilkan ringkasan visual nama modul yang berhasil dikemas.
 3. **`DapcodeModuleCommand.php` (`php artisan dapcode:module`):**
    - Menampilkan tabel visual status enkripsi, ketersediaan plaintext, dan otorisasi lisensi seluruh modul.
 4. **`SignDapcodeLicense.php` (`php artisan dapcode:sign-license`):**

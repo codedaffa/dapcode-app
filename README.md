@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/Minifier%20Vault-Secure%20SourceMap-blueviolet?style=for-the-badge" alt="Secure SourceMap Vault">
   <img src="https://img.shields.io/badge/Theme%20Engine-Indonesian%20Holidays-dc2626?style=for-the-badge" alt="Indonesian Holidays">
   <img src="https://img.shields.io/badge/Localization-ID%20%7C%20EN-38bdf8?style=for-the-badge" alt="i18n">
-  <img src="https://img.shields.io/badge/Security%20Tests-61%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="61 Passed Tests">
+  <img src="https://img.shields.io/badge/Security%20Tests-69%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="69 Passed Tests">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
@@ -39,16 +39,17 @@ Sistem keamanan enterprise yang menggabungkan kriptografi kunci asimetris (**RSA
 - **Layer 5 (Integrity Verification & Anti-Tampering Engine):** Memeriksa integritas SHA-256 seluruh file core security. Modifikasi file ilegal langsung memicu *fail-closed*.
 - **Layer 6 (AES-256-GCM Envelope Encryption & Centralized Master Manifest):**
   - **Fresh Clone State:** Source code controller & model tersimpan dalam format terenkripsi **`.php.enc`** di `app/Modules/{Module}/Encrypted/` dengan master manifest terpusat di `app/Services/Dapcode/modules-manifest.json` yang dipantau oleh Layer 5.
+  - **Auto-Minified Envelopes:** Amplop enkripsi `.php.enc` langsung ter-minify otomatis dalam format 1-baris JSON (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`) saat perintah `php artisan dapcode:pack` dijalankan.
   - **Auto-Unlock:** Saat diaktivasi dengan lisensi resmi, file didekripsi menjadi `.php` di disk lokal.
   - **Auto-Lock:** Saat lisensi dicabut (*Revoke*), file `.php` dihapus dari disk sehingga kembali ke status terenkripsi dan fail-closed.
   - **Git Leak-Proof:** File `.php` plaintext diabaikan oleh `.gitignore` sehingga **hanya file `.php.enc` dan `modules-manifest.json` yang di-push ke GitHub**.
 
 ### 3. 📦 PHP Code Minifier Engine with Secure SourceMap Vault
-Engine kompresi dan dekompresi performa tinggi untuk file PHP (AegisGuard Protection, HMVC Modules, Controllers, Models, Routes):
+Engine kompresi dan dekompresi performa tinggi untuk file PHP (AegisGuard Protection, HMVC Modules, Controllers, Models, Routes, dan Enkripsi .enc):
 - **Zero Plaintext Leak (`.bak` Elimination):** Tidak lagi meninggalkan file backup `.bak` di direktori source code. Seluruh kode asli dikompresi (`gzdeflate` level 9), dienkripsi, dan diarsipkan secara aman di `storage/app/dapcode/.sourcemaps/*.dapmap` (terisolasi dan diabaikan oleh Git).
 - **100% Byte-for-Byte SHA-256 Exact Restoration:** Menjamin restorasi kode asli saat proses `unminify` persis 100% identik tanpa perubahan spasi, baris baru, indentasi, atau format karakter.
-- **PHP Code Minification:** Menggunakan engine tokenizer native PHP (`php_strip_whitespace`) untuk membersihkan komentar, tab, dan baris baru secara instan.
-- **Full Module Discovery:** Otomatis memindai dan me-minify seluruh file PHP pada modul HMVC (`app/Modules/*`), dengan proteksi khusus yang mengabaikan file terenkripsi (`*.enc`) dan Blade Views.
+- **PHP Code Minification:** Menggunakan engine tokenizer native PHP (`php_strip_whitespace`) untuk membersihkan komentar, tab, dan baris baru secara instan dengan pengelolaan temporary file yang aman pada platform Linux & Windows.
+- **Full Module Discovery & AegisGuard .enc Integration:** Otomatis memindai dan me-minify seluruh file PHP pada modul HMVC (`app/Modules/*`), file proteksi AegisGuard, serta seluruh file amplop terenkripsi (`*.enc` / `*.php.enc`) yang secara arsitektural terintegrasi ke dalam grup target `aegisguard`.
 
 ### 4. 🖥️ Developer Web Terminal & Authority Signer (`/dapcode/terminal`)
 - **Interactive Artisan Console:** Menjalankan perintah Laravel Artisan secara visual dengan riwayat perintah (*keyboard history*), auto-scroll, dan output berwarna.
@@ -233,8 +234,11 @@ php artisan code:minify controllers
 # Minify seluruh Models yang tidak dienkripsi (app/Models & Modules):
 php artisan code:minify models
 
-# Minify seluruh file proteksi DapCode AegisGuard (Services, Master Manifest, Core, Middleware, Commands):
+# Minify seluruh file proteksi DapCode AegisGuard (Services, Master Manifest, Core, Middleware, Commands, dan File Enkripsi .enc):
 php artisan code:minify aegisguard
+
+# Inspeksi status seluruh file aegisguard & amplop enkripsi .enc:
+php artisan code:status aegisguard
 
 # Minify seluruh file routes (web.php, api.php, channels.php, console.php):
 php artisan code:minify routes
@@ -257,7 +261,7 @@ php artisan code:unminify controllers
 # Restorasi Models ke 100% kode asli:
 php artisan code:unminify models
 
-# Restorasi file proteksi AegisGuard ke 100% kode asli:
+# Restorasi file proteksi AegisGuard dan .enc ke 100% kode asli:
 php artisan code:unminify aegisguard
 
 # Restorasi file routes:
@@ -286,8 +290,15 @@ php artisan dapcode:pack Blog
 
 # Atau mengemas seluruh modul sekaligus:
 php artisan dapcode:pack all
+
+# Mengemas dengan memaksa penguncian (purge plaintext) meskipun lisensi lokal aktif:
+php artisan dapcode:pack all --lock
 ```
-*Perintah ini mengambil kode terbaru, mengenkripsinya ke `.php.enc`, memperbarui manifest integritas, dan mengunci file plaintext agar aman saat di-commit ke Git.*
+*Fitur Unggulan `dapcode:pack`:*
+1. **Otomatis Ter-Minify dari Awal:** File `.php.enc` yang dihasilkan langsung dikompresi ke dalam format 1-baris JSON (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`) tanpa indentasi berlebih.
+2. **License-Aware Development Mode:** Jika mesin lokal memiliki lisensi aktif untuk modul tersebut, file plaintext tetap berstatus `UNLOCKED` sehingga pengembangan dan akses rute tetap berjalan lancar.
+3. **Summary Transparan:** Menampilkan daftar nama modul yang berhasil dikemas secara rapi (`Modul dikemas: dashboard, ...`).
+4. **Git Safe:** Manifest integritas otomatis diperbarui dan file `.php` lokal dicegah bocor ke Git oleh `.gitignore`.
 
 ### C. Menghapus Modul:
 ```bash
@@ -325,14 +336,14 @@ php artisan dapcode:sign-license --revoke --license_id=<LICENSE_ID> --passcode="
 
 ## 🧪 Menjalankan Automated Security Tests (100% Pass)
 
-Aplikasi dilengkapi **61 Automated Feature & Security Tests** untuk menguji seluruh lapisan pertahanan:
+Aplikasi dilengkapi **69 Automated Feature & Security Tests** untuk menguji seluruh lapisan pertahanan:
 
 ```bash
 php artisan test
 ```
 
 ### Rincian Cakupan Test Suite:
-* ✅ **`DapcodeEncryptedModuleSecurityTest` (25 Tests):** Menguji status fresh clone locked, dekripsi saat aktivasi, pembersihan plaintext saat revocation, cipher tampering, tag verification, path traversal, dan manipulasi manifest.
+* ✅ **`DapcodeEncryptedModuleSecurityTest` (33 Tests):** Menguji status fresh clone locked, dekripsi saat aktivasi, pembersihan plaintext saat revocation, cipher tampering, tag verification, path traversal, manipulasi manifest, siklus minify/unminify dengan lisensi aktif, pengelompokan file `.enc` ke target `aegisguard`, dan isolasi route portofolio.
 * ✅ **`DapcodeLayeredGuardSecurityTest` (12 Tests):** Menguji ketahanan Layer 1–6 terhadap middleware bypass, controller direct invocation, HMVC sub-request injection, tampered core files, dan canonical path obfuscation.
 * ✅ **`DapcodeLicenseSecurityTest` (22 Tests):** Menguji validasi tanda tangan RSA-2048, verifikasi expired date, granular module licensing, anti-forgery request headers/cookies, dan hash passcode validation.
 * ✅ **`ExampleTest` (2 Tests):** Unit & basic application assertions.

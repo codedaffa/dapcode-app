@@ -66,8 +66,12 @@ graph TD
 
 ### Command Lifecycle:
 * **Membuat Modul:** `php artisan make:module {Nama}` (atau klik tombol **`+ Make Module`** di Web Terminal).
-* **Mengemas Kode Terbaru:** `php artisan dapcode:pack {module=all}` (atau klik tombol **`dapcode:pack all`** di Web Terminal).
+* **Mengemas Kode Terbaru:** `php artisan dapcode:pack {module=all} [--lock]` (atau klik tombol **`dapcode:pack all`** di Web Terminal).
+  - *Auto-Minified Envelopes:* File `.php.enc` otomatis dikemas dalam format 1-baris JSON ter-minify (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`).
+  - *License-Aware Unlock:* Modul dengan lisensi aktif lokal tetap dipertahankan terbuka (`UNLOCKED via Active License`) tanpa memutus alur pengembangan lokal (gunakan `--lock` untuk memaksa penguncian).
+  - *Summary Reporting:* Menampilkan daftar nama modul yang dikemas secara transparan pada penutup perintah.
 * **Melihat Status Keamanan:** `php artisan dapcode:module status`.
+* **Inspeksi Minifikasi & Enkripsi:** `php artisan code:status aegisguard`.
 
 ---
 

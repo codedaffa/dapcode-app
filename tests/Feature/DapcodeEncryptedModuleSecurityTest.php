@@ -12,6 +12,7 @@ use App\Services\Dapcode\LicenseVerifier;
 use App\Services\Dapcode\ModuleEncryptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class DapcodeEncryptedModuleSecurityTest extends TestCase
@@ -45,9 +46,10 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
             self::$originalMasterManifest = File::get(ModuleEncryptionService::getMasterManifestPath());
         }
 
-        // Backup Commerce & Career controllers, models, and original encrypted payloads
-        $modules = ['Commerce', 'Career', 'Project', 'Research'];
-        foreach ($modules as $mod) {
+        // Backup all controllers, models, and original encrypted payloads
+        $allMods = LicenseGuard::getAllAvailableModules();
+        foreach ($allMods as $rawMod) {
+            $mod = Str::studly($rawMod);
             $ctrl = app_path("Modules/{$mod}/Controllers/{$mod}.php");
             if (!isset(self::$originalControllers[$mod]) && File::exists($ctrl)) {
                 self::$originalControllers[$mod] = File::get($ctrl);
@@ -86,20 +88,17 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
 
     protected function restorePlaintextFiles(): void
     {
-        $modules = ['Commerce', 'Career', 'Project', 'Research'];
-        foreach ($modules as $mod) {
+        $allMods = LicenseGuard::getAllAvailableModules();
+        foreach ($allMods as $rawMod) {
+            $mod = Str::studly($rawMod);
             $ctrlPath = app_path("Modules/{$mod}/Controllers/{$mod}.php");
             if (isset(self::$originalControllers[$mod])) {
                 File::put($ctrlPath, self::$originalControllers[$mod]);
-            } elseif (File::exists($ctrlPath)) {
-                File::delete($ctrlPath);
             }
 
             $modelPath = app_path("Modules/{$mod}/Models/{$mod}.php");
             if (isset(self::$originalModels[$mod])) {
                 File::put($modelPath, self::$originalModels[$mod]);
-            } elseif (File::exists($modelPath)) {
-                File::delete($modelPath);
             }
 
             $encDir = app_path("Modules/{$mod}/Encrypted");
@@ -620,4 +619,297 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
         $this->get('/commerce')->assertStatus(403);
         $this->assertFileDoesNotExist(app_path('Modules/Commerce/Controllers/Commerce.php'));
     }
+
+    // 26. Minified module remains available, unlocked, and protected against tampering
+    public function test_26_minified_module_remains_available_and_verified()
+    {
+        $instId = InstallationService::getInstallationId();
+        $this->createEncryptedModuleState('Commerce');
+
+        $activeLicense = $this->authoritySign([
+            'license_id'      => 'LIC-2026-MINIFIED-CHECK',
+            'installation_id' => $instId,
+            'status'          => 'ACTIVE',
+            'issued_at'       => date('c'),
+            'expires_at'      => date('c', strtotime('+2 years')),
+            'modules'         => ['commerce'],
+        ]);
+
+        $actRes = ActivationService::activate($activeLicense);
+        $this->assertTrue($actRes['success']);
+
+        // Minify the module's controller
+        $ctrlPath = app_path('Modules/Commerce/Controllers/Commerce.php');
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+        $miniRes = $minifier->minifyFile($ctrlPath);
+        $this->assertTrue($miniRes['success']);
+
+        // Must still be UNLOCKED and accessible
+        $this->assertEquals('UNLOCKED', ModuleEncryptionService::getModuleStatus('Commerce'));
+        $this->assertTrue(ModuleEncryptionService::isModuleAvailable('Commerce'));
+        $this->get('/commerce')->assertStatus(200);
+
+        // Tamper test: modifying the minified file must flag TAMPERED and 403
+        File::put($ctrlPath, File::get($ctrlPath) . ' // tamper');
+        $this->assertEquals('TAMPERED', ModuleEncryptionService::getModuleStatus('Commerce'));
+        $this->assertFalse(ModuleEncryptionService::isModuleAvailable('Commerce'));
+        $this->get('/commerce')->assertStatus(403);
+    }
+
+    // SCENARIO 1: License -> Minify
+    // 1. Activate license Dashboard
+    // 2. Dashboard can be opened
+    // 3. Minify Dashboard
+    // 4. License status remains ACTIVE
+    // 5. Dashboard can still be opened
+    public function test_27_scenario_1_license_minify_access_allowed()
+    {
+        $instId = InstallationService::getInstallationId();
+        $this->createEncryptedModuleState('Commerce');
+
+        $license = $this->authoritySign([
+            'license_id'      => 'LIC-2026-SCENARIO-1',
+            'installation_id' => $instId,
+            'status'          => 'ACTIVE',
+            'issued_at'       => date('c'),
+            'expires_at'      => date('c', strtotime('+2 years')),
+            'modules'         => ['commerce'],
+        ]);
+
+        $actRes = ActivationService::activate($license);
+        $this->assertTrue($actRes['success']);
+        $this->assertEquals('ACTIVE', LicenseGuard::getStatus());
+        $this->get('/commerce')->assertStatus(200);
+
+        // Minify module files
+        $ctrlPath = app_path('Modules/Commerce/Controllers/Commerce.php');
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+        $miniRes = $minifier->minifyFile($ctrlPath);
+        $this->assertTrue($miniRes['success']);
+
+        // Check source state is minified
+        $this->assertEquals('minified', \App\Services\Dapcode\LicenseAuditLogger::detectSourceState($ctrlPath));
+
+        // License must remain ACTIVE and module access ALLOWED
+        $this->assertEquals('ACTIVE', LicenseGuard::getStatus());
+        $this->assertEquals('UNLOCKED', ModuleEncryptionService::getModuleStatus('Commerce'));
+        $this->assertTrue(ModuleEncryptionService::isModuleAvailable('Commerce'));
+        $this->get('/commerce')->assertStatus(200);
+    }
+
+    // SCENARIO 2: License -> Minify -> Restart (Cache Clear)
+    // 1. Activate license
+    // 2. Minify Dashboard
+    // 3. Restart application / clear cache
+    // 4. Dashboard remains accessible, license remains ACTIVE
+    public function test_28_scenario_2_license_minify_restart_cache_clear_access_allowed()
+    {
+        $instId = InstallationService::getInstallationId();
+        $this->createEncryptedModuleState('Commerce');
+
+        $license = $this->authoritySign([
+            'license_id'      => 'LIC-2026-SCENARIO-2',
+            'installation_id' => $instId,
+            'status'          => 'ACTIVE',
+            'issued_at'       => date('c'),
+            'expires_at'      => date('c', strtotime('+2 years')),
+            'modules'         => ['commerce'],
+        ]);
+
+        $actRes = ActivationService::activate($license);
+        $this->assertTrue($actRes['success']);
+
+        // Minify controller
+        $ctrlPath = app_path('Modules/Commerce/Controllers/Commerce.php');
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+        $minifier->minifyFile($ctrlPath);
+
+        // Simulate application restart: clear all caches
+        LicenseGuard::clearCache();
+        IntegrityService::clearCache();
+        if (function_exists('cache')) {
+            try { cache()->flush(); } catch (\Throwable $e) {}
+        }
+
+        // Must still be ACTIVE and accessible
+        $this->assertEquals('ACTIVE', LicenseGuard::getStatus());
+        $this->assertTrue(ModuleEncryptionService::isModuleAvailable('Commerce'));
+        $this->get('/commerce')->assertStatus(200);
+    }
+
+    // SCENARIO 3: License -> Minify -> Reactivate License
+    // 1. Activate Dashboard license
+    // 2. Minify Dashboard
+    // 3. Re-run activation process
+    // 4. Source remains MINIFIED (no auto-unminify)
+    // 5. License remains ACTIVE
+    public function test_29_scenario_3_license_minify_reactivate_preserves_minified_state()
+    {
+        $instId = InstallationService::getInstallationId();
+        $this->createEncryptedModuleState('Commerce');
+
+        $license = $this->authoritySign([
+            'license_id'      => 'LIC-2026-SCENARIO-3',
+            'installation_id' => $instId,
+            'status'          => 'ACTIVE',
+            'issued_at'       => date('c'),
+            'expires_at'      => date('c', strtotime('+2 years')),
+            'modules'         => ['commerce'],
+        ]);
+
+        $actRes = ActivationService::activate($license);
+        $this->assertTrue($actRes['success']);
+
+        // Minify
+        $ctrlPath = app_path('Modules/Commerce/Controllers/Commerce.php');
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+        $minifier->minifyFile($ctrlPath);
+
+        $this->assertEquals('minified', \App\Services\Dapcode\LicenseAuditLogger::detectSourceState($ctrlPath));
+
+        // Reactivate license
+        $reactRes = ActivationService::activate($license);
+        $this->assertTrue($reactRes['success']);
+
+        // BUG 2 VERIFICATION: Source code MUST remain minified (NO auto-unminify)
+        $this->assertEquals('minified', \App\Services\Dapcode\LicenseAuditLogger::detectSourceState($ctrlPath));
+        $this->assertEquals('ACTIVE', LicenseGuard::getStatus());
+        $this->get('/commerce')->assertStatus(200);
+    }
+
+    // SCENARIO 4: License -> Unminify
+    // 1. Activate Dashboard license
+    // 2. Ensure source is MINIFIED
+    // 3. Run explicit UNMINIFY process
+    // 4. Source = UNMINIFIED, License = ACTIVE, Access = ALLOWED (No auto-revoke)
+    public function test_30_scenario_4_license_unminify_preserves_active_license_and_access()
+    {
+        $instId = InstallationService::getInstallationId();
+        $this->createEncryptedModuleState('Commerce');
+
+        $license = $this->authoritySign([
+            'license_id'      => 'LIC-2026-SCENARIO-4',
+            'installation_id' => $instId,
+            'status'          => 'ACTIVE',
+            'issued_at'       => date('c'),
+            'expires_at'      => date('c', strtotime('+2 years')),
+            'modules'         => ['commerce'],
+        ]);
+
+        $actRes = ActivationService::activate($license);
+        $this->assertTrue($actRes['success']);
+
+        // Minify
+        $ctrlPath = app_path('Modules/Commerce/Controllers/Commerce.php');
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+        $minifier->minifyFile($ctrlPath);
+        $this->assertEquals('minified', \App\Services\Dapcode\LicenseAuditLogger::detectSourceState($ctrlPath));
+
+        // Explicit unminify
+        $formatter = app(\App\Services\Dapcode\CodeFormatterService::class);
+        $unminiRes = $formatter->unminifyFile($ctrlPath);
+        $this->assertTrue($unminiRes['success']);
+
+        // BUG 3 VERIFICATION: Source is unminified, license NOT revoked
+        $this->assertEquals('original', \App\Services\Dapcode\LicenseAuditLogger::detectSourceState($ctrlPath));
+        $this->assertEquals('ACTIVE', LicenseGuard::getStatus());
+        $this->assertTrue(ModuleEncryptionService::isModuleAvailable('Commerce'));
+        $this->get('/commerce')->assertStatus(200);
+    }
+
+    // SCENARIO 5: Revoke License
+    // 1. License is ACTIVE
+    // 2. Run explicit REVOKE via Signed Revocation Token
+    // 3. License = REVOKED, Module Access = DENIED regardless of source state
+    public function test_31_scenario_5_explicit_revoke_revokes_license_regardless_of_minification()
+    {
+        $instId = InstallationService::getInstallationId();
+        $this->createEncryptedModuleState('Commerce');
+
+        $licenseId = 'LIC-2026-SCENARIO-5';
+        $license = $this->authoritySign([
+            'license_id'      => $licenseId,
+            'installation_id' => $instId,
+            'status'          => 'ACTIVE',
+            'issued_at'       => date('c'),
+            'expires_at'      => date('c', strtotime('+2 years')),
+            'modules'         => ['commerce'],
+        ]);
+
+        $actRes = ActivationService::activate($license);
+        $this->assertTrue($actRes['success']);
+
+        // Minify
+        $ctrlPath = app_path('Modules/Commerce/Controllers/Commerce.php');
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+        $minifier->minifyFile($ctrlPath);
+        $this->get('/commerce')->assertStatus(200);
+
+        // Explicit revocation
+        $revocationToken = $this->authorityRevoke($licenseId, $instId, 'Explicit Test Revocation');
+        $deactRes = ActivationService::deactivate($revocationToken);
+        $this->assertTrue($deactRes['success']);
+
+        // Access must be DENIED and status must be REVOKED
+        $this->assertEquals('REVOKED', LicenseGuard::getStatus());
+        $this->get('/commerce')->assertStatus(403);
+    }
+
+    public function test_32_portfolio_files_grouped_with_routes_not_aegisguard()
+    {
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+
+        $portfolioController = app_path('Http/Controllers/PortfolioController.php');
+        $portfolioBlade = resource_path('views/portfolio.blade.php');
+
+        // 1. Verify getTargetFiles('routes') includes routes + portfolio files
+        $routesFiles = $minifier->getTargetFiles('routes');
+        $this->assertContains(realpath($portfolioController) ?: $portfolioController, $routesFiles);
+        $this->assertContains(realpath($portfolioBlade) ?: $portfolioBlade, $routesFiles);
+        $this->assertContains(realpath(base_path('routes/web.php')) ?: base_path('routes/web.php'), $routesFiles);
+        $this->assertContains(realpath(base_path('routes/api.php')) ?: base_path('routes/api.php'), $routesFiles);
+
+        // 2. Verify getTargetFiles('aegisguard') does NOT include portfolio files
+        $aegisFiles = $minifier->getTargetFiles('aegisguard');
+        $this->assertNotContains(realpath($portfolioController) ?: $portfolioController, $aegisFiles);
+        $this->assertNotContains(realpath($portfolioBlade) ?: $portfolioBlade, $aegisFiles);
+
+        // 3. Verify artisan command code:status routes includes portfolio
+        \Illuminate\Support\Facades\Artisan::call('code:status', ['target' => 'routes']);
+        $routesOutput = \Illuminate\Support\Facades\Artisan::output();
+        $this->assertStringContainsString('PortfolioController.php', $routesOutput);
+        $this->assertStringContainsString('portfolio.blade.php', $routesOutput);
+
+        // 4. Verify artisan command code:status aegisguard does not include portfolio
+        \Illuminate\Support\Facades\Artisan::call('code:status', ['target' => 'aegisguard']);
+        $aegisOutput = \Illuminate\Support\Facades\Artisan::output();
+        $this->assertStringNotContainsString('PortfolioController.php', $aegisOutput);
+        $this->assertStringNotContainsString('portfolio.blade.php', $aegisOutput);
+    }
+
+    public function test_33_encrypted_enc_files_grouped_with_aegisguard()
+    {
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+
+        $dashEnc = app_path('Modules/Dashboard/Encrypted/Controllers/Dashboard.php.enc');
+        $dashModelEnc = app_path('Modules/Dashboard/Encrypted/Models/Dashboard.php.enc');
+
+        // 1. Verify getTargetFiles('aegisguard') includes .enc files
+        $aegisFiles = $minifier->getTargetFiles('aegisguard');
+        $this->assertContains(realpath($dashEnc) ?: $dashEnc, $aegisFiles);
+        $this->assertContains(realpath($dashModelEnc) ?: $dashModelEnc, $aegisFiles);
+
+        // 2. Verify getTargetFiles('modules') does NOT include .enc files
+        $moduleFiles = $minifier->getTargetFiles('modules');
+        $this->assertNotContains(realpath($dashEnc) ?: $dashEnc, $moduleFiles);
+        $this->assertNotContains(realpath($dashModelEnc) ?: $dashModelEnc, $moduleFiles);
+
+        // 3. Verify artisan command code:status aegisguard includes .enc with type ENC
+        \Illuminate\Support\Facades\Artisan::call('code:status', ['target' => 'aegisguard']);
+        $aegisOutput = \Illuminate\Support\Facades\Artisan::output();
+        $this->assertStringContainsString('Dashboard.php.enc', $aegisOutput);
+        $this->assertStringContainsString('ENC', $aegisOutput);
+    }
 }
+
+

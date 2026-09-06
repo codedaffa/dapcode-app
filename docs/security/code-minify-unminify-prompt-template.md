@@ -74,12 +74,17 @@ Tugas Anda adalah mengimplementasikan sistem **Code Minifier & Unminifier Enterp
 #### 3. `CodeMinifierService.php`
 - **Fungsi:** Engine utama minifikasi dan analisis status kode.
 - **Target File Discovery:**
-  - Mendukung target `'all'`, `'aegisguard'` (file proteksi core & master manifest JSON terpusat), `'modules'`, `'routes'`, `'views'`, atau path file/direktori spesifik.
+  - Mendukung target `'all'`, `'aegisguard'` (murni file proteksi security engine, licensing, services, middleware, commands, master manifest JSON terpusat, serta seluruh file amplop enkripsi `.enc` / `.php.enc`), `'modules'`, `'routes'` (seluruh file routes & halaman utama portofolio: routes/*, PortfolioController, portfolio.blade.php), `'views'`, atau path file/direktori spesifik.
+  - **Prinsip Pengelompokan Portofolio:** File halaman utama portofolio (`PortfolioController.php` dan `resources/views/portfolio.blade.php`) secara arsitektur digabungkan ke dalam target `'routes'` (bukan ke dalam target `'aegisguard'`), karena halaman utama portofolio adalah entry-point web routing aplikasi publik, sedangkan `'aegisguard'` dikhususkan murni untuk sistem pertahanan dan perizinan lisensi.
+  - **Prinsip Pengelompokan File Enkripsi `.enc`:** Seluruh file amplop modul terenkripsi (`app/Modules/*/Encrypted/*.enc` dan `*.php.enc`) secara arsitektural digabungkan ke dalam target `'aegisguard'` (bukan ke dalam target `'modules'`), karena file `.enc` merupakan artefak kriptografis biner/JSON AegisGuard.
+  - **Isolasi Vault untuk `.enc` & `modules-manifest.json`:** File `.enc` dan `modules-manifest.json` adalah artefak status dinamis kriptografis mesin. File-file ini **DILARANG** disimpan di SourceMap Vault atau di-restore dari snapshot vault lama. Saat di-minify, JSON dipadatkan; saat di-unminify, file cukup di-beautify (`JSON_PRETTY_PRINT`) dari konten aktifnya saat ini tanpa mengubah ciphertext, IV, tag, dan salt.
+  - **Otomatisasi Minifikasi pada Packaging:** Saat perintah `dapcode:pack` dijalankan, amplop enkripsi `.enc` langsung dikemas dalam format minified (1-baris JSON).
 - **Method yang wajib ada:**
   - `minifyPhp(string $content, string $filePath = ''): string`
     - Memanfaatkan `php_strip_whitespace()`.
+    - **Safe Cross-Platform Temporary File:** Menggunakan `storage_path('framework/cache')` dengan `@tempnam` dan blok `try ... finally` pembersihan file untuk mencegah `E_NOTICE: tempnam(): file created in the system's temporary directory` yang dapat memicu `ErrorException` pada lingkungan Windows/PHP.
   - `minifyJson(string $content): string`
-    - Memadatkan JSON string.
+    - Memadatkan JSON string (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`). Termasuk menangani file amplop `.enc`.
   - `minifyBlade(string $content): string`
     - Memadatkan blok `<style>` (hapus `/*...*/`, padatkan whitespace dan karakter `[:;,{}]`).
     - Memadatkan blok `<script>` (hapus komentar `//` dan `/*...*/`, satukan baris kode JS).

@@ -1,11 +1,1 @@
-{
-    "version": 1,
-    "algorithm": "AES-256-GCM",
-    "iv": "I1HhH632HzzpamoN",
-    "tag": "0iYRRVr+4ZS/WY6wuTsnaw==",
-    "ciphertext": "kGWog0WrYGrMtKo+0wwJVzzoO9grUajFBT3ZiAS4rak+atatyVbANp/i1VK7/PgX/oG/8EnD/I7jI4gtgxqUg+qgNf0TSY47Y+0S0L/ofNZYdvIhi2oFuJx0BSXpHuTNRhs9y+yw9Ikm4jWbdTKYVUSk80i5SNVomPtL/7W0XeC9eklLkEsUTLnwyj/7nCjrdZgjaJ1HM1RrI+pOarACJZ/tDhJvFvVv9xnE7WNG6UL/8eoeSBBjYc61/MDhVacMHLnpw4KWvtJB8y4eEiY0tEXkOOUHEcytDSi3xB92ZkKDW5HYijO+WLJ8ego70kn/L4de80vTIxfSmPNr2Kt4+7QJc2dCcvt4XrlCD74FUIFIsN2NabLkRcnMWCZ3+K0ZWhFUPwW0zaYobQ+1+ATZYS8yOca4iA/OZ8YNiJfe34TBOjGvSvP6xB7H+eN6aGrq6RJT7Cb2SVIWYd24ByE3e8ZKWgi1GCW3u+JidXPDzdaaLpBTFA+9v7C60FB+UBLNDPMYo7Aa02msqoO02hVeD/5GQ6NJQUhlEFHazZn1tLu6Dk3pug==",
-    "sha256": "8657a15807eb7694f49f34ad26a52e687842c9082ed02642d911eebdd10a509a",
-    "size": 421,
-    "module": "research",
-    "relative_path": "Controllers/Research.php"
-}
+{"version":1,"algorithm":"AES-256-GCM","iv":"5XHKcb4W4JDnjpGy","tag":"Y4N50fb/nZLZb9PGa3VPIQ==","ciphertext":"PzcIqg4fuCElv88IHKFqPgJSd8hSQo5rxMhsT1A6+TRuP7Ovk1kjFPtTozxChwleMztWdfYjifQdiNO/HzIpPa4T8O3x3y/Axrj1iLGmehC5UGqJc/EPb7CgT2QpTVdPl8f5bIfD9yD0y6hlDV6BL47L2Dh3dajDo6d9gUXo1BkZKWz5DHFUFEBmrZ/twLGN7Z6m8nXUf6kaufYPuftDjKT0oiD86hs/doQEp8M9J1x5RdDyhG0Q2NwFx33fH3cOPAgqyzK0FKVPO9p0XKfyw4n/UJCCorG60UNPnox6A47CRDi0+Y8asfAYOdpi1Isuq0E5jwEprwqiQ80oH9ZuI5gYrW223x7xXdY+vgBfyfC5+kFPca6InIdxqgk98du33dn/Dn1CbRpS2G6FmQKlu61TNhcbgBwrNlcoayVaHky+DL5jcXKScN94zr8rfb9znEKsLeqP4V+7IXE+Ry1PrQ==","sha256":"eedc235cd5d8e652082fd30c89fd2c3fceedc41a61105030d975131b0375945a","size":352,"module":"research","relative_path":"Controllers/Research.php"}
