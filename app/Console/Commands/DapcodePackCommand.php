@@ -1,2 +1,125 @@
 <?php
- namespace App\Console\Commands; use App\Services\Dapcode\InstallationService; use App\Services\Dapcode\IntegrityService; use App\Services\Dapcode\LicenseGuard; use App\Services\Dapcode\ModuleEncryptionService; use Illuminate\Console\Command; use Illuminate\Support\Str; class DapcodePackCommand extends Command { protected $signature = 'dapcode:pack {module=all : The module name to pack (e.g. Blog, Commerce, or "all")} {--lock : Force module locking (purge plaintext) even if active license exists}'; protected $description = 'Package and re-encrypt latest module development code into AES-256-GCM (.php.enc) envelopes for Git/GitHub release'; public function handle() { $target = trim((string) $this->argument('module')); $forceLock = (bool) $this->option('lock'); $instId = InstallationService::getInstallationId(); $dummyLic = [ 'license_id' => 'DEV-PACK-' . strtoupper(Str::random(6)), 'installation_id' => $instId, 'status' => 'ACTIVE', 'modules' => ['*'], 'signature' => 'dev_pack', ]; $availableModules = LicenseGuard::getAllAvailableModules(); if (empty($availableModules)) { $this->error("Tidak ada modul yang ditemukan di dalam direktori app/Modules/."); return 1; } $modulesToPack = []; if (strtolower($target) === 'all' || empty($target)) { $modulesToPack = $availableModules; } else { $found = null; foreach ($availableModules as $m) { if (strcasecmp($m, $target) === 0) { $found = $m; break; } } if (!$found) { $this->error("Modul [{$target}] tidak ditemukan di app/Modules/."); $this->line("Daftar modul yang tersedia: " . implode(', ', $availableModules)); return 1; } $modulesToPack = [$found]; } $this->info("======================================================="); $this->info("   DAPCODE AEGISGUARD — PACK & ENCRYPT LATEST CODE     "); $this->info("======================================================="); $this->line("Mengemas kode pengembangan terbaru ke dalam amplop enkripsi (.php.enc)..."); $this->newLine(); $packedModules = []; $activeLic = LicenseGuard::getLicense(); $hasActiveLicense = $activeLic && LicenseGuard::canAccessApplication(); foreach ($modulesToPack as $mod) { $this->line("<comment>Packing modul:</comment> <info>{$mod}</info>..."); $criticalFiles = ModuleEncryptionService::discoverCriticalFiles($mod); if (empty($criticalFiles)) { if (ModuleEncryptionService::isModuleEncrypted($mod)) { $this->line("  [INFO] File plaintext tidak ditemukan di disk. Menggunakan envelope .enc yang sudah ada."); } else { $this->warn("  [SKIP] Tidak ada file Controller/Model PHP ditemukan untuk modul {$mod}."); } continue; } $res = ModuleEncryptionService::encryptModule($mod, $dummyLic); if ($res['success']) { $fileCount = $res['encrypted_files_count'] ?? count($res['encrypted_files'] ?? $criticalFiles); if (!$forceLock && $hasActiveLicense && LicenseGuard::isModuleAllowed($mod)) { ModuleEncryptionService::unlockModule($mod, $activeLic); $this->info("  [OK] Berhasil mengemas {$fileCount} file ke format .php.enc (Status: UNLOCKED via Active License)."); } else { ModuleEncryptionService::lockModule($mod); $this->info("  [OK] Berhasil mengemas {$fileCount} file ke format .php.enc & di-lock."); } $packedModules[] = $mod; } else { $this->error("  [FAIL] Gagal mengemas {$mod}: " . ($res['message'] ?? 'Error tidak diketahui')); } } IntegrityService::recordCoreFilesManifest(); LicenseGuard::clearCache(); $this->newLine(); $this->info("======================================================="); $this->info("  [SELESAI] " . count($packedModules) . " modul berhasil dipaketkan dengan kode terbaru!"); if (!empty($packedModules)) { $this->line("  Modul dikemas: <info>" . implode(', ', $packedModules) . "</info>"); } else { $this->line("  Modul dikemas: <comment>(Tidak ada file plaintext baru yang dipaketkan)</comment>"); } $this->info("  Status: File .php.enc siap untuk di-commit & di-push ke GitHub."); $this->info("======================================================="); return 0; } }
+
+namespace App\Console\Commands;
+
+use App\Services\Dapcode\InstallationService;
+use App\Services\Dapcode\IntegrityService;
+use App\Services\Dapcode\LicenseGuard;
+use App\Services\Dapcode\ModuleEncryptionService;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
+class DapcodePackCommand extends Command
+{
+    protected $signature = 'dapcode:pack {module=all : The module name to pack (e.g. Blog, Commerce, or "all")} {--lock : Force module locking (purge plaintext) even if active license exists}';
+
+    protected $description = 'Package and re-encrypt latest module development code into AES-256-GCM (.php.enc) envelopes for Git/GitHub release';
+
+    public function handle()
+    {
+        $target = trim((string) $this->argument('module'));
+        $forceLock = (bool) $this->option('lock');
+        $instId = InstallationService::getInstallationId();
+
+        $dummyLic = [
+            'license_id'      => 'DEV-PACK-' . strtoupper(Str::random(6)),
+            'installation_id' => $instId,
+            'status'          => 'ACTIVE',
+            'modules'         => ['*'],
+            'signature'       => 'dev_pack',
+        ];
+
+        $availableModules = LicenseGuard::getAllAvailableModules();
+        if (empty($availableModules)) {
+            $this->error("Tidak ada modul yang ditemukan di dalam direktori app/Modules/.");
+            return 1;
+        }
+
+        $modulesToPack = [];
+        if (strtolower($target) === 'all' || empty($target)) {
+            $modulesToPack = $availableModules;
+        } else {
+            $found = null;
+            foreach ($availableModules as $m) {
+                if (strcasecmp($m, $target) === 0) {
+                    $found = $m;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $this->error("Modul [{$target}] tidak ditemukan di app/Modules/.");
+                $this->line("Daftar modul yang tersedia: " . implode(', ', $availableModules));
+                return 1;
+            }
+
+            $modulesToPack = [$found];
+        }
+
+        $this->info("=======================================================");
+        $this->info("   DAPCODE AEGISGUARD — PACK & ENCRYPT LATEST CODE     ");
+        $this->info("=======================================================");
+        $this->line("Mengemas kode pengembangan terbaru ke dalam amplop enkripsi (.php.enc)...");
+        $this->newLine();
+
+        $packedModules = [];
+        $activeLic = LicenseGuard::getLicense();
+        $hasActiveLicense = $activeLic && LicenseGuard::canAccessApplication();
+
+        foreach ($modulesToPack as $mod) {
+            $this->line("<comment>Packing modul:</comment> <info>{$mod}</info>...");
+            $criticalFiles = ModuleEncryptionService::discoverCriticalFiles($mod);
+
+            if (empty($criticalFiles)) {
+                if (ModuleEncryptionService::isModuleEncrypted($mod)) {
+                    $this->line("  [INFO] File plaintext tidak ditemukan di disk. Menggunakan envelope .enc yang sudah ada.");
+                } else {
+                    $this->warn("  [SKIP] Tidak ada file Controller/Model PHP ditemukan untuk modul {$mod}.");
+                }
+                continue;
+            }
+
+            $res = ModuleEncryptionService::encryptModule($mod, $dummyLic);
+            if ($res['success']) {
+                $fileCount = $res['encrypted_files_count'] ?? count($res['encrypted_files'] ?? $criticalFiles);
+
+                if (!$forceLock && $hasActiveLicense && LicenseGuard::isModuleAllowed($mod)) {
+                    ModuleEncryptionService::unlockModule($mod, $activeLic);
+                    $this->info("  [OK] Berhasil mengemas {$fileCount} file ke format .php.enc (Status: UNLOCKED via Active License).");
+                } else {
+                    ModuleEncryptionService::lockModule($mod);
+                    $this->info("  [OK] Berhasil mengemas {$fileCount} file ke format .php.enc & di-lock.");
+                }
+
+                $packedModules[] = $mod;
+            } else {
+                $this->error("  [FAIL] Gagal mengemas {$mod}: " . ($res['message'] ?? 'Error tidak diketahui'));
+            }
+        }
+
+        // Minify master manifest modules-manifest.json
+        $manifestPath = ModuleEncryptionService::getMasterManifestPath();
+        if (File::exists($manifestPath)) {
+            $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+            $minifier->minifyFile($manifestPath, false);
+            $this->line("  [OK] Master manifest <info>modules-manifest.json</info> berhasil di-minify.");
+        }
+
+        IntegrityService::recordCoreFilesManifest();
+        LicenseGuard::clearCache();
+
+        $this->newLine();
+        $this->info("=======================================================");
+        $this->info("  [SELESAI] " . count($packedModules) . " modul berhasil dipaketkan dengan kode terbaru!");
+        if (!empty($packedModules)) {
+            $this->line("  Modul dikemas: <info>" . implode(', ', $packedModules) . "</info>");
+        } else {
+            $this->line("  Modul dikemas: <comment>(Tidak ada file plaintext baru yang dipaketkan)</comment>");
+        }
+        $this->info("  Status: File .php.enc siap untuk di-commit & di-push ke GitHub.");
+        $this->info("=======================================================");
+
+        return 0;
+    }
+}
