@@ -240,7 +240,7 @@ php artisan code:minify aegisguard
 # Inspeksi status seluruh file aegisguard & amplop enkripsi .enc:
 php artisan code:status aegisguard
 
-# Minify seluruh file routes (web.php, api.php, channels.php, console.php):
+# Minify kelompok seluruh file routes, middlewares, helpers, Http/Kernel.php, dan portofolio:
 php artisan code:minify routes
 
 # Minify 1 modul spesifik (misal: Blog):
@@ -264,7 +264,7 @@ php artisan code:unminify models
 # Restorasi file proteksi AegisGuard dan .enc ke 100% kode asli:
 php artisan code:unminify aegisguard
 
-# Restorasi file routes:
+# Restorasi kelompok seluruh file routes, middlewares, helpers, Http/Kernel.php, dan portofolio:
 php artisan code:unminify routes
 
 # Restorasi 1 modul spesifik:

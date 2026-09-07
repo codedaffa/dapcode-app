@@ -910,6 +910,45 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
         $this->assertStringContainsString('Dashboard.php.enc', $aegisOutput);
         $this->assertStringContainsString('ENC', $aegisOutput);
     }
+
+    public function test_34_helpers_middlewares_and_kernel_grouped_with_routes_and_all()
+    {
+        $minifier = app(\App\Services\Dapcode\CodeMinifierService::class);
+
+        $kernel = app_path('Http/Kernel.php');
+        $authMiddleware = app_path('Http/Middleware/Authenticate.php');
+        $csrfMiddleware = app_path('Http/Middleware/VerifyCsrfToken.php');
+        $hmvcHelper = app_path('Helpers/hmvc.php');
+        $viteHelper = app_path('Services/Vite/ViteHelper.php');
+
+        // 1. Verify getTargetFiles('routes') includes all of them
+        $routesFiles = $minifier->getTargetFiles('routes');
+        $this->assertContains(realpath($kernel) ?: $kernel, $routesFiles);
+        $this->assertContains(realpath($authMiddleware) ?: $authMiddleware, $routesFiles);
+        $this->assertContains(realpath($csrfMiddleware) ?: $csrfMiddleware, $routesFiles);
+        $this->assertContains(realpath($hmvcHelper) ?: $hmvcHelper, $routesFiles);
+        $this->assertContains(realpath($viteHelper) ?: $viteHelper, $routesFiles);
+
+        // 2. Verify getTargetFiles('all') includes all of them
+        $allFiles = $minifier->getTargetFiles('all');
+        $this->assertContains(realpath($kernel) ?: $kernel, $allFiles);
+        $this->assertContains(realpath($authMiddleware) ?: $authMiddleware, $allFiles);
+        $this->assertContains(realpath($csrfMiddleware) ?: $csrfMiddleware, $allFiles);
+        $this->assertContains(realpath($hmvcHelper) ?: $hmvcHelper, $allFiles);
+        $this->assertContains(realpath($viteHelper) ?: $viteHelper, $allFiles);
+
+        // 3. Verify individual target resolution
+        $middlewareFiles = $minifier->getTargetFiles('middlewares');
+        $this->assertContains(realpath($kernel) ?: $kernel, $middlewareFiles);
+        $this->assertContains(realpath($authMiddleware) ?: $authMiddleware, $middlewareFiles);
+
+        $helperFiles = $minifier->getTargetFiles('helpers');
+        $this->assertContains(realpath($hmvcHelper) ?: $hmvcHelper, $helperFiles);
+        $this->assertContains(realpath($viteHelper) ?: $viteHelper, $helperFiles);
+
+        $kernelFiles = $minifier->getTargetFiles('kernel');
+        $this->assertContains(realpath($kernel) ?: $kernel, $kernelFiles);
+    }
 }
 
 
