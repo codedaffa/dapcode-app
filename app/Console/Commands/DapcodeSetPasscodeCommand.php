@@ -1,0 +1,137 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Services\Dapcode\LicenseGuard;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+
+class DapcodeSetPasscodeCommand extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'dapcode:set-passcode {passcode? : Passcode rahasia baru yang ingin di-hash dan disimpan ke .env}';
+
+    /**
+     * The list of command aliases.
+     *
+     * @var array<string>
+     */
+    protected $aliases = ['dapcode:passcode'];
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Hash new Authority passcode with SHA-256 and store DAPCODE_AUTHORITY_PASSCODE_HASH into .env';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setAliases(['dapcode:passcode']);
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        $this->info("=======================================================");
+        $this->info("   DAPCODE AEGISGUARD — SET AUTHORITY PASSCODE HASH    ");
+        $this->info("=======================================================");
+
+        $passcode = $this->argument('passcode');
+
+        if (empty($passcode)) {
+            $passcode = $this->secret('Masukkan Passcode Rahasia Baru:');
+
+            if (empty($passcode)) {
+                $this->error("[ERROR] Passcode tidak boleh kosong!");
+                return Command::FAILURE;
+            }
+
+            $confirm = $this->secret('Ulangi Passcode Baru untuk Konfirmasi:');
+            if ($passcode !== $confirm) {
+                $this->error("[ERROR] Konfirmasi passcode tidak cocok! Proses dibatalkan.");
+                return Command::FAILURE;
+            }
+        }
+
+        // 1. Generate SHA-256 hash
+        $hash = hash('sha256', (string) $passcode);
+
+        // 2. Read and update .env
+        $envPath = base_path('.env');
+        if (!File::exists($envPath)) {
+            if (File::exists(base_path('.env.example'))) {
+                File::copy(base_path('.env.example'), $envPath);
+            } else {
+                File::put($envPath, '');
+            }
+        }
+
+        $envContent = File::get($envPath);
+
+        // Disable plain text DAPCODE_AUTHORITY_PASSCODE if present
+        if (preg_match('/^DAPCODE_AUTHORITY_PASSCODE=(.*)$/m', $envContent)) {
+            $envContent = preg_replace(
+                '/^DAPCODE_AUTHORITY_PASSCODE=(.*)$/m',
+                '# DAPCODE_AUTHORITY_PASSCODE=$1 # (dinonaktifkan, beralih ke DAPCODE_AUTHORITY_PASSCODE_HASH)',
+                $envContent
+            );
+        }
+
+        // Set or update DAPCODE_AUTHORITY_PASSCODE_HASH
+        if (preg_match('/^DAPCODE_AUTHORITY_PASSCODE_HASH=.*$/m', $envContent)) {
+            $envContent = preg_replace(
+                '/^DAPCODE_AUTHORITY_PASSCODE_HASH=.*$/m',
+                "DAPCODE_AUTHORITY_PASSCODE_HASH={$hash}",
+                $envContent
+            );
+        } else {
+            $envContent = rtrim($envContent) . PHP_EOL . PHP_EOL . "# DapCode AegisGuard Authority Passcode Hash" . PHP_EOL . "DAPCODE_AUTHORITY_PASSCODE_HASH={$hash}" . PHP_EOL;
+        }
+
+        File::put($envPath, $envContent);
+
+        // 3. Update .env.example if missing
+        $envExamplePath = base_path('.env.example');
+        if (File::exists($envExamplePath)) {
+            $exampleContent = File::get($envExamplePath);
+            if (!preg_match('/^DAPCODE_AUTHORITY_PASSCODE_HASH=/m', $exampleContent)) {
+                $exampleContent = rtrim($exampleContent) . PHP_EOL . PHP_EOL . "# DapCode AegisGuard Authority Passcode Hash" . PHP_EOL . "DAPCODE_AUTHORITY_PASSCODE_HASH=" . PHP_EOL;
+                File::put($envExamplePath, $exampleContent);
+            }
+        }
+
+        // 4. Clear Laravel config cache
+        $this->callSilently('config:clear');
+        LicenseGuard::clearCache();
+
+        $this->newLine();
+        $this->info("  [OK] Passcode berhasil di-hash dengan SHA-256.");
+        $this->line("  Hash SHA-256 : <comment>{$hash}</comment>");
+        $this->info("  [OK] Nilai berhasil disimpan ke dalam file .env:");
+        $this->line("       <info>DAPCODE_AUTHORITY_PASSCODE_HASH={$hash}</info>");
+        $this->info("  [OK] Cache konfigurasi Laravel berhasil dibersihkan.");
+        $this->newLine();
+        $this->info("=======================================================");
+        $this->info("  Status: Passcode baru langsung aktif untuk:");
+        $this->line("  - Authority Web Terminal : <comment>/dapcode/terminal</comment>");
+        $this->line("  - Authority CLI Signer   : <comment>php artisan dapcode:sign-license</comment>");
+        $this->info("=======================================================");
+
+        return Command::SUCCESS;
+    }
+}
