@@ -15,7 +15,7 @@ DapCode AegisGuard™ mengimplementasikan sistem keamanan berlapis untuk mengont
 5. **Layer 5: Core File Integrity Service** (Anti-Tamper Checksum Verification)
    Memverifikasi SHA-256 hash file inti arsitektur lisensi dan master manifest modul (`app/Services/Dapcode/modules-manifest.json`) menggunakan manifest integritas runtime (`.integrity-manifest`). Modifikasi file core atau manipulasi master manifest secara ilegal langsung memicu status `INTEGRITY_FAILED`.
 6. **Layer 6: Encrypted Critical Module Protection & Atomic Runtime** (AES-256-GCM Envelope Encryption)
-   Menyimpan source code controller & model dalam format terenkripsi (`.php.enc`) di repositori fresh clone GitHub dengan master manifest terpusat di `app/Services/Dapcode/modules-manifest.json`. Source code didekripsi ke file `.php` lokal saat lisensi aktif, dan dihapus (*fail-closed lock*) saat lisensi dicabut (*Revoked*).
+   Menyimpan source code controller & model dalam format terenkripsi (`.php.enc`) di repositori fresh clone GitHub dengan master manifest terpusat di `app/Services/Dapcode/modules-manifest.json`. Source code didekripsi ke file `.php` lokal saat lisensi aktif, dan dihapus (*fail-closed lock*) saat lisensi dicabut (*Revoked*). Selain modul, 20 file kode proteksi core AegisGuard juga dapat disegel ke format amplop `.php.enc` dan dieksekusi secara JIT (Just-In-Time) in-memory oleh `AegisguardLoader`.
 
 ---
 
@@ -64,14 +64,21 @@ graph TD
     E --> F["5. Push to GitHub (Zero Plaintext Leaks)"]
 ```
 
-### Command Lifecycle:
+### Command Lifecycle (Modul HMVC):
 * **Membuat Modul:** `php artisan make:module {Nama}` (atau klik tombol **`+ Make Module`** di Web Terminal).
 * **Mengemas Kode Terbaru:** `php artisan dapcode:pack {module=all} [--lock]` (atau klik tombol **`dapcode:pack all`** di Web Terminal).
   - *Auto-Minified Envelopes:* File `.php.enc` otomatis dikemas dalam format 1-baris JSON ter-minify (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`).
   - *License-Aware Unlock:* Modul dengan lisensi aktif lokal tetap dipertahankan terbuka (`UNLOCKED via Active License`) tanpa memutus alur pengembangan lokal (gunakan `--lock` untuk memaksa penguncian).
   - *Summary Reporting:* Menampilkan daftar nama modul yang dikemas secara transparan pada penutup perintah.
-* **Melihat Status Keamanan:** `php artisan dapcode:module status`.
+* **Melihat Status Keamanan Modul:** `php artisan dapcode:module status`.
 * **Inspeksi Minifikasi & Enkripsi:** `php artisan code:status aegisguard`.
+
+### Core AegisGuard Lifecycle (Enkripsi & Dekripsi Kode Inti):
+* **Dekripsi Kode Core:** `php artisan dapcode:aegisguard decrypt` (atau tombol **`aegisguard:decrypt`** di Web Terminal). Memulihkan 20 file core ke kode sumber asli berformat PSR-12 rapi.
+* **Pengembangan Kode Core:** Lakukan modifikasi kode PHP pada direktori core (`Services/Dapcode`, `Commands`, dll.).
+* **Enkripsi Kode Core:** `php artisan dapcode:aegisguard encrypt` (atau tombol **`aegisguard:encrypt`** di Web Terminal). Menyegel kembali 20 file ke format `.php.enc` minified dan mengganti file `.php` dengan safe loader stub.
+* **Inspeksi Status Core:** `php artisan dapcode:aegisguard status` (atau tombol **`aegisguard:status`**).
+* **Manajemen Authority Passcode:** `php artisan dapcode:set-passcode [passcode_baru]` untuk menghasilkan digest SHA-256 dan mengupdate `.env` secara instan.
 
 ---
 

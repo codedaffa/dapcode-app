@@ -20,6 +20,7 @@ Dokumen ini memetakan model ancaman (*Threat Model*), matriks vektor serangan po
 | **Stale / Injected Plaintext File** | Membuat file PHP manual tanpa lisensi | `LicenseGuard` memvalidasi status lisensi aktif dan integritas modul. Jika tidak ada lisensi sah, akses tetap menghasilkan HTTP 403. | **MITIGATED** |
 | **Race Condition on Revocation** | Eksekusi modul bersamaan dengan revokasi | File locking eksklusif (`flock LOCK_EX`) pada proses unlock dan validasi ulang lisensi di critical section. Plaintext langsung dipurge saat revokasi. | **MITIGATED** |
 | **Core Security File Tampering** | Mengedit `LicenseGuard.php`, `LicenseVerifier.php`, atau `modules-manifest.json` | **Layer 5 (IntegrityService)** memverifikasi SHA-256 seluruh file inti sistem dan master manifest. Status menjadi `INTEGRITY_FAILED` jika dimodifikasi. | **MITIGATED** |
+| **Core AegisGuard Source Code Exposure** | Membaca logika proteksi internal dari fresh clone repository | **Core Envelope Encryption & In-Memory JIT Execution (`AegisguardLoader`)**: 20 file core security dapat dienkripsi ke `.php.enc` dan dijalankan langsung via memori tanpa menuliskan plaintext ke disk. | **MITIGATED** |
 | **Path Traversal & Obfuscation** (`../`, encoded slugs) | Mengakses modul terlarang via path manipulasi | **Canonical Module Resolver** menormalisasi string, menolak traversal, encoding ganda, dan karakter non-alfanumerik. | **MITIGATED** |
 | **Unauthorized / Bypass Unminification** | Membongkar atau me-unminify kode terproteksi secara ilegal | **Secure SourceMap Vault + Layer 5 Integrity**: Kode asli terenkripsi di `.sourcemaps/*.dapmap`. Unminify hanya dapat dieksekusi via channel resmi yang terotorisasi (`code:unminify`). Segala bypass eksternal dilarang keras dan ditolak oleh Security Guardian. | **MITIGATED** |
 
@@ -33,7 +34,7 @@ Batas eksekusi modul tidak bergantung pada titik tunggal:
 3. **Layer 3 (Core Base Controller)**: `Controller::__construct()`, `render()`, dan `moduleRender()` mengunci instansiasi dan eksekusi controller.
 4. **Layer 4 (RSA-2048 Digital Licensing & Authority Passcode)**: Memverifikasi keabsahan tanda tangan kriptografis dan digest passcode authority.
 5. **Layer 5 (Anti-Tampering Integrity Guard)**: Memverifikasi hash SHA-256 seluruh file core security dan master manifest (`modules-manifest.json`).
-6. **Layer 6 (AES-256-GCM Envelope Encryption & Centralized Master Manifest)**: Menyimpan kode kritis dalam format terenkripsi `.php.enc` di GitHub dengan master manifest terpusat di `app/Services/Dapcode/modules-manifest.json` dan hanya membuka plaintext secara lokal saat aktif.
+6. **Layer 6 (AES-256-GCM Envelope Encryption & Centralized Master Manifest)**: Menyimpan kode kritis dalam format terenkripsi `.php.enc` di GitHub dengan master manifest terpusat di `app/Services/Dapcode/modules-manifest.json` dan hanya membuka plaintext secara lokal saat aktif, serta proteksi JIT in-memory envelope untuk 20 file core security via `AegisguardLoader`.
 
 ---
 
@@ -49,8 +50,8 @@ Batas eksekusi modul tidak bergantung pada titik tunggal:
 
 ## 4. Automated Security Verification (100% Pass)
 
-Ketahanan seluruh vektor serangan di atas divalidasi secara otomatis melalui **61 Security Feature Tests**:
-* `Tests\Feature\DapcodeEncryptedModuleSecurityTest`: **25/25 PASS**
+Ketahanan seluruh vektor serangan di atas divalidasi secara otomatis melalui **70 Security Feature Tests**:
+* `Tests\Feature\DapcodeEncryptedModuleSecurityTest`: **34/34 PASS**
 * `Tests\Feature\DapcodeLayeredGuardSecurityTest`: **12/12 PASS**
 * `Tests\Feature\DapcodeLicenseSecurityTest`: **22/22 PASS**
 * `Tests\Feature\ExampleTest`: **2/2 PASS**

@@ -74,11 +74,11 @@ Tugas Anda adalah mengimplementasikan sistem **Code Minifier & Unminifier Enterp
 #### 3. `CodeMinifierService.php`
 - **Fungsi:** Engine utama minifikasi dan analisis status kode.
 - **Target File Discovery:**
-  - Mendukung target `'all'`, `'aegisguard'` (murni file proteksi security engine, licensing, services, middleware, commands, master manifest JSON terpusat, serta seluruh file amplop enkripsi `.enc` / `.php.enc`), `'modules'`, `'routes'` (seluruh file routes, middlewares, helpers, `app/Http/Kernel.php` & halaman utama portofolio), `'middlewares'`, `'helpers'`, `'kernel'`, `'views'`, atau path file/direktori spesifik.
+  - Mendukung target `'all'`, `'aegisguard'` (murni file proteksi security engine, licensing, services, middleware, commands, master manifest JSON terpusat, serta seluruh file amplop enkripsi `.enc` / `*.php.enc`), `'modules'`, `'routes'` (seluruh file routes, middlewares, helpers, `app/Http/Kernel.php` & halaman utama portofolio), `'middlewares'`, `'helpers'`, `'kernel'`, `'views'`, atau path file/direktori spesifik.
   - **Prinsip Pengelompokan Portofolio, Middleware, Kernel & Helper:** File halaman utama portofolio (`PortfolioController.php` dan `resources/views/portfolio.blade.php`), seluruh file helper (`app/Helpers/*.php`, `ViteHelper.php`), seluruh file middleware (`app/Http/Middleware/*.php`), dan `app/Http/Kernel.php` secara arsitektur digabungkan ke dalam kelompok target `'routes'` (seluruh file route & halaman utama portofolio) dan `'all'` (semua sistem).
-  - **Prinsip Pengelompokan File Enkripsi `.enc`:** Seluruh file amplop modul terenkripsi (`app/Modules/*/Encrypted/*.enc` dan `*.php.enc`) secara arsitektural digabungkan ke dalam target `'aegisguard'` (bukan ke dalam target `'modules'`), karena file `.enc` merupakan artefak kriptografis biner/JSON AegisGuard.
+  - **Prinsip Pengelompokan File Enkripsi `.enc` & Amplop AegisGuard:** Seluruh file amplop modul terenkripsi (`app/Modules/*/Encrypted/*.enc` dan `*.php.enc`) serta seluruh file kode core AegisGuard terenkripsi (`*.php.enc`) secara arsitektural digabungkan ke dalam target `'aegisguard'` (dan `'all'`).
   - **Isolasi Vault untuk `.enc` & `modules-manifest.json`:** File `.enc` dan `modules-manifest.json` adalah artefak status dinamis kriptografis mesin. File-file ini **DILARANG** disimpan di SourceMap Vault atau di-restore dari snapshot vault lama. Saat di-minify, JSON dipadatkan; saat di-unminify, file cukup di-beautify (`JSON_PRETTY_PRINT`) dari konten aktifnya saat ini tanpa mengubah ciphertext, IV, tag, dan salt.
-  - **Otomatisasi Minifikasi pada Packaging:** Saat perintah `dapcode:pack` dijalankan, amplop enkripsi `.enc` langsung dikemas dalam format minified (1-baris JSON).
+  - **Otomatisasi Minifikasi pada Packaging:** Saat perintah `dapcode:pack` atau `dapcode:aegisguard encrypt` dijalankan, amplop enkripsi `.enc` langsung dikemas dalam format minified (1-baris JSON).
 - **Method yang wajib ada:**
   - `minifyPhp(string $content, string $filePath = ''): string`
     - Memanfaatkan `php_strip_whitespace()`.
@@ -237,9 +237,10 @@ public function getFileStatus(string $filePath): ?array
     $lines = substr_count($content, "\n") + 1;
     $isBlade = \Illuminate\Support\Str::endsWith($filePath, '.blade.php');
     $isJson = \Illuminate\Support\Str::endsWith($filePath, '.json');
+    $isEnc = \Illuminate\Support\Str::endsWith($filePath, '.enc');
 
-    if ($isJson) {
-        $type = 'JSON';
+    if ($isJson || $isEnc) {
+        $type = $isEnc ? 'ENC' : 'JSON';
         $isMinified = ($lines <= 1 && $size > 0);
     } elseif ($isBlade) {
         $type = 'Blade';

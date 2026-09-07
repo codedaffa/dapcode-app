@@ -55,9 +55,10 @@ app/Modules/**/Jobs/**/*.php
 app/Modules/**/Policies/**/*.php
 app/Modules/**/Helpers/**/*.php
 
-# Ensure encrypted envelopes are strictly tracked
+# Ensure encrypted envelopes are strictly tracked (Modules & Core AegisGuard)
 !app/Modules/**/Encrypted/**/*.enc
 !app/Modules/**/Encrypted/**/*.php.enc
+!app/**/*.php.enc
 
 # Legacy per-module manifest (deprecated in favor of centralized modules-manifest.json)
 app/Modules/*/Encrypted/manifest.json

@@ -79,6 +79,9 @@ Buat file konfigurasi yang memuat:
    - `activate($licensePayload)`: Memverifikasi tanda tangan digital RSA-2048 payload lisensi baru, mencocokkan Installation ID, menyimpan ke `.license`, mendiskripsi modul yang diotorisasi, dan mengupdate integrity checksum.
    - `deactivate($revocationInput, $reason)`: Memverifikasi *Signed Revocation Token*, memproses pencabutan penuh atau parsial, menghapus plaintext modul yang dicabut, dan memperbarui lisensi.
 
+7. **`AegisguardLoader.php`:**
+   - Engine dekripsi in-memory JIT (Just-In-Time) AES-256-GCM untuk mengeksekusi 20 file kode proteksi core AegisGuard dalam format amplop biner `.php.enc` tanpa menuliskan kode plaintext ke disk.
+
 ---
 
 ### C. Console Commands (`app/Console/Commands/`)
@@ -94,6 +97,14 @@ Buat file konfigurasi yang memuat:
    - Menampilkan tabel visual status enkripsi, ketersediaan plaintext, dan otorisasi lisensi seluruh modul.
 4. **`SignDapcodeLicense.php` (`php artisan dapcode:sign-license`):**
    - Menandatangani lisensi digital dan token pencabutan via CLI.
+5. **`DapcodeAegisguardCommand.php` (`php artisan dapcode:aegisguard [status]`):**
+   - Memeriksa status 20 file kode proteksi core AegisGuard (ketersediaan source `.php`, amplop `.php.enc`, dan kesiapan runtime JIT).
+6. **`DapcodeAegisguardEncryptCommand.php` (`php artisan dapcode:aegisguard encrypt [--force]`):**
+   - Mengenkripsi dan me-minify 20 file kode proteksi AegisGuard ke amplop biner `.php.enc` dan mengganti file `.php` dengan safe loader stub.
+7. **`DapcodeAegisguardDecryptCommand.php` (`php artisan dapcode:aegisguard decrypt [--force]`):**
+   - Mendekripsi 20 file kode proteksi AegisGuard dari `.php.enc` ke kode sumber asli berformat PSR-12 rapi menggunakan `CodeFormatterService`.
+8. **`DapcodeSetPasscodeCommand.php` (`php artisan dapcode:set-passcode [passcode]`):**
+   - Menghitung hash SHA-256 Authority Passcode dan menyimpannya secara otomatis ke `.env` (`DAPCODE_AUTHORITY_PASSCODE_HASH`).
 
 ---
 
@@ -109,6 +120,6 @@ Buat file konfigurasi yang memuat:
 
 ### E. Authority Web Terminal & Views (`/dapcode/terminal`)
 
-- **`authority-terminal.blade.php`:** Web Terminal interaktif dengan Artisan console runner, modal dialog **`+ Make Module`**, preset buttons, dan RSA-2048 Signer.
+- **`authority-terminal.blade.php`:** Web Terminal interaktif dengan Artisan console runner, modal dialog **`+ Make Module`**, quick command preset buttons (`aegisguard:status`, `aegisguard:encrypt`, `aegisguard:decrypt`, `code:status all`, `code:minify all`, dll.), cheatsheet modal panduan perintah, dan RSA-2048 Signer.
 - **`activate.blade.php`:** Halaman aktivasi klien dengan tombol salin Installation ID dan modal konfirmasi pencabutan lisensi.
 ```
