@@ -1,0 +1,253 @@
+/**
+ * DAPCODE UI - FORM CONTROLS
+ * Input, Select, Textarea, Checkbox, Radio, File-upload, Date-picker, Search, Filter
+ */
+
+.ui-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.ui-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ui-label-required {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.ui-help-text {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.ui-error-text {
+    font-size: 12px;
+    color: var(--danger);
+    font-weight: 500;
+}
+
+/* Base Input & Textarea */
+.ui-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.ui-input-icon-left,
+.ui-input-icon-right {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    pointer-events: none;
+}
+.ui-input-icon-left { left: 12px; }
+.ui-input-icon-right { right: 12px; }
+
+.ui-input,
+.ui-select,
+.ui-textarea {
+    width: 100%;
+    background-color: var(--ui-bg-input);
+    border: 1px solid var(--ui-border-default);
+    border-radius: var(--ui-radius-md);
+    color: var(--text-main);
+    font-family: var(--ui-font-family);
+    font-size: 13.5px;
+    padding: 10px 14px;
+    transition: var(--ui-transition-fast);
+    outline: none;
+    line-height: 1.4;
+}
+
+.ui-input:focus,
+.ui-select:focus,
+.ui-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    background-color: rgba(15, 23, 42, 0.9);
+}
+
+.ui-input::placeholder,
+.ui-textarea::placeholder {
+    color: var(--text-sub);
+}
+
+.ui-input:disabled,
+.ui-select:disabled,
+.ui-textarea:disabled {
+    background-color: rgba(255, 255, 255, 0.03);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.ui-input-has-left-icon { padding-left: 38px; }
+.ui-input-has-right-icon { padding-right: 38px; }
+
+.ui-input.is-invalid,
+.ui-select.is-invalid,
+.ui-textarea.is-invalid {
+    border-color: var(--danger);
+}
+.ui-input.is-invalid:focus,
+.ui-select.is-invalid:focus,
+.ui-textarea.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+}
+
+/* Select */
+.ui-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 38px;
+    cursor: pointer;
+}
+.ui-select option {
+    background-color: #0f172a;
+    color: #ffffff;
+}
+
+/* Textarea */
+.ui-textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+/* Checkbox & Radio */
+.ui-check-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13.5px;
+    color: var(--text-main);
+}
+.ui-checkbox,
+.ui-radio {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border-color);
+    background-color: var(--ui-bg-input);
+    border-radius: var(--ui-radius-sm);
+    cursor: pointer;
+    outline: none;
+    display: grid;
+    place-content: center;
+    transition: var(--ui-transition-fast);
+    flex-shrink: 0;
+}
+.ui-radio {
+    border-radius: 50%;
+}
+.ui-checkbox:checked,
+.ui-radio:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+.ui-checkbox:checked::before {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    color: #ffffff;
+}
+.ui-radio:checked::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #ffffff;
+}
+.ui-checkbox:focus-visible,
+.ui-radio:focus-visible {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+/* Switch / Toggle */
+.ui-switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.ui-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.ui-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    transition: var(--ui-transition-base);
+}
+.ui-switch-slider::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: var(--ui-transition-base);
+}
+.ui-switch input:checked + .ui-switch-slider {
+    background-color: var(--primary);
+}
+.ui-switch input:checked + .ui-switch-slider::before {
+    transform: translateX(18px);
+}
+
+/* File Upload Dropzone */
+.ui-file-dropzone {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--ui-radius-lg);
+    background-color: rgba(255, 255, 255, 0.02);
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--ui-transition-base);
+    position: relative;
+}
+.ui-file-dropzone:hover,
+.ui-file-dropzone.is-dragover {
+    border-color: var(--primary);
+    background-color: rgba(99, 102, 241, 0.05);
+}
+.ui-file-input {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Search Bar & Filter */
+.ui-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}

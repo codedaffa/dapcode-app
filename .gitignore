@@ -1,7 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
-/public/build
+# /public/build (tracked for production deployment)
 /storage/*.key
 /vendor
 .env
@@ -39,6 +39,8 @@ Thumbs.db
 /storage/logs/license-audit*.log
 *.bak
 *.tmp
+scratch_*
+/scratch/
 
 # ==============================================================================
 # DAPCODE PROTECTED MODULES (PLAINTEXT FILES ARE IGNORED)

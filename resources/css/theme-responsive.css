@@ -585,7 +585,7 @@ body.sidebar-mobile-open .sidebar-overlay {
     margin-bottom: 24px;
     width: 100%;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Responsive Grid Systems */

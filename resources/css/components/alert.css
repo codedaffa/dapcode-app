@@ -1,0 +1,111 @@
+/**
+ * DAPCODE UI - ALERT COMPONENT
+ */
+
+.ui-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: var(--ui-radius-md);
+    border: 1px solid transparent;
+    position: relative;
+    font-family: var(--ui-font-family);
+    transition: var(--ui-transition-base);
+    animation: ui-fade-in 0.25s ease-out;
+}
+
+.ui-alert-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.ui-alert-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.ui-alert-title {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 4px;
+}
+
+.ui-alert-description {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.ui-alert-close {
+    background: transparent;
+    border: none;
+    color: currentColor;
+    opacity: 0.6;
+    cursor: pointer;
+    padding: 4px;
+    margin: -4px -4px -4px 8px;
+    border-radius: var(--ui-radius-sm);
+    font-size: 14px;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: var(--ui-transition-fast);
+}
+
+.ui-alert-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Variants */
+.ui-alert-info {
+    background-color: rgba(56, 189, 248, 0.1);
+    border-color: rgba(56, 189, 248, 0.25);
+    color: #bae6fd;
+}
+.ui-alert-info .ui-alert-icon {
+    color: #38bdf8;
+}
+
+.ui-alert-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.25);
+    color: #a7f3d0;
+}
+.ui-alert-success .ui-alert-icon {
+    color: #10b981;
+}
+
+.ui-alert-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #fde68a;
+}
+.ui-alert-warning .ui-alert-icon {
+    color: #f59e0b;
+}
+
+.ui-alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #fecaca;
+}
+.ui-alert-danger .ui-alert-icon {
+    color: #ef4444;
+}
+
+/* Left Accent Border */
+.ui-alert-accent {
+    border-left-width: 4px;
+}
+.ui-alert-accent.ui-alert-info { border-left-color: #38bdf8; }
+.ui-alert-accent.ui-alert-success { border-left-color: #10b981; }
+.ui-alert-accent.ui-alert-warning { border-left-color: #f59e0b; }
+.ui-alert-accent.ui-alert-danger { border-left-color: #ef4444; }
+
+@keyframes ui-fade-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}

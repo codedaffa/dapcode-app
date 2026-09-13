@@ -65,7 +65,7 @@ graph TD
 ```
 
 ### Command Lifecycle (Modul HMVC):
-* **Membuat Modul:** `php artisan make:module {Nama}` (atau klik tombol **`+ Make Module`** di Web Terminal).
+* **Membuat Modul:** `php artisan make:hmvc-module {Nama}` atau `php artisan make:module {Nama}` (atau klik tombol **`+ Make Module`** di Web Terminal). Modul otomatis mewarisi Base Controller, UI Component library, dan enkripsi amplop Layer 6.
 * **Mengemas Kode Terbaru:** `php artisan dapcode:pack {module=all} [--lock]` (atau klik tombol **`dapcode:pack all`** di Web Terminal).
   - *Auto-Minified Envelopes:* File `.php.enc` otomatis dikemas dalam format 1-baris JSON ter-minify (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`).
   - *License-Aware Unlock:* Modul dengan lisensi aktif lokal tetap dipertahankan terbuka (`UNLOCKED via Active License`) tanpa memutus alur pengembangan lokal (gunakan `--lock` untuk memaksa penguncian).

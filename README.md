@@ -9,7 +9,8 @@
   <img src="https://img.shields.io/badge/Minifier%20Vault-Secure%20SourceMap-blueviolet?style=for-the-badge" alt="Secure SourceMap Vault">
   <img src="https://img.shields.io/badge/Theme%20Engine-Indonesian%20Holidays-dc2626?style=for-the-badge" alt="Indonesian Holidays">
   <img src="https://img.shields.io/badge/Localization-ID%20%7C%20EN-38bdf8?style=for-the-badge" alt="i18n">
-  <img src="https://img.shields.io/badge/Security%20Tests-70%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="70 Passed Tests">
+  <img src="https://img.shields.io/badge/UI%20Design%20System-22%2B%20Components-6366f1?style=for-the-badge&logo=blueprint&logoColor=white" alt="UI Component Library">
+  <img src="https://img.shields.io/badge/Security%20%26%20UI%20Tests-81%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="81 Passed Tests">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
@@ -17,7 +18,7 @@
   <img src="docs/images/dapcode-aegisguard.jpg" alt="DapCode AegisGuard - Advanced Cybersecurity & Protection" width="100%">
 </p>
 
-**DapCode App** adalah platform portofolio digital dan ekosistem pengembang modern yang dibangun di atas framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)**, frontend asset pipeline modern bertenaga **Laravel Vite**, sistem proteksi multi-lapis terenkripsi **DapCode AegisGuard™** (*6-Layer Defense-in-Depth, Asymmetric RSA-2048 Digital Licensing, and AES-256-GCM Envelope Encryption*), serta mesin **Code & View Minifier / Unminifier** bertenaga **Secure SourceMap Vault** (*Zero Plaintext Leak, 100% Byte-for-Byte SHA-256 Exact Restoration*).
+**DapCode App** adalah platform portofolio digital dan ekosistem pengembang modern yang dibangun di atas framework **Laravel** dengan arsitektur modular **HMVC (Hierarchical Model-View-Controller)**, **Internal UI Component Library & Design System** (`<x-ui.*>`) siap pakai dengan interaktif showcase playground, frontend asset pipeline modern bertenaga **Laravel Vite**, sistem proteksi multi-lapis terenkripsi **DapCode AegisGuard™** (*6-Layer Defense-in-Depth, Asymmetric RSA-2048 Digital Licensing, and AES-256-GCM Envelope Encryption*), serta mesin **Code & View Minifier / Unminifier** bertenaga **Secure SourceMap Vault** (*Zero Plaintext Leak, 100% Byte-for-Byte SHA-256 Exact Restoration*).
 
 ---
 
@@ -80,6 +81,19 @@ Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indone
 ### 7. 🌐 Dual-Language Localization (ID / EN)
 - Dukungan penuh multi-bahasa untuk seluruh modul dan antarmuka sistem (`/lang/id` & `/lang/en`).
 
+### 8. 🎨 DapCode Internal UI Component Library & Design System
+Sistem antarmuka terstandarisasi yang dirancang dengan estetika *modern dark mode*, konsistensi token CSS, dan modularitas tinggi untuk mempercepat pembangunan fitur tanpa membuat komponen dari nol:
+- **22+ Komponen Blade Mandiri (`<x-ui.*>`):**
+  - **Primitives:** Button (beragam varian tema, ukuran `sm/md/lg`, pill shape, loading spinner, dropdown actions), Badge (subtle, solid, outline, dot indicator), Status Indicator (pulsing radar dots), Alert (accent border, auto dismissible).
+  - **Cards & Feedback:** Card (title, subtitle, icon, custom header/footer/action slots), Stat Card (trend counter indicator), Loading (animated spinner & shimmering skeleton), Empty State.
+  - **Form Controls:** Input (icon, help text, floating labels), Select (custom styled dropdowns), DatePicker (modern native picker), Textarea, Switch Toggle, Radio Button, File Upload (drag & drop ready).
+  - **Table & Navigation:** Table (striped, hoverable), DataTable (client-side dynamic fast search, custom action bar & pagination), Filter Bar, Breadcrumb Navigation Trail, Tabs (pills & underline styles).
+  - **Interactive Dialogs & Popups:** Modal (`<x-ui.modal>` dengan pilihan ukuran `sm/md/lg/xl`, static backdrop, autofocus otomatis, Escape key), Floating Tooltips, Notification Toast (`DapToast`), Dialog Konfirmasi Promise-based (`DapConfirm`).
+- **Interactive Playground & Code Guide (`/dapcode/ui-showcase`):**
+  Halaman dokumentasi visual hidup di mana programmer dapat menguji coba setiap komponen secara langsung dan menyalin baris kodenya dengan satu klik (*one-click copy with toast feedback*).
+- **HMVC Module Generator (`php artisan make:hmvc-module`):**
+  Perintah otomatis untuk menghasilkan modul HMVC baru yang langsung mewarisi Base Controller dan terintegrasi penuh dengan ekosistem UI Component Library.
+
 ---
 
 ## 📂 13 Modul HMVC Terproteksi
@@ -119,7 +133,7 @@ dapcode-app/
 │   │   ├── ViewUnminifyCommand.php    # Unminify Views: php artisan view:unminify
 │   │   ├── DapcodeModuleCommand.php   # Status modul: php artisan dapcode:module
 │   │   ├── DapcodePackCommand.php     # Re-encrypt kode develop: php artisan dapcode:pack
-│   │   ├── MakeHMVCModule.php         # Generator modul baru: php artisan make:module
+│   │   ├── MakeHMVCModule.php         # Generator modul baru & UI: php artisan make:hmvc-module
 │   │   ├── RemoveHMVCModule.php       # Hapus modul HMVC: php artisan remove:module
 │   │   └── SignDapcodeLicense.php     # Authority CLI Signer (RSA-2048 Private Key)
 │   ├── Http/
@@ -128,6 +142,8 @@ dapcode-app/
 │   │   │   ├── PortfolioController.php # Landing Page Portofolio (/)
 │   │   │   ├── Dapcode/
 │   │   │   │   └── LicenseController.php # Activation, Terminal & Signer Handlers
+│   │   │   ├── Dev/
+│   │   │   │   └── UiShowcaseController.php # UI Component Library Showcase Controller
 │   │   │   └── Core/                  # Base Controllers per Modul
 │   │   └── Middleware/
 │   │       └── DapcodeLicenseMiddleware.php # Layer 1 Dynamic Route Interceptor
@@ -166,7 +182,16 @@ dapcode-app/
 │       ├── dapcode-threat-model.md    # Threat Model & Trust Boundaries
 │       └── dapcode-license-architecture.md # Architecture & Hardening Guide
 ├── resources/
+│   ├── css/
+│   │   ├── app.css                    # Entry Point CSS
+│   │   └── components/                # 10 CSS Design Tokens & Component Stylesheets
+│   ├── js/
+│   │   ├── app.js                    # Entry Point JS
+│   │   └── components/                # 7 Micro-Driver JS (Modal, Toast, Confirm, Tabs, dll.)
 │   └── views/
+│       ├── components/ui/             # 22+ Blade UI Design System Components (<x-ui.*>)
+│       ├── showcase/
+│       │   └── index.blade.php        # Interactive UI Showcase Playground View
 │       ├── dapcode/
 │       │   ├── activate.blade.php     # Form Aktivasi & Deaktivasi Lisensi
 │       │   ├── authority-terminal.blade.php # Developer Web Terminal & RSA-2048 Signer
@@ -178,11 +203,12 @@ dapcode-app/
 │           └── .sourcemaps/           # Secure SourceMap Vault (*.dapmap, di-.gitignore)
 ├── tests/
 │   └── Feature/
-│       ├── DapcodeEncryptedModuleSecurityTest.php # 25 Tests Enkripsi AES-256-GCM
+│       ├── DapcodeEncryptedModuleSecurityTest.php # 34 Tests Enkripsi AES-256-GCM
 │       ├── DapcodeLayeredGuardSecurityTest.php    # 12 Tests Multi-Layer Protection
-│       └── DapcodeLicenseSecurityTest.php         # 22 Tests Verifikasi Lisensi RSA
+│       ├── DapcodeLicenseSecurityTest.php         # 22 Tests Verifikasi Lisensi RSA
+│       └── UiComponentLibraryTest.php             # 11 Tests UI Component Library
 └── routes/
-    └── web.php                        # Routing Web & DapCode Endpoints
+    └── web.php                        # Routing Web, Showcase & DapCode Endpoints
 ```
 
 ---
@@ -402,15 +428,16 @@ php artisan dapcode:sign-license --revoke --license_id=<LICENSE_ID> --passcode="
 
 ---
 
-## 🧪 Menjalankan Automated Security Tests (100% Pass)
+## 🧪 Menjalankan Automated Security & UI Tests (100% Pass)
 
-Aplikasi dilengkapi **70 Automated Feature & Security Tests** untuk menguji seluruh lapisan pertahanan:
+Aplikasi dilengkapi **81 Automated Feature, Security, & UI Tests** untuk menguji seluruh lapisan pertahanan dan integritas komponen antarmuka:
 
 ```bash
 php artisan test
 ```
 
 ### Rincian Cakupan Test Suite:
+* ✅ **`UiComponentLibraryTest` (11 Tests, 34 Assertions):** Menguji responsivitas halaman `/dapcode/ui-showcase`, render seluruh komponen tombol, badge, alert, card, form controls, modal, tabs, integrasi modul Setting, validasi asset manifest Vite, halaman landing portfolio, serta integrasi halaman aktivasi dan terminal.
 * ✅ **`DapcodeEncryptedModuleSecurityTest` (34 Tests):** Menguji status fresh clone locked, dekripsi saat aktivasi, pembersihan plaintext saat revocation, cipher tampering, tag verification, path traversal, manipulasi manifest, siklus minify/unminify dengan lisensi aktif, pengelompokan file `.enc` ke target `aegisguard`, dan isolasi route portofolio.
 * ✅ **`DapcodeLayeredGuardSecurityTest` (12 Tests):** Menguji ketahanan Layer 1–6 terhadap middleware bypass, controller direct invocation, HMVC sub-request injection, tampered core files, dan canonical path obfuscation.
 * ✅ **`DapcodeLicenseSecurityTest` (22 Tests):** Menguji validasi tanda tangan RSA-2048, verifikasi expired date, granular module licensing, anti-forgery request headers/cookies, dan hash passcode validation.

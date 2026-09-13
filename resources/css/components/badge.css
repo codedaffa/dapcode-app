@@ -1,0 +1,131 @@
+/**
+ * DAPCODE UI - BADGE COMPONENT
+ */
+
+.ui-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--ui-font-family);
+    font-weight: 600;
+    line-height: 1;
+    border-radius: var(--ui-radius-sm);
+    white-space: nowrap;
+    user-select: none;
+    transition: var(--ui-transition-fast);
+}
+
+/* Sizes */
+.ui-badge-sm {
+    padding: 3px 7px;
+    font-size: 11px;
+}
+.ui-badge-md {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+.ui-badge-lg {
+    padding: 6px 13px;
+    font-size: 13px;
+}
+
+/* Pill */
+.ui-badge-pill {
+    border-radius: var(--ui-radius-full);
+}
+
+/* Variants - Subtle (Default) */
+.ui-badge-subtle.ui-badge-primary {
+    background-color: var(--primary-light, rgba(99, 102, 241, 0.15));
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.ui-badge-subtle.ui-badge-success {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.ui-badge-subtle.ui-badge-warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #fcd34d;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.ui-badge-subtle.ui-badge-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.ui-badge-subtle.ui-badge-info {
+    background-color: rgba(56, 189, 248, 0.15);
+    color: #7dd3fc;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+.ui-badge-subtle.ui-badge-secondary {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+/* Variants - Solid */
+.ui-badge-solid.ui-badge-primary {
+    background-color: var(--primary);
+    color: #ffffff;
+}
+.ui-badge-solid.ui-badge-success {
+    background-color: var(--success);
+    color: #ffffff;
+}
+.ui-badge-solid.ui-badge-warning {
+    background-color: var(--warning);
+    color: #0f172a;
+}
+.ui-badge-solid.ui-badge-danger {
+    background-color: var(--danger);
+    color: #ffffff;
+}
+.ui-badge-solid.ui-badge-info {
+    background-color: var(--info);
+    color: #0f172a;
+}
+.ui-badge-solid.ui-badge-secondary {
+    background-color: #475569;
+    color: #ffffff;
+}
+
+/* Variants - Outline */
+.ui-badge-outline {
+    background-color: transparent;
+}
+.ui-badge-outline.ui-badge-primary {
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+.ui-badge-outline.ui-badge-success {
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+.ui-badge-outline.ui-badge-warning {
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+.ui-badge-outline.ui-badge-danger {
+    color: var(--danger);
+    border: 1px solid var(--danger);
+}
+.ui-badge-outline.ui-badge-info {
+    color: var(--info);
+    border: 1px solid var(--info);
+}
+.ui-badge-outline.ui-badge-secondary {
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+/* Dot indicator inside badge */
+.ui-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    display: inline-block;
+}

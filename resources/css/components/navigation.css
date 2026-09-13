@@ -1,0 +1,187 @@
+/**
+ * DAPCODE UI - NAVIGATION
+ * Breadcrumb, Tabs, Dropdown
+ */
+
+/* --------------------------------------------------------------------------
+   1. Breadcrumbs
+   -------------------------------------------------------------------------- */
+.ui-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.ui-breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+}
+
+.ui-breadcrumb-item a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: var(--ui-transition-fast);
+}
+.ui-breadcrumb-item a:hover {
+    color: var(--primary);
+}
+
+.ui-breadcrumb-separator {
+    color: var(--text-sub);
+    font-size: 11px;
+}
+
+.ui-breadcrumb-item.is-current {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   2. Tabs
+   -------------------------------------------------------------------------- */
+.ui-tabs-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--ui-border-subtle);
+    padding-bottom: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.ui-tab-btn {
+    background: transparent;
+    border: none;
+    padding: 10px 16px;
+    font-family: var(--ui-font-family);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--ui-transition-fast);
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.ui-tab-btn:hover {
+    color: #ffffff;
+}
+
+.ui-tab-btn.is-active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+/* Pill Tabs */
+.ui-tabs-pills {
+    border-bottom: none;
+    background-color: rgba(15, 23, 42, 0.6);
+    padding: 4px;
+    border-radius: var(--ui-radius-md);
+    border: 1px solid var(--ui-border-default);
+    display: inline-flex;
+}
+
+.ui-tabs-pills .ui-tab-btn {
+    border-bottom: none;
+    border-radius: var(--ui-radius-sm);
+    padding: 7px 14px;
+    font-size: 13px;
+}
+
+.ui-tabs-pills .ui-tab-btn.is-active {
+    background-color: var(--primary);
+    color: #ffffff;
+    box-shadow: var(--ui-shadow-xs);
+}
+
+.ui-tab-pane {
+    display: none;
+    padding-top: 20px;
+    animation: ui-fade-in 0.2s ease-out;
+}
+.ui-tab-pane.is-active {
+    display: block;
+}
+
+/* --------------------------------------------------------------------------
+   3. Dropdown Menu
+   -------------------------------------------------------------------------- */
+.ui-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.ui-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 180px;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--ui-radius-md);
+    padding: 6px;
+    box-shadow: var(--ui-shadow-lg);
+    z-index: 1050;
+    display: none;
+    animation: ui-fade-in 0.15s ease-out;
+}
+
+.ui-dropdown-menu.is-open {
+    display: block;
+}
+
+.ui-dropdown-menu.is-right {
+    left: auto;
+    right: 0;
+}
+
+.ui-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-main);
+    text-decoration: none;
+    border-radius: var(--ui-radius-sm);
+    transition: var(--ui-transition-fast);
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.ui-dropdown-item:hover {
+    background-color: rgba(99, 102, 241, 0.12);
+    color: #ffffff;
+}
+
+.ui-dropdown-item.is-danger {
+    color: #f87171;
+}
+.ui-dropdown-item.is-danger:hover {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ffffff;
+}
+
+.ui-dropdown-divider {
+    height: 1px;
+    background-color: var(--ui-border-subtle);
+    margin: 4px 0;
+}
