@@ -7,6 +7,7 @@ import { DapConfirm } from './confirm';
 import { DapDropdown } from './dropdown';
 import { DapTooltip } from './tooltip';
 import { DapTabs } from './tabs';
+import { DapTable } from './table';
 
 export const DapUI = {
     modal: DapModal,
@@ -15,12 +16,14 @@ export const DapUI = {
     dropdown: DapDropdown,
     tooltip: DapTooltip,
     tabs: DapTabs,
+    table: DapTable,
 
     init() {
         DapModal.init();
         DapDropdown.init();
         DapTooltip.init();
         DapTabs.init();
+        DapTable.init();
     }
 };
 

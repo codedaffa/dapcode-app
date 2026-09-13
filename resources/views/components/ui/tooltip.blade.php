@@ -1,1 +1,1 @@
-@props([ 'text' => '', ]) <span {{ $attributes->merge(['data-ui-tooltip' => $text, 'style' => 'display: inline-block; cursor: help;']) }}>{{ $slot }}</span>
+@props([ 'text' => '', ]) <span {{ $attributes-> merge(['data-ui-tooltip' => $text, 'style' => 'display: inline-block; cursor: help;']) }}>{{ $slot }}</span>

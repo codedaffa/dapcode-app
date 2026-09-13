@@ -245,6 +245,26 @@
     gap: 10px;
 }
 
+#ui-confirm-dialog-singleton .ui-modal-footer,
+.ui-confirm-dialog .ui-modal-footer {
+    border-top: none;
+    background: transparent;
+    padding: 0 24px 24px;
+    justify-content: center;
+    gap: 12px;
+}
+
+#ui-confirm-dialog-singleton .ui-modal-footer .ui-btn,
+.ui-confirm-dialog .ui-modal-footer .ui-btn {
+    padding: 10px 22px;
+    font-size: 13.5px;
+    min-width: 110px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
 /* --------------------------------------------------------------------------
    6. Toasts / Notifications
    -------------------------------------------------------------------------- */

@@ -88,6 +88,10 @@ class UiComponentLibraryTest extends TestCase
         $response->assertSee('ui-btn', false);
         $response->assertSee('ui-card', false);
         $response->assertSee('ui-badge', false);
+        $response->assertSee('Lihat Kode');
+        $response->assertSee('ui-code-drawer', false);
+        $response->assertSee('Panduan &amp; Integrasi', false);
+        $response->assertSee('Salin Kode');
     }
 
     /**
@@ -190,6 +194,20 @@ class UiComponentLibraryTest extends TestCase
         $renderedTabs = Blade::render('<x-ui.tabs :items="[[\'id\' => \'t1\', \'label\' => \'Tab 1\'], [\'id\' => \'t2\', \'label\' => \'Tab 2\']]" active="t1">Konten Tab</x-ui.tabs>');
         $this->assertStringContainsString('data-ui-tab-target="t1"', $renderedTabs);
         $this->assertStringContainsString('Tab 1', $renderedTabs);
+    }
+
+    /**
+     * Test datatable component with auto-refresh and refreshable props.
+     */
+    public function test_ui_datatable_auto_refresh_rendering()
+    {
+        $rendered = Blade::render('<x-ui.datatable id="test-dt" endpoint="/api/test" refreshable auto-refresh="5000" auto-refresh-toggle><p>Data</p></x-ui.datatable>');
+        $this->assertStringContainsString('id="test-dt"', $rendered);
+        $this->assertStringContainsString('data-ui-refresh-url="/api/test"', $rendered);
+        $this->assertStringContainsString('data-ui-auto-refresh="5000"', $rendered);
+        $this->assertStringContainsString('data-ui-table-refresh="test-dt"', $rendered);
+        $this->assertStringContainsString('data-ui-table-auto-refresh="test-dt"', $rendered);
+        $this->assertStringContainsString('Auto Refresh', $rendered);
     }
 
     /**

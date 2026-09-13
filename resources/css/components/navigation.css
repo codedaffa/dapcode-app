@@ -90,7 +90,14 @@
     padding: 4px;
     border-radius: var(--ui-radius-md);
     border: 1px solid var(--ui-border-default);
-    display: inline-flex;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 100%;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    box-sizing: border-box;
 }
 
 .ui-tabs-pills .ui-tab-btn {
@@ -98,12 +105,28 @@
     border-radius: var(--ui-radius-sm);
     padding: 7px 14px;
     font-size: 13px;
+    flex-shrink: 0;
 }
 
 .ui-tabs-pills .ui-tab-btn.is-active {
     background-color: var(--primary);
     color: #ffffff;
     box-shadow: var(--ui-shadow-xs);
+}
+
+@media (max-width: 640px) {
+    .ui-tabs-pills {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        max-width: 100%;
+        width: 100%;
+    }
+    .ui-tabs-pills::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .ui-tab-pane {

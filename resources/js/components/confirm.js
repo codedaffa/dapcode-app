@@ -44,9 +44,13 @@ export function DapConfirm({
                     <h3 style="font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 8px;">${title}</h3>
                     <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin: 0;">${message}</p>
                 </div>
-                <div class="ui-modal-footer" style="justify-content: center; gap: 10px; border-top: none; padding: 0 24px 24px; background: transparent;">
-                    <button type="button" class="ui-btn ui-btn-secondary" id="ui-confirm-cancel-btn">${cancelText}</button>
-                    <button type="button" class="ui-btn ${btnClass}" id="ui-confirm-ok-btn">${confirmText}</button>
+                <div class="ui-modal-footer" style="justify-content: center; gap: 12px; border-top: none; padding: 0 24px 24px; background: transparent;">
+                    <button type="button" class="ui-btn ui-btn-secondary ui-btn-md" id="ui-confirm-cancel-btn" style="min-width: 110px; padding: 10px 22px;">
+                        <i class="fa-solid fa-xmark"></i> <span>${cancelText}</span>
+                    </button>
+                    <button type="button" class="ui-btn ${btnClass} ui-btn-md" id="ui-confirm-ok-btn" style="min-width: 110px; padding: 10px 22px;">
+                        <i class="${type === 'danger' ? 'fa-solid fa-trash' : (type === 'success' ? 'fa-solid fa-check' : 'fa-solid fa-circle-check')}"></i> <span>${confirmText}</span>
+                    </button>
                 </div>
             </div>
         `;
