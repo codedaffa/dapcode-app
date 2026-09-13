@@ -36,7 +36,12 @@ Thumbs.db
 /storage/app/dapcode/.sourcemaps/
 /storage/app/dapcode/*.dapmap
 /storage/framework/cache/dap_php_*
+/storage/framework/dapcode/
 /storage/logs/license-audit*.log
+authority_private_key.pem
+*.pem
+*.key
+*.dapmap
 *.bak
 *.tmp
 scratch_*

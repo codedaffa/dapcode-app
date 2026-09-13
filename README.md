@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/Theme%20Engine-Indonesian%20Holidays-dc2626?style=for-the-badge" alt="Indonesian Holidays">
   <img src="https://img.shields.io/badge/Localization-ID%20%7C%20EN-38bdf8?style=for-the-badge" alt="i18n">
   <img src="https://img.shields.io/badge/UI%20Design%20System-22%2B%20Components-6366f1?style=for-the-badge&logo=blueprint&logoColor=white" alt="UI Component Library">
-  <img src="https://img.shields.io/badge/Security%20%26%20UI%20Tests-81%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="81 Passed Tests">
+  <img src="https://img.shields.io/badge/Security%20%26%20UI%20Tests-82%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="82 Passed Tests">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
@@ -126,9 +126,9 @@ dapcode-app/
 │   │   ├── CodeMinifyCommand.php      # Minify PHP & Blade: php artisan code:minify
 │   │   ├── CodeUnminifyCommand.php    # Unminify PHP & Blade: php artisan code:unminify
 │   │   ├── CodeStatusCommand.php      # Status Minifikasi: php artisan code:status
-│   │   ├── DapcodeAegisguardCommand.php # Status proteksi AegisGuard: php artisan dapcode:aegisguard
-│   │   ├── DapcodeAegisguardEncryptCommand.php # Enkripsi core AegisGuard: php artisan dapcode:aegisguard encrypt
-│   │   ├── DapcodeAegisguardDecryptCommand.php # Dekripsi core AegisGuard: php artisan dapcode:aegisguard decrypt
+│   │   ├── DapcodeAegisguardCommand.php # Status proteksi AegisGuard: php artisan aegisguard:status (alias: dapcode:aegisguard)
+│   │   ├── DapcodeAegisguardEncryptCommand.php # Enkripsi core & auto-minify: php artisan aegisguard:encrypt (alias: dapcode:aegisguard-encrypt)
+│   │   ├── DapcodeAegisguardDecryptCommand.php # Dekripsi core & auto-unminify: php artisan aegisguard:decrypt (alias: dapcode:aegisguard-decrypt)
 │   │   ├── ViewMinifyCommand.php      # Minify Views: php artisan view:minify
 │   │   ├── ViewUnminifyCommand.php    # Unminify Views: php artisan view:unminify
 │   │   ├── DapcodeModuleCommand.php   # Status modul: php artisan dapcode:module
@@ -348,7 +348,7 @@ php artisan dapcode:pack all
 php artisan dapcode:pack all --lock
 ```
 *Fitur Unggulan `dapcode:pack`:*
-1. **Otomatis Ter-Minify dari Awal:** File `.php.enc` yang dihasilkan langsung dikompresi ke dalam format 1-baris JSON (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`) tanpa indentasi berlebih.
+1. **Otomatis Ter-Minify dari Awal:** File `.php.enc` yang dihasilkan dan master manifest terpusat (`app/Services/Dapcode/modules-manifest.json`) langsung dikompresi ke dalam format 1-baris JSON (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`) tanpa `JSON_PRETTY_PRINT` atau indentasi berlebih, menjamin integritas dan status minifikasi permanen.
 2. **License-Aware Development Mode:** Jika mesin lokal memiliki lisensi aktif untuk modul tersebut, file plaintext tetap berstatus `UNLOCKED` sehingga pengembangan dan akses rute tetap berjalan lancar.
 3. **Summary Transparan:** Menampilkan daftar nama modul yang berhasil dikemas secara rapi (`Modul dikemas: dashboard, ...`).
 4. **Git Safe:** Manifest integritas otomatis diperbarui dan file `.php` lokal dicegah bocor ke Git oleh `.gitignore`.
@@ -372,30 +372,34 @@ Ketika seluruh file core AegisGuard dalam status terenkripsi (`.php.enc`), aplik
 ### 🔄 Alur Pengembangan Core AegisGuard (*Workflow Modifikasi Kode Core*):
 Jika Anda perlu mengubah, mengembangkan, atau melakukan audit pada kode inti proteksi AegisGuard:
 
-1. **Dekripsi Kode Core ke Format Asli:**
+1. **Dekripsi Kode Core ke Format Asli & Auto-Unminify Seluruh Proyek:**
    ```bash
-   # Melalui CLI:
-   php artisan dapcode:aegisguard decrypt
-   # Atau tombol preset di Web Terminal: aegisguard:decrypt
+   # Melalui CLI (Perintah Utama atau Alias):
+   php artisan aegisguard:decrypt
+   # Atau: php artisan dapcode:aegisguard decrypt
+   # Atau klik tombol preset di Web Terminal: aegisguard:decrypt
    ```
-   *Seluruh 20 file kode core akan didekripsi dan otomatis diformat rapi sesuai standar PSR-12 menggunakan `CodeFormatterService`.*
+   *Seluruh 20 file kode core AegisGuard didekripsi dari `.enc` ke kode sumber asli, dan sistem secara otomatis memanggil `code:unminify all --force`. Kode dipulihkan dari SourceMap Vault ke format multiline yang terstruktur rapi sesuai standar PSR-12.*
 
 2. **Lakukan Modifikasi Kode:**
    Edit file `.php` pada `app/Services/Dapcode/`, `app/Console/Commands/`, `app/Http/Middleware/`, dll. sesuai kebutuhan pengembangan Anda.
 
-3. **Enkripsi Kembali ke Amplop Biner:**
+3. **Enkripsi Kembali ke Amplop Biner & Auto-Minify Seluruh Proyek:**
    Setelah pengeditan selesai, segel kembali ke status produksi terenkripsi:
    ```bash
-   # Melalui CLI:
-   php artisan dapcode:aegisguard encrypt
-   # Atau tombol preset di Web Terminal: aegisguard:encrypt
+   # Melalui CLI (Perintah Utama atau Alias):
+   php artisan aegisguard:encrypt
+   # Atau: php artisan dapcode:aegisguard encrypt
+   # Atau klik tombol preset di Web Terminal: aegisguard:encrypt
    ```
-   *Perintah ini mengenkripsi seluruh file core menjadi amplop `.php.enc` ter-minify dan mengganti file `.php` asli dengan safe loader stub.*
+   *Perintah ini mengenkripsi seluruh file core menjadi amplop `.php.enc` ter-minify, mengganti file `.php` asli dengan safe loader stub minified 2 baris, dan secara otomatis mengeksekusi `code:minify all --force` sehingga 100% kode proyek ter-minify optimal.*
 
 4. **Inspeksi Status Proteksi Core:**
    ```bash
-   php artisan dapcode:aegisguard status
-   # Atau tombol preset di Web Terminal: aegisguard:status
+   # Melalui CLI:
+   php artisan aegisguard:status
+   # Atau: php artisan dapcode:aegisguard status
+   # Atau klik tombol preset di Web Terminal: aegisguard:status
    ```
    *Menampilkan status ketersediaan kode `.php`, amplop `.php.enc`, dan kesiapan in-memory JIT execution.*
 
@@ -430,14 +434,14 @@ php artisan dapcode:sign-license --revoke --license_id=<LICENSE_ID> --passcode="
 
 ## 🧪 Menjalankan Automated Security & UI Tests (100% Pass)
 
-Aplikasi dilengkapi **81 Automated Feature, Security, & UI Tests** untuk menguji seluruh lapisan pertahanan dan integritas komponen antarmuka:
+Aplikasi dilengkapi **82 Automated Feature, Security, & UI Tests** untuk menguji seluruh lapisan pertahanan dan integritas komponen antarmuka:
 
 ```bash
 php artisan test
 ```
 
 ### Rincian Cakupan Test Suite:
-* ✅ **`UiComponentLibraryTest` (11 Tests, 34 Assertions):** Menguji responsivitas halaman `/dapcode/ui-showcase`, render seluruh komponen tombol, badge, alert, card, form controls, modal, tabs, integrasi modul Setting, validasi asset manifest Vite, halaman landing portfolio, serta integrasi halaman aktivasi dan terminal.
+* ✅ **`UiComponentLibraryTest` (12 Tests, 38 Assertions):** Menguji responsivitas halaman `/dapcode/ui-showcase`, render seluruh komponen tombol, badge, alert, card, form controls, modal, tabs, datatable auto-refresh, integrasi modul Setting, validasi asset manifest Vite, halaman landing portfolio, serta integrasi halaman aktivasi dan terminal.
 * ✅ **`DapcodeEncryptedModuleSecurityTest` (34 Tests):** Menguji status fresh clone locked, dekripsi saat aktivasi, pembersihan plaintext saat revocation, cipher tampering, tag verification, path traversal, manipulasi manifest, siklus minify/unminify dengan lisensi aktif, pengelompokan file `.enc` ke target `aegisguard`, dan isolasi route portofolio.
 * ✅ **`DapcodeLayeredGuardSecurityTest` (12 Tests):** Menguji ketahanan Layer 1–6 terhadap middleware bypass, controller direct invocation, HMVC sub-request injection, tampered core files, dan canonical path obfuscation.
 * ✅ **`DapcodeLicenseSecurityTest` (22 Tests):** Menguji validasi tanda tangan RSA-2048, verifikasi expired date, granular module licensing, anti-forgery request headers/cookies, dan hash passcode validation.

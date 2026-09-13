@@ -67,17 +67,17 @@ graph TD
 ### Command Lifecycle (Modul HMVC):
 * **Membuat Modul:** `php artisan make:hmvc-module {Nama}` atau `php artisan make:module {Nama}` (atau klik tombol **`+ Make Module`** di Web Terminal). Modul otomatis mewarisi Base Controller, UI Component library, dan enkripsi amplop Layer 6.
 * **Mengemas Kode Terbaru:** `php artisan dapcode:pack {module=all} [--lock]` (atau klik tombol **`dapcode:pack all`** di Web Terminal).
-  - *Auto-Minified Envelopes:* File `.php.enc` otomatis dikemas dalam format 1-baris JSON ter-minify (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`).
+  - *Auto-Minified Envelopes & Master Manifest:* File `.php.enc` dan `app/Services/Dapcode/modules-manifest.json` otomatis dikemas dalam format 1-baris JSON ter-minify (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`) tanpa `JSON_PRETTY_PRINT`.
   - *License-Aware Unlock:* Modul dengan lisensi aktif lokal tetap dipertahankan terbuka (`UNLOCKED via Active License`) tanpa memutus alur pengembangan lokal (gunakan `--lock` untuk memaksa penguncian).
   - *Summary Reporting:* Menampilkan daftar nama modul yang dikemas secara transparan pada penutup perintah.
 * **Melihat Status Keamanan Modul:** `php artisan dapcode:module status`.
 * **Inspeksi Minifikasi & Enkripsi:** `php artisan code:status aegisguard`.
 
 ### Core AegisGuard Lifecycle (Enkripsi & Dekripsi Kode Inti):
-* **Dekripsi Kode Core:** `php artisan dapcode:aegisguard decrypt` (atau tombol **`aegisguard:decrypt`** di Web Terminal). Memulihkan 20 file core ke kode sumber asli berformat PSR-12 rapi.
+* **Dekripsi Kode Core & Auto-Unminify:** `php artisan aegisguard:decrypt` atau `php artisan dapcode:aegisguard decrypt` (atau tombol **`aegisguard:decrypt`** di Web Terminal). Memulihkan 20 file core ke kode sumber asli berformat PSR-12 rapi dan secara otomatis memicu `code:unminify all --force` pada seluruh proyek.
 * **Pengembangan Kode Core:** Lakukan modifikasi kode PHP pada direktori core (`Services/Dapcode`, `Commands`, dll.).
-* **Enkripsi Kode Core:** `php artisan dapcode:aegisguard encrypt` (atau tombol **`aegisguard:encrypt`** di Web Terminal). Menyegel kembali 20 file ke format `.php.enc` minified dan mengganti file `.php` dengan safe loader stub.
-* **Inspeksi Status Core:** `php artisan dapcode:aegisguard status` (atau tombol **`aegisguard:status`**).
+* **Enkripsi Kode Core & Auto-Minify:** `php artisan aegisguard:encrypt` atau `php artisan dapcode:aegisguard encrypt` (atau tombol **`aegisguard:encrypt`** di Web Terminal). Menyegel kembali 20 file ke format `.php.enc` minified, mengganti file `.php` dengan safe loader stub minified 2 baris, dan secara otomatis memicu `code:minify all --force` pada seluruh proyek.
+* **Inspeksi Status Core:** `php artisan aegisguard:status` atau `php artisan dapcode:aegisguard status` (atau tombol **`aegisguard:status`** di Web Terminal).
 * **Manajemen Authority Passcode:** `php artisan dapcode:set-passcode [passcode_baru]` untuk menghasilkan digest SHA-256 dan mengupdate `.env` secara instan.
 
 ---
