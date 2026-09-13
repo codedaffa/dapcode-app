@@ -43,7 +43,11 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
         }
 
         if (self::$originalMasterManifest === null && File::exists(ModuleEncryptionService::getMasterManifestPath())) {
-            self::$originalMasterManifest = File::get(ModuleEncryptionService::getMasterManifestPath());
+            $rawManifest = File::get(ModuleEncryptionService::getMasterManifestPath());
+            $decodedManifest = json_decode($rawManifest, true);
+            self::$originalMasterManifest = is_array($decodedManifest)
+                ? json_encode($decodedManifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+                : $rawManifest;
         }
 
         // Backup all controllers, models, and original encrypted payloads
@@ -79,7 +83,16 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
         $this->resetLicenseFiles();
         $this->restorePlaintextFiles();
         if (self::$originalMasterManifest !== null) {
-            File::put(ModuleEncryptionService::getMasterManifestPath(), self::$originalMasterManifest);
+            $manifestToRestore = self::$originalMasterManifest;
+            $decodedManifest = json_decode($manifestToRestore, true);
+            if (is_array($decodedManifest)) {
+                $manifestToRestore = json_encode($decodedManifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            }
+            if (File::exists(ModuleEncryptionService::getMasterManifestPath())) {
+                @chmod(ModuleEncryptionService::getMasterManifestPath(), 0666);
+            }
+            File::put(ModuleEncryptionService::getMasterManifestPath(), $manifestToRestore);
+            @chmod(ModuleEncryptionService::getMasterManifestPath(), 0644);
         }
         IntegrityService::recordCoreFilesManifest();
         LicenseGuard::clearCache();
@@ -112,13 +125,25 @@ class DapcodeEncryptedModuleSecurityTest extends TestCase
                     if (!File::isDirectory(dirname($fullPath))) {
                         File::makeDirectory(dirname($fullPath), 0755, true, true);
                     }
+                    if (File::exists($fullPath)) {
+                        @chmod($fullPath, 0666);
+                    }
                     File::put($fullPath, $encContent);
                 }
             }
         }
 
         if (self::$originalMasterManifest !== null) {
-            File::put(ModuleEncryptionService::getMasterManifestPath(), self::$originalMasterManifest);
+            $manifestToRestore = self::$originalMasterManifest;
+            $decodedManifest = json_decode($manifestToRestore, true);
+            if (is_array($decodedManifest)) {
+                $manifestToRestore = json_encode($decodedManifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            }
+            if (File::exists(ModuleEncryptionService::getMasterManifestPath())) {
+                @chmod(ModuleEncryptionService::getMasterManifestPath(), 0666);
+            }
+            File::put(ModuleEncryptionService::getMasterManifestPath(), $manifestToRestore);
+            @chmod(ModuleEncryptionService::getMasterManifestPath(), 0644);
         }
     }
 

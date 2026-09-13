@@ -108,6 +108,7 @@ Sistem tema dinamis yang otomatis mendeteksi kalender hari besar nasional Indone
 dapcode-app/
 ├── app/
 │   ├── Console/Commands/
+│   │   ├── CreateDatabaseCommand.php  # Auto Create Database: php artisan db:create
 │   │   ├── CodeMinifyCommand.php      # Minify PHP & Blade: php artisan code:minify
 │   │   ├── CodeUnminifyCommand.php    # Unminify PHP & Blade: php artisan code:unminify
 │   │   ├── CodeStatusCommand.php      # Status Minifikasi: php artisan code:status
@@ -200,10 +201,29 @@ composer install
 npm install
 ```
 
-### 3. Konfigurasi Lingkungan (.env)
+### 3. Konfigurasi Lingkungan, Database & Migrasi
+
+Anda dapat memilih **1-Langkah Otomatis** atau langkah manual:
+
+#### ⚡ Opsi A: 1-Langkah Otomatis (Direkomendasikan)
 ```bash
+composer setup
+```
+> Perintah `composer setup` akan otomatis membuat `.env` dari `.env.example`, meng-generate `APP_KEY`, membuat database fisik (`dapcode_app`) di MySQL melalui `php artisan db:create`, dan mengeksekusi seluruh migrasi tabel via `php artisan migrate --force`.
+
+#### 🛠️ Opsi B: Langkah Manual
+```bash
+# 1. Salin file environment
 cp .env.example .env
+
+# 2. Generate Application Key
 php artisan key:generate
+
+# 3. Buat Database Otomatis (MySQL/PostgreSQL/SQLite)
+php artisan db:create
+
+# 4. Eksekusi Migrasi Database
+php artisan migrate
 ```
 
 ### 4. Build Frontend Asset (Vite)
