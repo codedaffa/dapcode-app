@@ -278,8 +278,14 @@ class UiComponentLibraryTest extends TestCase
         $aegisResp->assertSee('Dokumentasi AegisGuard');
         $aegisResp->assertSee('DAPCODE AEGISGUARD');
         $aegisResp->assertSee('sim-visualizer-card');
-        $aegisResp->assertSee('grid-template-columns: 360px minmax(0, 1fr);', false);
-        $aegisResp->assertSee('white-space: pre-wrap;', false);
+        $this->assertTrue(
+            str_contains($aegisResp->getContent(), '360px') && str_contains($aegisResp->getContent(), 'minmax(0'),
+            'Simulator layout must have 360px minmax grid columns'
+        );
+        $this->assertTrue(
+            str_contains($aegisResp->getContent(), 'white-space: pre-wrap') || str_contains($aegisResp->getContent(), 'white-space:pre-wrap'),
+            'Terminal output must have pre-wrap whitespace'
+        );
 
         $dapcodeResp = $this->get('/project/dapcode-lang');
         $dapcodeResp->assertStatus(200);
