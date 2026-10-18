@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/Theme%20Engine-Indonesian%20Holidays-dc2626?style=for-the-badge" alt="Indonesian Holidays">
   <img src="https://img.shields.io/badge/Localization-ID%20%7C%20EN-38bdf8?style=for-the-badge" alt="i18n">
   <img src="https://img.shields.io/badge/UI%20Design%20System-22%2B%20Components-6366f1?style=for-the-badge&logo=blueprint&logoColor=white" alt="UI Component Library">
-  <img src="https://img.shields.io/badge/Security%20%26%20UI%20Tests-82%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="82 Passed Tests">
+  <img src="https://img.shields.io/badge/Security%20%26%20UI%20Tests-83%20Passed%20(100%25)-brightgreen?style=for-the-badge" alt="83 Passed Tests">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
@@ -348,10 +348,11 @@ php artisan dapcode:pack all
 php artisan dapcode:pack all --lock
 ```
 *Fitur Unggulan `dapcode:pack`:*
-1. **Otomatis Ter-Minify dari Awal:** File `.php.enc` yang dihasilkan dan master manifest terpusat (`app/Services/Dapcode/modules-manifest.json`) langsung dikompresi ke dalam format 1-baris JSON (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`) tanpa `JSON_PRETTY_PRINT` atau indentasi berlebih, menjamin integritas dan status minifikasi permanen.
-2. **License-Aware Development Mode:** Jika mesin lokal memiliki lisensi aktif untuk modul tersebut, file plaintext tetap berstatus `UNLOCKED` sehingga pengembangan dan akses rute tetap berjalan lancar.
-3. **Summary Transparan:** Menampilkan daftar nama modul yang berhasil dikemas secara rapi (`Modul dikemas: dashboard, ...`).
-4. **Git Safe:** Manifest integritas otomatis diperbarui dan file `.php` lokal dicegah bocor ke Git oleh `.gitignore`.
+1. **Smart Differential / Incremental Encryption (Zero-Diff Git History):** Sistem secara cerdas membandingkan hash SHA-256 berkas kode sumber terhadap amplop `.php.enc` yang ada. File yang tidak mengalami perubahan (`[UNCHANGED]`) tidak akan ditulis ulang ke disk dan salt tetap dipertahankan, sehingga Git hanya mendeteksi perubahan pada file yang benar-benar Anda edit tanpa *dirty diffs* pada file lain.
+2. **Otomatis Ter-Minify dari Awal:** File `.php.enc` yang dihasilkan dan master manifest terpusat (`app/Services/Dapcode/modules-manifest.json`) langsung dikompresi ke dalam format 1-baris JSON (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`) tanpa `JSON_PRETTY_PRINT` atau indentasi berlebih, menjamin integritas dan status minifikasi permanen.
+3. **License-Aware Development Mode:** Jika mesin lokal memiliki lisensi aktif untuk modul tersebut, file plaintext tetap berstatus `UNLOCKED` sehingga pengembangan dan akses rute tetap berjalan lancar.
+4. **Summary Transparan:** Menampilkan daftar nama modul yang berhasil dikemas secara rapi (`Modul dikemas: dashboard, ...`), lengkap dengan rincian file baru/diperbarui vs file tidak berubah.
+5. **Git Safe:** Manifest integritas otomatis diperbarui dan file `.php` lokal dicegah bocor ke Git oleh `.gitignore`.
 
 ### C. Menghapus Modul:
 ```bash
