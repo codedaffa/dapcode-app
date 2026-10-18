@@ -68,6 +68,10 @@ return [
         'tech_stack' => 'Teknologi Digunakan',
         'status' => 'Status Pengerjaan',
         'live_demo' => 'Lihat Demo',
+        'dapcode' => 'DapCode',
+        'dapcode_lang' => 'DapCode',
+        'dapcode_title' => 'DapCode — Dokumentasi & Interaktif Playground',
+        'dapcode_subtitle' => 'Pusat Dokumentasi Menyeluruh, Panduan Instalasi OS, dan Playground Interaktif Bahasa Pemrograman DapCode (.dap)',
     ],
     'research' => [
         'name' => 'Riset',

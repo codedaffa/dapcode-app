@@ -244,6 +244,16 @@ body {
     margin-bottom: 4px;
     transition: var(--transition-smooth);
     white-space: nowrap;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.menu-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1;
 }
 
 .menu-item i {

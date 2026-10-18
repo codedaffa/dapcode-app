@@ -68,6 +68,10 @@ return [
         'tech_stack' => 'Technologies Used',
         'status' => 'Development Status',
         'live_demo' => 'Live Demo',
+        'dapcode' => 'DapCode',
+        'dapcode_lang' => 'DapCode',
+        'dapcode_title' => 'DapCode — Documentation & Interactive Playground',
+        'dapcode_subtitle' => 'Comprehensive Documentation, Multi-OS Installation Guide, and Interactive Code Playground for DapCode (.dap)',
     ],
     'research' => [
         'name' => 'Research',

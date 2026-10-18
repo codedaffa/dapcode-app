@@ -262,6 +262,30 @@ class UiComponentLibraryTest extends TestCase
         $terminalResp->assertStatus(200);
         $terminalResp->assertSee('DapCode Developer Web Terminal');
     }
+
+    /**
+     * Test project module sidebar contains Dokumentasi AegisGuard menu.
+     */
+    public function test_project_module_sidebar_contains_aegisguard_documentation_menu()
+    {
+        $response = $this->get('/project');
+        $response->assertStatus(200);
+        $response->assertSee('Dokumentasi AegisGuard');
+        $response->assertSee('/project/aegisguard');
+
+        $aegisResp = $this->get('/project/aegisguard');
+        $aegisResp->assertStatus(200);
+        $aegisResp->assertSee('Dokumentasi AegisGuard');
+        $aegisResp->assertSee('DAPCODE AEGISGUARD');
+        $aegisResp->assertSee('sim-visualizer-card');
+        $aegisResp->assertSee('grid-template-columns: 360px minmax(0, 1fr);', false);
+        $aegisResp->assertSee('white-space: pre-wrap;', false);
+
+        $dapcodeResp = $this->get('/project/dapcode-lang');
+        $dapcodeResp->assertStatus(200);
+        $dapcodeResp->assertSee('Dokumentasi AegisGuard');
+        $dapcodeResp->assertSee('DapCode Docs & Runner');
+    }
 }
 
 

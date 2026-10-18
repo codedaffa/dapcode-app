@@ -1,1 +1,259 @@
-{"version":1,"algorithm":"AES-256-GCM","updated_at":"2026-09-13T18:29:56+00:00","modules":{"achievement":{"salt":"ec467701ce73b3cd7c6362f4bfb2c50d","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Achievement.php","encrypted":"Encrypted/Controllers/Achievement.php.enc","sha256":"cbc8fc548f27589f808a23d5201898b5fe5ccd53c959018b0e0f7851ebdc255d","size":439},{"path":"Models/Achievement.php","encrypted":"Encrypted/Models/Achievement.php.enc","sha256":"84aad1f24ad6d6ae48b038d2653bffec99377ec44842ef9b82aba58221c4c142","size":243}]},"activity":{"salt":"25f8a1af424c5199e9d473dae68b9446","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Activity.php","encrypted":"Encrypted/Controllers/Activity.php.enc","sha256":"4295e3a0f20c2c43952dfe6bd5cac13600a1edca3c4d6cfb2fc3fdcbcd0dfad8","size":421},{"path":"Models/Activity.php","encrypted":"Encrypted/Models/Activity.php.enc","sha256":"8a9899a5b73bd5635baf2110babea990f8b7a89c6cf1c380d5e6c81329cc9e46","size":237}]},"career":{"salt":"9f0521228a1d40943d63f39e7390aabb","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Career.php","encrypted":"Encrypted/Controllers/Career.php.enc","sha256":"28b67d3ff449ad5290f4b0f43f3e7a82a6d22edb42b5a95deaaf19d788dd0960","size":202},{"path":"Models/Career.php","encrypted":"Encrypted/Models/Career.php.enc","sha256":"90ec7e51cc37e5efbc69581f53e24ef86574cd62a8034cb4beea9ea313d7d530","size":147}]},"certification":{"salt":"e198ea1c842fc56dae1cae2588bf26ba","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Certification.php","encrypted":"Encrypted/Controllers/Certification.php.enc","sha256":"87b3765c9d68d31c12c6f58ec8341b1109a0e57cac6ba263dd09927db49fac93","size":451},{"path":"Models/Certification.php","encrypted":"Encrypted/Models/Certification.php.enc","sha256":"ddbbed7e75406e013a23d0ade4f4a24c77844c5f0f664ac9c794c2123a8b00e6","size":247}]},"commerce":{"salt":"5f808a909281d95fb933d0af9656cfe9","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Commerce.php","encrypted":"Encrypted/Controllers/Commerce.php.enc","sha256":"2141311db9ad7223e6ffdf15662a5719affe4c71bfcca36f49e5b0a01fd67122","size":208},{"path":"Models/Commerce.php","encrypted":"Encrypted/Models/Commerce.php.enc","sha256":"995b29601ebea5049d5cf645f40b3c843e9a374645af91a4e47560db3f9d81aa","size":153}]},"dashboard":{"salt":"78aabeab5cce79a8d3bc7137d08c50a8","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Dashboard.php","encrypted":"Encrypted/Controllers/Dashboard.php.enc","sha256":"518627c3ca034a25c5b131ac83a2f63bc2e8bb1f39e653e9931b4e1ce399fc08","size":2576},{"path":"Models/Dashboard.php","encrypted":"Encrypted/Models/Dashboard.php.enc","sha256":"396ead1011a292518c2104d75695f9140efd1a6bfb5500ac8430e401972e2d92","size":224}]},"education":{"salt":"824408dad25cd5063ea39c1fd467aa92","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Education.php","encrypted":"Encrypted/Controllers/Education.php.enc","sha256":"d7d08fb23aa63cc23da33e73818d1363264fc9dc2ace7d6dd52f24be6008409b","size":400},{"path":"Models/Education.php","encrypted":"Encrypted/Models/Education.php.enc","sha256":"ec44fc4a17ae0be9c21a79045b5087c2cd29c43c4203f0de1c847f6b37325cc9","size":224}]},"interest":{"salt":"ce67f549b63962ba22f7a146e7824838","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Interest.php","encrypted":"Encrypted/Controllers/Interest.php.enc","sha256":"28f2bfde4a010ec97c06d37939bafb66ef5cebf7a1b506b0b79051e349f7967c","size":421},{"path":"Models/Interest.php","encrypted":"Encrypted/Models/Interest.php.enc","sha256":"a983ec6f3cbc7e58b587c2ad5f01fcaca69eed2815c8efd00c9fe9dc54d32d06","size":237}]},"media":{"salt":"9d887de537ca3d4ad6ca560e00e3b83a","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Media.php","encrypted":"Encrypted/Controllers/Media.php.enc","sha256":"8685e582cb3ab473ac13316b158fd8fcbc98817e019c99bfb0469805c9352e82","size":403},{"path":"Models/Media.php","encrypted":"Encrypted/Models/Media.php.enc","sha256":"77a328f91c188cff480939d82b71dbd607cc311c5bac0b3389390da72d419576","size":231}]},"profile":{"salt":"a6b224f22755e748946257d317863308","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Profile.php","encrypted":"Encrypted/Controllers/Profile.php.enc","sha256":"764eb45fdee15e45b563808bca1182a4fca1e6023eb92d9971c0273e628ac09d","size":572},{"path":"Models/Profile.php","encrypted":"Encrypted/Models/Profile.php.enc","sha256":"56d6ce8c1821c641df2cadff5985fa96d4d48787078ca25e7d1761f0bd6fb8eb","size":220}]},"project":{"salt":"363327502fa37f536ad0e41355525150","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Project.php","encrypted":"Encrypted/Controllers/Project.php.enc","sha256":"8e2c3b6067b1f0369dbe39b67422f98cc906f2780e7bf89396b4e5383f9b62b0","size":415},{"path":"Models/Project.php","encrypted":"Encrypted/Models/Project.php.enc","sha256":"e4038888bf5d5afb9aaff45c326e687604e8efd8641bf8e59eb494069c29139a","size":235}]},"research":{"salt":"6623b365f7a584d20522ef02692b45f0","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Research.php","encrypted":"Encrypted/Controllers/Research.php.enc","sha256":"8657a15807eb7694f49f34ad26a52e687842c9082ed02642d911eebdd10a509a","size":421},{"path":"Models/Research.php","encrypted":"Encrypted/Models/Research.php.enc","sha256":"69da7ba71c78196ad5879a9854471a2fda4ce2ffbdf11fec9b072992f7920cbe","size":237}]},"setting":{"salt":"953bafb2ba96422d503b4b7f33fe3a50","encrypted_at":"2026-09-13T18:29:56+00:00","files":[{"path":"Controllers/Setting.php","encrypted":"Encrypted/Controllers/Setting.php.enc","sha256":"8e89e03954806752848c06b1cf5ccce28d2a9b7adf249701fc7355582392c21d","size":415},{"path":"Models/Setting.php","encrypted":"Encrypted/Models/Setting.php.enc","sha256":"d9e780b4791fde05a37ab9c424151d038cc5fa121a4504bd54ddb7af6d3e0d0e","size":235}]}}}
+{
+    "version": 1,
+    "algorithm": "AES-256-GCM",
+    "updated_at": "2026-10-18T05:47:06+00:00",
+    "modules": {
+        "achievement": {
+            "salt": "85acb7597435dab6f956974915371441",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Achievement.php",
+                    "encrypted": "Encrypted/Controllers/Achievement.php.enc",
+                    "sha256": "b286af1bc61f0f7c7201a00d287de8039654e5972842add31f7351ad2cb04d39",
+                    "size": 412
+                },
+                {
+                    "path": "Models/Achievement.php",
+                    "encrypted": "Encrypted/Models/Achievement.php.enc",
+                    "sha256": "1898e20bfa1e89d8ce913b075c4c6ea3bee46874927e1870b6575b25bb356f49",
+                    "size": 228
+                }
+            ]
+        },
+        "activity": {
+            "salt": "1e22f9631d828712d5e6b10ac6d76f3b",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Activity.php",
+                    "encrypted": "Encrypted/Controllers/Activity.php.enc",
+                    "sha256": "4dec674614f3e62dc27a038edc670dba3ff28e469257c4662a1ee0fcfa028f0b",
+                    "size": 394
+                },
+                {
+                    "path": "Models/Activity.php",
+                    "encrypted": "Encrypted/Models/Activity.php.enc",
+                    "sha256": "57c1198064872a39bf2ea93b659cc08ae8b975a61bc956783b2321d14cd83faa",
+                    "size": 222
+                }
+            ]
+        },
+        "career": {
+            "salt": "4a3c4cb5e9cc3222155ab8ce0f9b546c",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Career.php",
+                    "encrypted": "Encrypted/Controllers/Career.php.enc",
+                    "sha256": "6a17022f619d18e5c15f22eb64038e8684f52ae8692a0ae7c119849ebaee326f",
+                    "size": 213
+                },
+                {
+                    "path": "Models/Career.php",
+                    "encrypted": "Encrypted/Models/Career.php.enc",
+                    "sha256": "910755b86f16890122ee02ef7150276821e5a2eda5fc64ad879bf25d12aa6219",
+                    "size": 147
+                }
+            ]
+        },
+        "certification": {
+            "salt": "ab7161b6fb3cb536f952000bbc5de054",
+            "encrypted_at": "2026-10-18T05:47:06+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Certification.php",
+                    "encrypted": "Encrypted/Controllers/Certification.php.enc",
+                    "sha256": "5e74098416a6165dd8571bf24ade96f1f6894b1779f979f834983f5d9252640f",
+                    "size": 424
+                },
+                {
+                    "path": "Models/Certification.php",
+                    "encrypted": "Encrypted/Models/Certification.php.enc",
+                    "sha256": "13a91770728e576cdc3238147085a127071640a504c8cf3d2d6058a5605959ef",
+                    "size": 232
+                }
+            ]
+        },
+        "commerce": {
+            "salt": "95b7f049ba27cbfc8ba189a47921ce6d",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Commerce.php",
+                    "encrypted": "Encrypted/Controllers/Commerce.php.enc",
+                    "sha256": "4f655c4cc1e3cac08eb9b5315736ca01b5a2b3dc0e16dc86a12f620e8b60c172",
+                    "size": 219
+                },
+                {
+                    "path": "Models/Commerce.php",
+                    "encrypted": "Encrypted/Models/Commerce.php.enc",
+                    "sha256": "3504145a1e3000d304d6654244479f66d9c33729eabb5d533db0b5f1911c52fc",
+                    "size": 153
+                }
+            ]
+        },
+        "dashboard": {
+            "salt": "f8f6253bbd7c73abb43ea8ec3800d3a0",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Dashboard.php",
+                    "encrypted": "Encrypted/Controllers/Dashboard.php.enc",
+                    "sha256": "518627c3ca034a25c5b131ac83a2f63bc2e8bb1f39e653e9931b4e1ce399fc08",
+                    "size": 2576
+                },
+                {
+                    "path": "Models/Dashboard.php",
+                    "encrypted": "Encrypted/Models/Dashboard.php.enc",
+                    "sha256": "396ead1011a292518c2104d75695f9140efd1a6bfb5500ac8430e401972e2d92",
+                    "size": 224
+                }
+            ]
+        },
+        "education": {
+            "salt": "12d03c6948cb178fd85cc22a096acd01",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Education.php",
+                    "encrypted": "Encrypted/Controllers/Education.php.enc",
+                    "sha256": "d7d08fb23aa63cc23da33e73818d1363264fc9dc2ace7d6dd52f24be6008409b",
+                    "size": 400
+                },
+                {
+                    "path": "Models/Education.php",
+                    "encrypted": "Encrypted/Models/Education.php.enc",
+                    "sha256": "ec44fc4a17ae0be9c21a79045b5087c2cd29c43c4203f0de1c847f6b37325cc9",
+                    "size": 224
+                }
+            ]
+        },
+        "interest": {
+            "salt": "e5e7baef6465c82c827c74baefc8f365",
+            "encrypted_at": "2026-10-18T05:47:06+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Interest.php",
+                    "encrypted": "Encrypted/Controllers/Interest.php.enc",
+                    "sha256": "43d9eb82498551d97eb65387250466c4ff99caf1a9bd644a8985516b5b5d0604",
+                    "size": 394
+                },
+                {
+                    "path": "Models/Interest.php",
+                    "encrypted": "Encrypted/Models/Interest.php.enc",
+                    "sha256": "bea6bd0821564010a9c01429aa8cd8544f4a542c7f8cd5f8143e0e0f6e746a19",
+                    "size": 222
+                }
+            ]
+        },
+        "media": {
+            "salt": "c916530064855c409f9f908337e5a4ce",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Media.php",
+                    "encrypted": "Encrypted/Controllers/Media.php.enc",
+                    "sha256": "cc11fea7b199ce5326c8af7a2accd23a16af2ea1f9cb3cfa5a07409b0de4ce20",
+                    "size": 376
+                },
+                {
+                    "path": "Models/Media.php",
+                    "encrypted": "Encrypted/Models/Media.php.enc",
+                    "sha256": "6817d966a20975a2f3cebc7231874f89b3076a64002a0cdae929059a3799b3f1",
+                    "size": 216
+                }
+            ]
+        },
+        "profile": {
+            "salt": "c4ed75e25335a83a4534244f760e256f",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Profile.php",
+                    "encrypted": "Encrypted/Controllers/Profile.php.enc",
+                    "sha256": "764eb45fdee15e45b563808bca1182a4fca1e6023eb92d9971c0273e628ac09d",
+                    "size": 572
+                },
+                {
+                    "path": "Models/Profile.php",
+                    "encrypted": "Encrypted/Models/Profile.php.enc",
+                    "sha256": "56d6ce8c1821c641df2cadff5985fa96d4d48787078ca25e7d1761f0bd6fb8eb",
+                    "size": 220
+                }
+            ]
+        },
+        "setting": {
+            "salt": "af27ae136b7e5187c3e919eb2cd66efa",
+            "encrypted_at": "2026-10-18T05:47:06+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Setting.php",
+                    "encrypted": "Encrypted/Controllers/Setting.php.enc",
+                    "sha256": "80479b3c581704a08fa4876d49d44e7acf6001873c2fdd53a456a4c87da5c517",
+                    "size": 388
+                },
+                {
+                    "path": "Models/Setting.php",
+                    "encrypted": "Encrypted/Models/Setting.php.enc",
+                    "sha256": "446d2abc8179e017e94b23d77fe581ecccd898f506019b768d3f11b1b0727350",
+                    "size": 220
+                }
+            ]
+        },
+        "research": {
+            "salt": "2512c4f145e58fddc32285f5b840673b",
+            "encrypted_at": "2026-10-18T05:47:05+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Research.php",
+                    "encrypted": "Encrypted/Controllers/Research.php.enc",
+                    "sha256": "7dfde14109a3417c6a8109eef9c544a8873d46cb5769b24c723a1ec078de9dd3",
+                    "size": 394
+                },
+                {
+                    "path": "Models/Research.php",
+                    "encrypted": "Encrypted/Models/Research.php.enc",
+                    "sha256": "36af776cfe0292265ef102b9d0d9885c20433bb896949b3df9679d80374bcf42",
+                    "size": 222
+                }
+            ]
+        },
+        "project": {
+            "salt": "f4803da5b96b3a075b6b67e334a25dcf",
+            "encrypted_at": "2026-10-18T05:47:06+00:00",
+            "files": [
+                {
+                    "path": "Controllers/Project.php",
+                    "encrypted": "Encrypted/Controllers/Project.php.enc",
+                    "sha256": "9e7db139c37212c11541cc2ed54df651c689706cc30953867698b3e123a73d7b",
+                    "size": 388
+                },
+                {
+                    "path": "Controllers/aegisguard/Aegisguard.php",
+                    "encrypted": "Encrypted/Controllers/aegisguard/Aegisguard.php.enc",
+                    "sha256": "2c86f92fa5c0f09c39d5163b715f7277f0bfcb589e2c6fe57fa9676dfe0113f3",
+                    "size": 22434
+                },
+                {
+                    "path": "Controllers/dapcode-lang/DapcodeLang.php",
+                    "encrypted": "Encrypted/Controllers/dapcode-lang/DapcodeLang.php.enc",
+                    "sha256": "01725f2c1889196214fb6e27f4fe752fb52f1330d7eb4e4e31776ba480bd5548",
+                    "size": 14896
+                },
+                {
+                    "path": "Models/Project.php",
+                    "encrypted": "Encrypted/Models/Project.php.enc",
+                    "sha256": "2341c5c8a367c8cf6e298421f85efadd94e82d31ced8516c59acf5a888a0983e",
+                    "size": 220
+                },
+                {
+                    "path": "Services/DapcodeKnowledge.php",
+                    "encrypted": "Encrypted/Services/DapcodeKnowledge.php.enc",
+                    "sha256": "c2239c150cb8c75c9da3f67837619f6d88a03eb165c1d757ba42f2e66ceb22b5",
+                    "size": 5414
+                }
+            ]
+        }
+    }
+}
