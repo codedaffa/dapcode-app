@@ -60,7 +60,7 @@ Engine kompresi dan dekompresi performa tinggi untuk file PHP (AegisGuard Protec
   - **`+ Make Module`**: Membuat modul baru lengkap (Controller, Model, View, Core Base Controller, dan auto-enkripsi Layer 6).
   - **`🗑️ Remove Module`**: Menghapus modul secara aman beserta registrasinya.
   - **`⚡ Minify PHP Code`**: Menjalankan minifikasi kode PHP (Semua Modul, Controller, Model, AegisGuard, Routes) secara visual.
-  - **`🔄 Unminify PHP Code`**: Merestorasi kode asli dari Secure SourceMap Vault secara visual.
+  - **`🔄 Unminify PHP Code`**: Merestorasi kode asli dari Secure SourceMap Vault secara visual (dilengkapi verifikasi integritas SHA-256 `mini_hash` untuk mencegah pemulihan snapshot kadaluarsa, dengan fallback otomatis ke Code Beautifier).
 - **RSA-2048 License Signer:** Menghasilkan signed activation payload dan signed revocation token secara instan dengan proteksi passcode Authority.
 - **Custom Floating Toast Notifications:** Seluruh notifikasi menggunakan komponen UI modern (*no native browser alerts*).
 

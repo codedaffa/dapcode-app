@@ -32,7 +32,7 @@ Tugas Anda adalah mengimplementasikan **DapCode AegisGuard™ (6-Layer Defense-i
    - Pencabutan lisensi (penuh maupun per-modul) wajib diverifikasi menggunakan *Signed Revocation Token* bertanda tangan RSA-2048 yang sah dan langsung menghapus plaintext dari disk.
 7. **Minified Code Protection & Zero Bypass Rule:**
    - Kode yang diminify adalah bagian dari proteksi sistem (*Hardening Layer*).
-   - AI Agent dan programmer **DILARANG KERAS** melakukan de-minify/unminify secara bypass atau ilegal tanpa melalui perintah resmi (`php artisan code:unminify` via *Secure SourceMap Vault*).
+   - AI Agent dan programmer **DILARANG KERAS** melakukan de-minify/unminify secara bypass atau ilegal tanpa melalui perintah resmi (`php artisan code:unminify` via *Secure SourceMap Vault* yang dilengkapi validasi integritas SHA-256 anti-stale rollback).
 
 ---
 

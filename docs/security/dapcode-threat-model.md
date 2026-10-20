@@ -23,6 +23,7 @@ Dokumen ini memetakan model ancaman (*Threat Model*), matriks vektor serangan po
 | **Core AegisGuard Source Code Exposure** | Membaca logika proteksi internal dari fresh clone repository | **Core Envelope Encryption & In-Memory JIT Execution (`AegisguardLoader`)**: 20 file core security dapat dienkripsi ke `.php.enc` dan dijalankan langsung via memori tanpa menuliskan plaintext ke disk. | **MITIGATED** |
 | **Path Traversal & Obfuscation** (`../`, encoded slugs) | Mengakses modul terlarang via path manipulasi | **Canonical Module Resolver** menormalisasi string, menolak traversal, encoding ganda, dan karakter non-alfanumerik. | **MITIGATED** |
 | **Unauthorized / Bypass Unminification** | Membongkar atau me-unminify kode terproteksi secara ilegal | **Secure SourceMap Vault + Layer 5 Integrity**: Kode asli terenkripsi di `.sourcemaps/*.dapmap`. Unminify hanya dapat dieksekusi via channel resmi yang terotorisasi (`code:unminify`). Segala bypass eksternal dilarang keras dan ditolak oleh Security Guardian. | **MITIGATED** |
+| **Stale SourceMap Rollback / Accidental Overwrite** | Pemulihan snapshot kode lama/usang saat unminify yang menghidupkan kembali kerentanan atau elemen yang telah dihapus | **SHA-256 mini_hash Validation & Beautifier Fallback**: `SourceMapVaultService` secara aktif memvalidasi kecocokan `hash_file('sha256', $filePath) === $mapData['mini_hash']`. Jika berkas telah diperbarui secara sah, snapshot lama ditolak otomatis (*fail-safe rejection*) dan sistem beralih aman ke native Code Beautifier. | **MITIGATED** |
 
 ---
 

@@ -20,13 +20,15 @@ Tugas Anda adalah mengimplementasikan sistem **Code Minifier & Unminifier Enterp
    - **Blade Templates:** Mengompres HTML, tag `<style>` (CSS), tag `<script>` (JS), dan blok `@php ... @endphp` menjadi **1 baris utuh**, dengan tetap melindungi elemen yang sensitif terhadap whitespace seperti `<pre>`, `<textarea>`, dan `<code>`.
    - **JSON / Manifest:** Menggunakan `json_decode()` + `json_encode()` tanpa indentasi (`JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`).
 
-2. **Secure SourceMap Vault (Zero Data-Loss Roundtrip):**
-   - Sebelum file diminify, file asli wajib di-backup secara terisolasi di dalam vault (`storage/framework/dapcode/vault/` atau path aman lainnya) yang diproteksi `.gitignore`.
-   - Menggunakan hashing SHA-256 untuk memvalidasi integritas file asli saat di-restore.
-   - Saat menjalankan `code:unminify`, sistem memprioritaskan pemulihan **100% kode asli byte-for-byte** dari Vault.
+2. **Secure SourceMap Vault (Zero Data-Loss Roundtrip & Anti-Stale Rollback Protection):**
+   - Sebelum file diminify, file asli wajib di-backup secara terisolasi di dalam vault (`storage/app/dapcode/.sourcemaps/` atau path aman lainnya) yang diproteksi `.gitignore` dan permissions `0700`/`0600`.
+   - Menggunakan hashing SHA-256 ganda (`orig_hash` dan `mini_hash`) serta HMAC checksum yang terikat ke Installation ID.
+   - **Validasi Integritas SHA-256 (`mini_hash` Verification):** Saat menjalankan `code:unminify`, `hasMap()` dan `restoreOriginal()` **wajib** mencocokkan `hash_file('sha256', $filePath)` dengan `mini_hash` yang terekam di vault.
+   - **Perlindungan Anti-Stale Rollback:** Jika file telah diedit secara sah oleh developer (sehingga hash saat ini tidak cocok lagi dengan `mini_hash` vault), snapshot lama tersebut **ditolak secara otomatis** (`hasMap()` mengembalikan `false`, `restoreOriginal()` mengembalikan `null`). Hal ini mencegah terjadinya *accidental rollback* yang menghidupkan kembali kode/elemen lama yang sudah dihapus.
+   - **Penyimpanan Cerdas (`storeMap`):** Jika konten yang hendak disimpan sudah berstatus satu baris / minified, vault tidak boleh menimpa rekaman yang ada kecuali jika `mini_hash` file cocok, menjaga kemurnian backup asli.
 
 3. **PHP Code Beautifier Fallback:**
-   - Jika file tidak memiliki rekaman di SourceMap Vault (misal file baru atau vault terhapus), sistem memiliki fallback tokenizer PHP native (`token_get_all`) untuk memformat ulang kode secara rapi sesuai standar PSR-12 (indentasi 4 spasi atau 2 spasi).
+   - Jika file tidak memiliki rekaman di SourceMap Vault atau snapshot vault kadaluarsa/tidak valid (*hash mismatch*), sistem beralih otomatis (*fail-safe fallback*) ke tokenizer PHP native (`token_get_all`) dan Blade Beautifier untuk memformat ulang kode terkini secara rapi sesuai standar PSR-12 (indentasi 4 spasi atau 2 spasi).
    - **PENTING:** Proses unminify/beautifier **DILARANG** menambahkan baris kosong baru berlebih di akhir file (`rtrim($code) . "\n"`).
 
 4. **Code Status Inspector Heuristic:**
@@ -44,23 +46,28 @@ Tugas Anda adalah mengimplementasikan sistem **Code Minifier & Unminifier Enterp
 ### A. Services (`app/Services/Dapcode/` atau namespace kustom)
 
 #### 1. `SourceMapVaultService.php`
-- **Fungsi:** Mengelola penyimpanan backup file asli sebelum minifikasi.
-- **Lokasi Vault:** `storage/framework/dapcode/vault/` (otomatis dibuat jika belum ada).
+- **Fungsi:** Mengelola penyimpanan backup file asli sebelum minifikasi dengan verifikasi integritas hash dan proteksi anti-stale rollback.
+- **Lokasi Vault:** `storage/app/dapcode/.sourcemaps/` (otomatis dibuat jika belum ada).
 - **Struktur Metadata:**
   ```json
   {
     "file": "app/Models/User.php",
-    "hash_original": "sha256...",
-    "hash_minified": "sha256...",
-    "minified_at": "2026-09-06T12:00:00Z",
-    "original_content": "...isi file asli..."
+    "orig_hash": "sha256...",
+    "mini_hash": "sha256...",
+    "inst_id": "DAP-XXXXXX-UUID",
+    "created_at": 1774000000,
+    "payload": "base64(gzdeflate(original_content))",
+    "checksum": "hmac_sha256(payload, secret)"
   }
   ```
 - **Method yang wajib ada:**
   - `storeMap(string $filePath, string $originalContent, string $minifiedContent): bool`
-  - `restoreOriginal(string $filePath): ?string`
-  - `hasMap(string $filePath): bool`
-  - `cleanVault(): int`
+  - `hasMap(string $filePath): bool` (wajib memvalidasi `hash_file('sha256', $filePath) === $mapData['mini_hash']`)
+  - `restoreOriginal(string $filePath): ?string` (mengembalikan `null` jika hash file saat ini berbeda dari `mini_hash`)
+  - `getVaultMapData(string $filePath): ?array` (validasi HMAC checksum integritas payload)
+  - `verifyMinifiedFile(string $filePath, string $expectedOrigHash): bool`
+  - `cleanMap(string $filePath): bool`
+  - `cleanAllMaps(): int`
 
 #### 2. `CodeFormatterService.php` (PHP Beautifier Native)
 - **Fungsi:** Memformat kode PHP yang minified kembali menjadi kode berstruktur rapi jika SourceMap Vault tidak tersedia.
